@@ -360,5 +360,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <p align="center">
-  Designed & Developed by 2026-Y2-S1-MLB-B1G2-03 Team Members for the <b>Software Engineering Project Course</b>
+  Designed & Developed by 2026-Y2-S1-MLB-B1G2-03 Team Members for the <b>Software Engineering Project</b>
 </p>
