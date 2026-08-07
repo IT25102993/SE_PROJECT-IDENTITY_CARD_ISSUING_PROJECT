@@ -353,7 +353,7 @@ section.visible {
     height: 36px;
     background: var(--accent-light);
     border: 1px solid var(--accent);
-    border-radius: 14px;
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
