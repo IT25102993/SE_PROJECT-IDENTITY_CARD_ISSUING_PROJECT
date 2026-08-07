@@ -181,9 +181,9 @@ body.light-theme .loader-progress-wrap {
     --sketch-dot:   rgba(255, 255, 255, 0.04);
 
     --nav-height:   68px;
-    --radius-sm:    6px;
-    --radius-md:    12px;
-    --radius-lg:    20px;
+    --radius-sm:    999px;
+    --radius-md:    999px;
+    --radius-lg:    999px;
 
     --transition:   all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: all 0.6s cubic-bezier(0.2, 1, 0.3, 1);
@@ -353,7 +353,7 @@ section.visible {
     height: 36px;
     background: var(--accent-light);
     border: 1px solid var(--accent);
-    border-radius: var(--radius-sm);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -403,7 +403,7 @@ section.visible {
     color: var(--text-secondary);
     font-size: 0.85rem;
     font-weight: 500;
-    padding: 0.4rem 0.75rem;
+    padding: 0.4rem 0.85rem;
     border-radius: var(--radius-sm);
     transition: var(--transition);
     letter-spacing: 0.01em;
@@ -426,7 +426,7 @@ section.visible {
     color: var(--text-secondary);
     width: 34px;
     height: 34px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-sm);  /* pill */
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -528,7 +528,7 @@ section.visible {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.7rem 1.4rem;
+    padding: 0.7rem 1.6rem;
     border-radius: var(--radius-sm);
     font-size: 0.875rem;
     font-weight: 600;
@@ -573,7 +573,7 @@ section.visible {
     max-width: 340px;
     background: var(--surface);
     border: 1.5px solid var(--border-strong);
-    border-radius: var(--radius-md);
+    border-radius: 28px;
     overflow: hidden;
     box-shadow: 0 8px 40px rgba(0,0,0,0.2);
     position: relative;
@@ -603,7 +603,7 @@ section.visible {
     width: 70px;
     height: 85px;
     border: 1.5px dashed var(--border-strong);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -731,9 +731,9 @@ section.visible {
     text-transform: uppercase;
     letter-spacing: 0.15em;
     margin-bottom: 0.75rem;
-    padding: 0.25rem 0.6rem;
+    padding: 0.25rem 0.75rem;
     background: var(--accent-light);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
 }
 
 .section-title {
@@ -751,7 +751,7 @@ section.visible {
 .service-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: 24px;
     padding: 1.75rem 1.5rem;
     display: flex;
     flex-direction: column;
@@ -786,7 +786,7 @@ section.visible {
     height: 40px;
     background: var(--accent-light);
     border: 1px solid rgba(79, 110, 247, 0.25);
-    border-radius: var(--radius-sm);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -884,6 +884,7 @@ section.visible {
     box-shadow: var(--accent-glow);
 }
 
+
 /* Connector line between steps */
 .step-connector {
     position: absolute;
@@ -964,7 +965,7 @@ section.visible {
     height: 32px;
     background: var(--accent-light);
     border: 1px solid rgba(79,110,247,0.2);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -977,7 +978,7 @@ section.visible {
 .contact-form-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: 28px;
     padding: 2.25rem;
 }
 
@@ -999,7 +1000,7 @@ section.visible {
 .form-group textarea,
 .form-group select {
     width: 100%;
-    padding: 0.7rem 0.9rem;
+    padding: 0.7rem 1rem;
     background: var(--bg);
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
@@ -1034,7 +1035,7 @@ section.visible {
 .form-group textarea {
     resize: vertical;
     min-height: 100px;
-    border-radius: var(--radius-sm);
+    border-radius: 20px;
 }
 
 .submit-btn {
@@ -1043,7 +1044,7 @@ section.visible {
     background: var(--accent);
     color: #ffffff;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-sm);  /* pill */
     font-family: 'Inter', sans-serif;
     font-size: 0.875rem;
     font-weight: 600;
@@ -1139,12 +1140,12 @@ section.visible {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: var(--surface);
     color: var(--text-secondary);
     border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-sm);  /* pill */
     cursor: pointer;
     display: flex;
     align-items: center;
