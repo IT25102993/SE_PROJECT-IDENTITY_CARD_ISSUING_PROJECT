@@ -20,6 +20,10 @@ body::before {
   z-index: -1;
 }
 .navbar {
+    padding: 10px 25px;
+    margin: 15px;
+    border: none;
+    border-radius: 30px;
     display: flex;
     justify-content: space-between;
     font-family: 'Poppins', sans-serif;
