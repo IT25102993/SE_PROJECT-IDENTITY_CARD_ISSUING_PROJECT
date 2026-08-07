@@ -1,5 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ─── Loading Screen ──────────────────────────────────────────
+    const loader    = document.getElementById('loader');
+    const loaderBar = document.getElementById('loader-bar');
+
+    // Apply saved theme immediately (before loader hides) to avoid flash
+    const savedTheme = localStorage.getItem('nexusgov-theme');
+    if (savedTheme === 'light') document.body.classList.add('light-theme');
+
+    if (loader && loaderBar) {
+        // Animate progress bar: 0 → 100% over ~1.1s in steps
+        let progress = 0;
+        const steps = [
+            { target: 30,  delay: 0 },
+            { target: 65,  delay: 250 },
+            { target: 88,  delay: 550 },
+            { target: 100, delay: 900 },
+        ];
+
+        steps.forEach(({ target, delay }) => {
+            setTimeout(() => {
+                loaderBar.style.width = target + '%';
+            }, delay);
+        });
+
+        // Hide loader after progress completes
+        setTimeout(() => {
+            loader.classList.add('hide');
+            // Remove from DOM after transition finishes (0.7s wipe + 0.5s opacity)
+            setTimeout(() => loader.remove(), 1200);
+        }, 1150);
+    }
+
     // ─── Global state ───────────────────────────────────────────
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
