@@ -150,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const themeIcon = themeToggle ? themeToggle.querySelector('i') : null;
 
+    // Sync icon with already-applied theme
     const applyTheme = (isLight) => {
         body.classList.toggle('light-theme', isLight);
         if (themeIcon) {
@@ -157,9 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Restore saved theme
-    const savedTheme = localStorage.getItem('nexusgov-theme');
-    if (savedTheme) applyTheme(savedTheme === 'light');
+    // Sync icon to current state (theme was applied before loader dismissed)
+    applyTheme(body.classList.contains('light-theme'));
 
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
