@@ -1,12 +1,4 @@
-/* =============================================
-   NEXUS GOV — Minimalistic Sketch Design System
-   ============================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
-
-/* =============================================
-   LOADING SCREEN
-   ============================================= */
 
 #loader {
     position: fixed;
@@ -1284,25 +1276,6 @@ section.visible {
 
 
 /*id */
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      background: radial-gradient(circle at center, #1e293b, #0f172a);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-      /* Establish 3D viewport */
-      perspective: 1000px;
-    }
-
     /* 3D Card Container */
     .card-container {
       width: 500px;
