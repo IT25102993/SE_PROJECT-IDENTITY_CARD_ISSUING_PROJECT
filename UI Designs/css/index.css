@@ -5,8 +5,8 @@
     --bg-color: #050505;
     --text-primary: #ffffff;
     --text-secondary: #b0b0b0;
-    --accent-color: #c5a059; /* Brightest part of the gold */
-    --gold-gradient: linear-gradient(135deg, #4d3d1a 0%, #b68d40 20%, #f1d279 50%, #b68d40 80%, #4d3d1a 100%);
+    --accent-color: #59a3c5; /* Brightest part of the gold */
+    --gold-gradient: linear-gradient(135deg, #1a1b4d 0%, #6940b6 20%, #7981f1 50%, #6040b6 80%, #2c1a4d 100%);
     --card-bg: #111111;
     --glass-bg: rgba(5, 5, 5, 0.85);
     --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -564,7 +564,7 @@ nav .container {
     padding: 1rem;
     background: rgba(128, 128, 128, 0.05);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 50px;
     color: var(--text-primary);
     font-family: inherit;
     transition: var(--transition-smooth);
@@ -589,7 +589,7 @@ nav .container {
     background: var(--accent-color);
     color: var(--bg-color);
     border: none;
-    border-radius: 12px; /* Soft edges */
+    border-radius: 50px; /* Soft edges */
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
