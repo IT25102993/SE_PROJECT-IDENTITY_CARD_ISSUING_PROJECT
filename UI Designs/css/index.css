@@ -1281,3 +1281,239 @@ section.visible {
     .stats-grid { grid-template-columns: 1fr; }
     .stat-item { text-align: left; }
 }
+
+
+/*id */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #1e293b, #0f172a);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      /* Establish 3D viewport */
+      perspective: 1000px;
+    }
+
+    /* 3D Card Container */
+    .card-container {
+      width: 500px;
+      height: 315px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+      cursor: pointer;
+    }
+
+    /* Main ID Card Layer */
+    .id-card {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      padding: 18px 22px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      
+      /* Base Realistic Card Styling */
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: linear-gradient(
+        115deg,
+        #cbe8d8 0%,
+        #e3f3e6 30%,
+        #fff3d1 65%,
+        #aee2eb 100%
+      );
+      
+      /* Multi-layered Realistic Shadows */
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Dynamic Holographic / Glare Overlay */
+    .glare {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(0, 0, 0, 0.1) 100%
+      );
+      pointer-events: none;
+      z-index: 10;
+      border-radius: 14px;
+      mix-blend-mode: overlay;
+    }
+
+    /* Floating Top Emblem Motif */
+    .id-card::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(212, 114, 90, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Header Layout with 3D Depth Elevation */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      transform: translateZ(25px); /* Pops forward in 3D space */
+    }
+
+    .emblem {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4af37, #8a6c1e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 8px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 
+        0 4px 8px rgba(0,0,0,0.2),
+        inset 0 0 0 2px #5c4712;
+      transform: translateZ(10px);
+    }
+
+    .header-titles {
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .header-titles .native-text {
+      font-size: 11px;
+      color: #222;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .header-titles .main-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      color: #111;
+      margin-top: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+    }
+
+    /* Body Layout */
+    .card-body {
+      display: flex;
+      gap: 18px;
+      height: calc(100% - 62px);
+    }
+
+    /* 3D Elevated Photo & Signature Layer */
+    .photo-section {
+      width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateZ(35px); /* Highest elevation for realistic extrusion */
+    }
+
+    .photo-box {
+      width: 110px;
+      height: 135px;
+      background-color: #d1d5db;
+      border: 1px solid #9ca3af;
+      border-radius: 4px;
+      box-shadow: 
+        0 8px 16px rgba(0,0,0,0.2),
+        inset 0 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 11px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    .signature-area {
+      margin-top: auto;
+      width: 100%;
+      text-align: center;
+    }
+
+    .signature-line {
+      font-family: 'Brush Script MT', cursive, sans-serif;
+      font-size: 15px;
+      color: #1e3a8a;
+      border-top: 1px solid #777;
+      padding-top: 2px;
+      margin-top: 4px;
+    }
+
+    .signature-subtext {
+      font-size: 7px;
+      color: #444;
+      line-height: 1;
+    }
+
+    /* 3D Elevated Text Fields Section */
+    .details-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #111;
+      transform: translateZ(20px); /* Medium elevation */
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 85px 12px 1fr;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+
+    .field-label {
+      font-weight: 600;
+      color: #222;
+      font-size: 10px;
+    }
+
+    .field-value {
+      font-weight: 700;
+      color: #000;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .id-number {
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    .multilingual-label {
+      font-size: 9px;
+      color: #333;
+      line-height: 1.1;
+    }

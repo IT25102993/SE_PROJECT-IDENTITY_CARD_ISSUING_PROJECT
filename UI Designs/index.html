@@ -89,31 +89,81 @@
                     </a>
                 </div>
             </div>
-            <!-- Sketch ID Card Illustration -->
-            <div class="hero-visual" aria-hidden="true">
-                <div class="id-card-sketch">
-                    <div class="card-header-strip"></div>
-                    <div class="card-body">
-                        <div class="card-photo-box">
-                            <i class="fa-regular fa-user"></i>
-                        </div>
-                        <div class="card-lines">
-                            <div class="card-line long"></div>
-                            <div class="card-line medium"></div>
-                            <div class="card-line short"></div>
-                            <div class="card-line medium"></div>
-                        </div>
-                    </div>
-                    <div class="card-footer-strip">
-                        <div class="barcode-sketch">
-                            <span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span><span></span>
-                            <span></span><span></span><span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="sketch-label">National Identity Card</div>
+  <!-- 3D Wrapper Container -->
+  <div class="card-container" id="cardContainer">
+    <div class="id-card">
+      <div class="glare" id="glareOverlay"></div>
+
+      <!-- Header Section -->
+      <div class="header">
+        <div class="emblem">EMBLEM</div>
+        <div class="header-titles">
+          <div class="native-text">ශ්‍රී ලංකා | இலங்கை</div>
+          <div class="native-text">ජාතික හැඳුනුම්පත | தேசிய அடையாள அட்டை</div>
+          <div class="main-title">SRI LANKA NATIONAL IDENTITY CARD</div>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <!-- Photo & Signature Section -->
+        <div class="photo-section">
+          <div class="photo-box">
+            <span>PHOTO</span>
+          </div>
+          <div class="signature-area">
+            <div class="signature-line">J. Doe</div>
+            <div class="signature-subtext">අත්සන / கையொப்பම් / Signature</div>
+          </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="details-section">
+          <div class="field-row">
+            <div class="field-label">
+              <span class="multilingual-label">අංකය / இல. /</span> No.:
             </div>
+            <div>:</div>
+            <div class="field-value id-number">199012345678</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">නම</div>
+            <div>:</div>
+            <div class="field-value">ජෝන් ඩෝ</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">பெயர்</div>
+            <div>:</div>
+            <div class="field-value">ஜான் டDoe</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">Name</div>
+            <div>:</div>
+            <div class="field-value">JOHN DOE</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <span class="multilingual-label">ස්ත්‍රී පුරුෂ භාවය / பால் /</span> Sex
+            </div>
+            <div>:</div>
+            <div class="field-value">පුරුෂ / ஆண் / Male</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">
+              <span class="multilingual-label">උපන් දිනය / பிறந்த திகதி /</span> DOB
+            </div>
+            <div>:</div>
+            <div class="field-value">1990.01.01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
         </div>
     </section>
 
@@ -310,6 +360,34 @@
     </button>
 
     <script src="js/main.js"></script>
+      <!-- Interactive 3D Physics Script -->
+  <script>
+    const container = document.getElementById('cardContainer');
+    const glare = document.getElementById('glareOverlay');
+
+    document.addEventListener('mousemove', (e) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+
+      // Calculate tilt angles based on mouse offset from center
+      const rotateX = ((clientY - innerHeight / 2) / (innerHeight / 2)) * -20;
+      const rotateY = ((clientX - innerWidth / 2) / (innerWidth / 2)) * 20;
+
+      // Apply 3D rotation transform to container
+      container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+      // Dynamic glare effect adjustment
+      const glareX = ((clientX / innerWidth) * 100);
+      const glareY = ((clientY / innerHeight) * 100);
+      glare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 60%)`;
+    });
+
+    // Reset card tilt when cursor leaves the window
+    document.addEventListener('mouseleave', () => {
+      container.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      glare.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%)';
+    });
+  </script>
 </body>
 
 </html>
