@@ -5,8 +5,9 @@
     --bg-color: #050505;
     --text-primary: #ffffff;
     --text-secondary: #b0b0b0;
-    --accent-color: #59a3c5; /* Brightest part of the gold */
-    --gold-gradient: linear-gradient(135deg, #1a1b4d 0%, #6940b6 20%, #7981f1 50%, #6040b6 80%, #2c1a4d 100%);
+    --accent-color: #000000; /* Brightest part of the gold */
+    /*--gold-gradient: linear-gradient(135deg, #1a1b4d 0%, #6940b6 20%, #7981f1 50%, #6040b6 80%, #2c1a4d 100%);*/
+    --gold-gradient: rgba(47, 0, 255, 0.85);
     --card-bg: #111111;
     --glass-bg: rgba(5, 5, 5, 0.85);
     --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,7 +19,7 @@
 body.light-theme {
     --bg-color: #faf9f6; /* Soft Alabaster/Off-white */
     --text-primary: #1a1a1a;
-    --text-secondary: #555555;
+    --text-secondary: #faf9f9;
     --card-bg: #ffffff;
     --glass-bg: rgba(250, 249, 246, 0.95);
     --gold-glow: 0 10px 30px rgba(212, 175, 55, 0.08);
