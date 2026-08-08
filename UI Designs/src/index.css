@@ -327,9 +327,19 @@ body.light-theme .form-textarea {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   overflow: hidden;
-  border: 1.5px solid rgba(234, 179, 8, 0.5);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.25);
-  background: linear-gradient(135deg, #091a30 0%, #112642 50%, #0a1c33 100%);
+  /* Modern Sri Lanka NIC - purple-violet to indigo-blue gradient */
+  border: 1.5px solid rgba(167, 139, 250, 0.45);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.65),
+    0 0 0 0.5px rgba(167, 139, 250, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background:
+    /* Guilloche-style radial glow on top-left */
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 92, 246, 0.28) 0%, transparent 70%),
+    /* Right-side accent glow */
+    radial-gradient(ellipse 40% 60% at 85% 75%, rgba(79, 70, 229, 0.22) 0%, transparent 65%),
+    /* Core gradient: purple-violet → deep indigo → dark navy */
+    linear-gradient(130deg, #2d1b69 0%, #1e1b4b 30%, #1a2060 55%, #1e3a8a 80%, #1e3058 100%);
   color: #ffffff;
   padding: 1rem 1.25rem;
   display: flex;
@@ -339,7 +349,11 @@ body.light-theme .form-textarea {
 .id-card-face.back {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
-  background: linear-gradient(135deg, #0a1c33 0%, #112642 50%, #091a30 100%);
+  /* Back face: slightly shifted hue variant of front */
+  background:
+    radial-gradient(ellipse 55% 55% at 80% 15%, rgba(99, 82, 220, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 50% at 20% 85%, rgba(59, 130, 246, 0.18) 0%, transparent 65%),
+    linear-gradient(130deg, #1e1b4b 0%, #231e6b 25%, #1a2060 55%, #1d3074 80%, #1e3a8a 100%);
 }
 
 /* Glare Layer */
