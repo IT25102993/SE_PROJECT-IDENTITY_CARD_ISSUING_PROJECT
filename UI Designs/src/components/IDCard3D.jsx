@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { RotateCw, User } from 'lucide-react';
+import { Shield, RotateCw, User, CheckCircle2 } from 'lucide-react';
 
 export const IDCard3D = ({ cardData }) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -8,16 +8,16 @@ export const IDCard3D = ({ cardData }) => {
   const [glareStyle, setGlareStyle] = useState({});
   const cardRef = useRef(null);
 
-  const data = {
-    nicNumber:  cardData?.nicNumber  || '123432043440',
+  const defaultData = {
+    nicNumber: cardData?.nicNumber || '200512345678',
     fullNameEn: cardData?.fullNameEn || 'Thilina Sakalasooriya',
     fullNameSi: cardData?.fullNameSi || 'තිලිණ සකළසූරිය',
     fullNameTa: cardData?.fullNameTa || 'திலீன சகலசூரிய',
-    gender:     cardData?.gender     || 'Male',
-    dob:        cardData?.dob        || '2005-01-01',
-    address:    cardData?.address    || 'No. 12, Main Street, Malabe, Colombo',
-    signature:  cardData?.signature  || 'Thilina S.',
-    photoUrl:   cardData?.photoUrl   || ''
+    gender: cardData?.gender || 'Male',
+    dob: cardData?.dob || '2005-01-01',
+    address: cardData?.address || 'No. 12, Main Street, Malabe, Colombo',
+    signature: cardData?.signature || 'Thilina Sakalasooriya',
+    photoUrl: cardData?.photoUrl || ''
   };
 
   const handleMouseMove = (e) => {
@@ -25,272 +25,218 @@ export const IDCard3D = ({ cardData }) => {
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -12;
-    const rotateY = ((x - rect.width  / 2) / (rect.width  / 2)) * 12;
-    const glareX  = (x / rect.width)  * 100;
-    const glareY  = (y / rect.height) * 100;
-    setTiltStyle({ transform: `rotateX(${rotateX}deg) rotateY(${(isFlipped ? 180 : 0) + rotateY}deg)` });
-    setGlareStyle({ background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%)` });
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -12;
+    const rotateY = ((x - centerX) / centerX) * 12;
+
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+
+    const baseFlip = isFlipped ? 180 : 0;
+    setTiltStyle({
+      transform: `rotateX(${rotateX}deg) rotateY(${baseFlip + rotateY}deg)`
+    });
+
+    setGlareStyle({
+      background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 65%)`
+    });
   };
 
   const handleMouseLeave = () => {
-    setTiltStyle({ transform: `rotateX(0deg) rotateY(${isFlipped ? 180 : 0}deg)` });
-    setGlareStyle({});
+    const baseFlip = isFlipped ? 180 : 0;
+    setTiltStyle({
+      transform: `rotateX(0deg) rotateY(${baseFlip}deg)`
+    });
+    setGlareStyle({
+      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%)'
+    });
   };
 
-  const handleFlip = (e) => {
+  const toggleFlip = (e) => {
     e.stopPropagation();
-    const next = !isFlipped;
-    setIsFlipped(next);
-    setTiltStyle({ transform: `rotateX(0deg) rotateY(${next ? 180 : 0}deg)` });
-  };
-
-  const genderText = data.gender === 'Male' ? 'පුරුෂ / ஆண் / Male' : 'ස්ත්‍රී / பெண் / Female';
-
-  /* ── shared card face wrapper styles ── */
-  const faceBase = {
-    position: 'absolute', inset: 0,
-    borderRadius: '14px',
-    backfaceVisibility: 'hidden',
-    WebkitBackfaceVisibility: 'hidden',
-    overflow: 'hidden',
-    boxShadow: '0 28px 55px rgba(0,0,0,0.65), 0 0 32px rgba(59,130,246,0.22)',
+    const nextFlipped = !isFlipped;
+    setIsFlipped(nextFlipped);
+    setTiltStyle({
+      transform: `rotateX(0deg) rotateY(${nextFlipped ? 180 : 0}deg)`
+    });
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: '520px', margin: '0 auto' }}>
-
-      {/* ── 3-D perspective container ── */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', width: '100%', maxWidth: '480px', margin: '0 auto' }}>
       <div
-        style={{ perspective: '1200px', width: '100%', padding: '0.5rem', cursor: 'pointer' }}
+        className="card-perspective-container"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
         <div
           ref={cardRef}
-          style={{
-            width: '100%', height: '308px',
-            position: 'relative',
-            transformStyle: 'preserve-3d',
-            transition: 'transform 0.65s cubic-bezier(0.23,1,0.32,1)',
-            ...tiltStyle
-          }}
-          onClick={handleFlip}
+          className={`id-card-3d ${isFlipped ? 'flipped' : ''}`}
+          style={tiltStyle}
+          onClick={toggleFlip}
+          title="Click card to flip front/back"
         >
+          {/* Glare Overlay */}
+          <div className="glare-overlay" style={glareStyle} />
 
-          {/* ══════════════════════════════════════════════
-              FRONT – graphic image as texture + live data overlay
-          ══════════════════════════════════════════════ */}
-          <div style={{ ...faceBase, fontFamily: 'Arial, sans-serif' }}>
-
-            {/* Exact NIC graphic as full-bleed background */}
-            <img
-              src="/images/index/nic_front.png"
-              alt="Sri Lanka NIC Front"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }}
-            />
-
-            {/* ── Live data overlay on top of the graphic ── */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', zIndex: 5 }}>
-
-              {/* Top strip: NIC number overlay */}
-              <div style={{
-                height: '46px',
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
-                paddingRight: '10px',
-              }}>
-                <div style={{
-                  background: 'rgba(0,0,0,0.45)', borderRadius: '4px',
-                  padding: '2px 8px', fontFamily: 'monospace',
-                  color: '#fffde7', fontSize: '0.72rem', fontWeight: '800', letterSpacing: '1.5px'
-                }}>
-                  {data.nicNumber}
-                </div>
-              </div>
-
-              {/* Body overlay */}
-              <div style={{ flex: 1, display: 'flex', gap: '0', padding: '4px 8px 4px 8px' }}>
-
-                {/* Photo zone */}
-                <div style={{ width: '88px', flexShrink: 0, paddingTop: '4px' }}>
-                  <div style={{
-                    width: '78px', height: '96px',
-                    border: '2px solid rgba(90,74,20,0.5)',
-                    borderRadius: '3px',
-                    overflow: 'hidden',
-                    background: 'rgba(184,168,130,0.3)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    {data.photoUrl
-                      ? <img src={data.photoUrl} alt="Photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <div style={{ textAlign: 'center', color: 'rgba(90,74,20,0.8)', fontSize: '0.55rem' }}>
-                          <User size={28} color="rgba(90,74,20,0.6)" />
-                          <div style={{ fontFamily: 'monospace' }}>PHOTO</div>
-                        </div>
-                    }
-                  </div>
-
-                  {/* Signature */}
-                  <div style={{
-                    marginTop: '6px', width: '78px',
-                    fontFamily: '"Brush Script MT", cursive',
-                    fontSize: '0.92rem', color: '#1a3a6e',
-                    borderBottom: '1.5px solid rgba(90,74,20,0.5)',
-                    textAlign: 'center', lineHeight: 1.15
-                  }}>
-                    {data.signature}
-                  </div>
-                </div>
-
-                {/* Text fields overlay — transparent, rides on top of the printed field lines */}
-                <div style={{
-                  flex: 1,
-                  display: 'flex', flexDirection: 'column', gap: '3px',
-                  fontSize: '0.63rem', color: '#0d0800',
-                  paddingLeft: '2px', paddingTop: '2px',
-                  fontFamily: 'Arial, sans-serif',
-                }}>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>නම / Name:</span>
-                    <span style={{ fontWeight: '700', fontSize: '0.7rem' }}>{data.fullNameEn}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>Name (Si):</span>
-                    <span style={{ fontWeight: '600', fontFamily: 'serif' }}>{data.fullNameSi}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>பெயர்:</span>
-                    <span style={{ fontWeight: '600' }}>{data.fullNameTa}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px', marginTop: '2px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>Address:</span>
-                    <span style={{ lineHeight: 1.25 }}>{data.address}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>Sex:</span>
-                    <span style={{ fontWeight: '600' }}>{genderText}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ color: '#5a4010', width: '48px', flexShrink: 0, fontSize: '0.58rem' }}>DOB:</span>
-                    <span style={{ fontWeight: '700', fontFamily: 'monospace', letterSpacing: '0.5px' }}>{data.dob}</span>
-                  </div>
-
-                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end', paddingBottom: '4px' }}>
-                    <div style={{ background: '#fff', padding: '2px', borderRadius: '2px' }}>
-                      <QRCodeSVG value={`SRI_LANKA_NIC:${data.nicNumber}:${data.fullNameEn}`} size={26} />
-                    </div>
-                  </div>
-                </div>
-
+          {/* FRONT FACE */}
+          <div className="id-card-face front">
+            {/* Header */}
+            <div className="nic-header">
+              <img
+                src="/images/index/gov_logo.png"
+                alt="Sri Lanka Emblem"
+                className="nic-emblem"
+                onError={(e) => {
+                  e.target.style.opacity = '0.5';
+                }}
+              />
+              <div className="nic-header-titles">
+                <div className="nic-native-sub">ශ්‍රී ලංකා | இலங்கை</div>
+                <div className="nic-native-sub">ජාතික හැඳුනුම්පත | தேசிய அடையாள அட்டை</div>
+                <div className="nic-main-title">SRI LANKA NATIONAL IDENTITY CARD</div>
               </div>
             </div>
 
-            {/* Glare overlay */}
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '14px', pointerEvents: 'none', zIndex: 20, ...glareStyle }} />
-          </div>
-
-          {/* ══════════════════════════════════════════════
-              BACK – graphic image + data overlay
-          ══════════════════════════════════════════════ */}
-          <div style={{ ...faceBase, transform: 'rotateY(180deg)', fontFamily: 'Arial, sans-serif' }}>
-
-            {/* Exact NIC back graphic */}
-            <img
-              src="/images/index/nic_back.png"
-              alt="Sri Lanka NIC Back"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: '14px' }}
-            />
-
-            {/* Live data overlay */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', zIndex: 5 }}>
-
-              {/* Reference number overlay */}
-              <div style={{
-                height: '40px',
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
-                paddingRight: '10px',
-              }}>
-                <span style={{
-                  fontFamily: 'monospace', fontSize: '0.65rem', fontWeight: '800',
-                  color: '#1a1000', letterSpacing: '0.5px',
-                  background: 'rgba(255,255,255,0.6)', padding: '1px 6px', borderRadius: '3px'
-                }}>
-                  {'FBP' + data.nicNumber.slice(-4) + '-N'}
-                </span>
+            {/* Body */}
+            <div className="nic-body">
+              {/* Photo & Signature */}
+              <div className="nic-photo-col">
+                <div className="nic-photo-box">
+                  {defaultData.photoUrl ? (
+                    <img src={defaultData.photoUrl} alt="Applicant" />
+                  ) : (
+                    <div style={{ textAlign: 'center', opacity: 0.6 }}>
+                      <User size={36} />
+                      <div style={{ fontSize: '0.6rem', marginTop: '2px' }}>PHOTO</div>
+                    </div>
+                  )}
+                </div>
+                <div className="nic-signature">
+                  {defaultData.signature || 'Signature'}
+                </div>
+                <div style={{ fontSize: '0.55rem', color: '#94a3b8', textAlign: 'center' }}>
+                  අත්සන / Signature
+                </div>
               </div>
 
-              {/* Body */}
-              <div style={{ flex: 1, display: 'flex', gap: '0.4rem', padding: '4px 8px' }}>
-
-                {/* Left address block */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.58rem', color: '#0d0800' }}>
-                  <div style={{ fontWeight: '700', color: '#3a2a00', fontSize: '0.6rem' }}>ලිපිනය / முகவரி / Address</div>
-                  <div style={{ lineHeight: 1.35 }}>{data.address}</div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', marginTop: '4px' }}>
-                    <div>
-                      <div style={{ color: '#5a4010', fontSize: '0.5rem' }}>Date of Issue</div>
-                      <div style={{ fontWeight: '700', fontFamily: 'monospace', fontSize: '0.6rem' }}>
-                        {new Date().toISOString().slice(0, 10)}
-                      </div>
-                    </div>
-                    <div>
-                      <div style={{ color: '#5a4010', fontSize: '0.5rem' }}>Place of Birth</div>
-                      <div style={{ fontWeight: '600' }}>Sri Lanka</div>
-                    </div>
-                    <div>
-                      <div style={{ color: '#5a4010', fontSize: '0.5rem' }}>Civil Status</div>
-                      <div style={{ fontWeight: '600' }}>Single</div>
-                    </div>
-                    <div>
-                      <div style={{ color: '#5a4010', fontSize: '0.5rem' }}>Country of Birth</div>
-                      <div style={{ fontWeight: '600' }}>Sri Lanka</div>
-                    </div>
-                  </div>
+              {/* Details */}
+              <div className="nic-details-col">
+                <div className="nic-field-row">
+                  <span className="nic-label">අංකය / No:</span>
+                  <span>:</span>
+                  <span className="nic-value nic-id-number">
+                    {defaultData.nicNumber || 'PENDING'}
+                  </span>
                 </div>
 
-                {/* Right side: QR code (sits on top of the graphic's barcode/fingerprint zones) */}
-                <div style={{ width: '90px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', paddingTop: '4px' }}>
-                  <div style={{ background: '#fff', padding: '3px', borderRadius: '3px' }}>
+                <div className="nic-field-row">
+                  <span className="nic-label">නම:</span>
+                  <span>:</span>
+                  <span className="nic-value" style={{ fontFamily: 'var(--font-sinhala)' }}>
+                    {defaultData.fullNameSi}
+                  </span>
+                </div>
+
+                <div className="nic-field-row">
+                  <span className="nic-label">பெயர்:</span>
+                  <span>:</span>
+                  <span className="nic-value">{defaultData.fullNameTa}</span>
+                </div>
+
+                <div className="nic-field-row">
+                  <span className="nic-label">Name:</span>
+                  <span>:</span>
+                  <span className="nic-value">{defaultData.fullNameEn}</span>
+                </div>
+
+                <div className="nic-field-row">
+                  <span className="nic-label">Sex:</span>
+                  <span>:</span>
+                  <span className="nic-value">
+                    {defaultData.gender === 'Male' ? 'පුරුෂ / Male' : 'ස්ත්‍රී / Female'}
+                  </span>
+                </div>
+
+                <div className="nic-field-row">
+                  <span className="nic-label">DOB:</span>
+                  <span>:</span>
+                  <span className="nic-value">{defaultData.dob}</span>
+                </div>
+
+                <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: '0.55rem', color: '#fbbf24', opacity: 0.8 }}>
+                    ★ Department of Registration of Persons
+                  </div>
+                  <div style={{ background: '#ffffff', padding: '3px', borderRadius: '4px' }}>
                     <QRCodeSVG
-                      value={`SRI_LANKA_NIC:${data.nicNumber}:${data.fullNameEn}:${data.dob}`}
-                      size={54}
+                      value={`SRI_LANKA_NIC:${defaultData.nicNumber || 'NEXUS_GOV'}:${defaultData.fullNameEn}`}
+                      size={36}
                     />
                   </div>
-                  <div style={{ fontSize: '0.5rem', color: '#3a2a00', textAlign: 'center', fontFamily: 'monospace' }}>
-                    DIGITAL<br/>IDENTITY
-                  </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* MRZ strip overlay */}
-              <div style={{
-                background: 'rgba(255,255,255,0.55)',
-                padding: '3px 8px',
-                fontFamily: '"Courier New", monospace', fontSize: '0.5rem',
-                color: '#0a0a0a', letterSpacing: '0.8px', lineHeight: 1.45,
-              }}>
-                <div>I&lt;LKA{data.nicNumber.padEnd(9, '<').slice(0, 9)}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
-                <div>{data.dob.replace(/-/g, '').slice(2)}&lt;{data.gender === 'Male' ? 'M' : 'F'}&lt;&lt;{data.fullNameEn.toUpperCase().replace(/ /g, '<').slice(0, 30).padEnd(30, '<')}</div>
+          {/* BACK FACE */}
+          <div className="id-card-face back">
+            <div className="nic-header">
+              <Shield size={20} color="#eab308" />
+              <div className="nic-header-titles">
+                <div className="nic-main-title">DEPARTMENT OF REGISTRATION OF PERSONS</div>
+                <div className="nic-native-sub">ලිපිනය සහ නිකුත් කළ දිනය | முகவரி & வழங்கப்பட்ட திகதி</div>
               </div>
             </div>
 
-            {/* Glare */}
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '14px', pointerEvents: 'none', zIndex: 20, ...glareStyle }} />
-          </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1, padding: '0.5rem 0' }}>
+              <div>
+                <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>ස්ථායී ලිපිනය / Address:</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#ffffff' }}>
+                  {defaultData.address}
+                </div>
+              </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.65rem' }}>
+                <div>
+                  <div style={{ color: '#94a3b8' }}>නිකුත් කළ දිනය / Issue Date:</div>
+                  <div style={{ fontWeight: 600, color: '#fbbf24' }}>
+                    {new Date().toISOString().split('T')[0]}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ color: '#94a3b8' }}>ස්ථානය / Place:</div>
+                  <div style={{ fontWeight: 600, color: '#ffffff' }}>Battaramulla, Sri Lanka</div>
+                </div>
+              </div>
+
+              {/* Barcode & Security */}
+              <div style={{ marginTop: 'auto', background: 'rgba(0,0,0,0.4)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '0.55rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                  <CheckCircle2 size={12} /> CRYPTOGRAPHICALLY SECURED IDENTITY PAYLOAD
+                </div>
+                <div style={{
+                  height: '24px',
+                  background: 'repeating-linear-gradient(90deg, #fff 0, #fff 2px, #000 2px, #000 5px)',
+                  borderRadius: '2px'
+                }} />
+                <div style={{ fontSize: '0.55rem', textAlign: 'center', color: '#94a3b8', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
+                  *PDF417-{defaultData.nicNumber || 'NEXUS-GOV-2026'}*
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Flip button */}
       <button
         type="button"
         className="btn btn-secondary btn-sm"
-        onClick={handleFlip}
+        onClick={toggleFlip}
         style={{ fontSize: '0.8rem', borderRadius: '20px' }}
       >
-        <RotateCw size={14} />
-        {isFlipped ? 'View Front Side' : 'View Back Side'}
+        <RotateCw size={14} /> {isFlipped ? 'View Front Side' : 'View Back Side (Click Card)'}
       </button>
     </div>
   );
