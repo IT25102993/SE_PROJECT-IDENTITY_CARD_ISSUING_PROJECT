@@ -295,7 +295,7 @@ body.light-theme .form-textarea {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3D Interactive Card Styling
+   3D Interactive Card Styling (Fixed Layout Dimensions & Perspective)
    ───────────────────────────────────────────────────────────── */
 .card-perspective-container {
   perspective: 1200px;
@@ -341,43 +341,6 @@ body.light-theme .form-textarea {
   -webkit-transform: rotateY(180deg);
   background: linear-gradient(135deg, #0a1c33 0%, #112642 50%, #091a30 100%);
 }
-
-/* ─────────────────────────────────────────────────────────────
-   Technical Blueprint / Sketch 3D Mode Styling
-   ───────────────────────────────────────────────────────────── */
-.id-card-face.sketch-mode {
-  background: #091326 !important;
-  background-image: 
-    linear-gradient(rgba(59, 130, 246, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.12) 1px, transparent 1px) !important;
-  background-size: 20px 20px !important;
-  border: 1.5px dashed rgba(96, 165, 250, 0.8) !important;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 35px rgba(59, 130, 246, 0.45) !important;
-}
-
-.id-card-face.sketch-mode .nic-header {
-  border-bottom: 1.5px dashed rgba(96, 165, 250, 0.6);
-}
-
-.id-card-face.sketch-mode .nic-photo-box {
-  border: 1.5px dashed #60a5fa !important;
-  background: rgba(15, 23, 42, 0.9) !important;
-}
-
-.sketch-crosshair {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #60a5fa;
-  opacity: 0.85;
-  pointer-events: none;
-  z-index: 5;
-}
-.sketch-crosshair.tl { top: 4px; left: 8px; }
-.sketch-crosshair.tr { top: 4px; right: 8px; }
-.sketch-crosshair.bl { bottom: 4px; left: 8px; }
-.sketch-crosshair.br { bottom: 4px; right: 8px; }
 
 /* Glare Layer */
 .glare-overlay {
