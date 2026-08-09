@@ -139,10 +139,10 @@ Below are visual previews of the key modules in the Identity Card Issuing System
 | ![Registration Preview](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/home-img.png) | ![Verification Preview]() |
 |                                                     *Step-by-step citizen identity submission portal.*                                                      | *Review submitted documents, biometrics, and approve.* |
 
-|                                                    **Digital Identity Card Front & Back Preview**                                                     |                                                          **Batch Print Queue & System Analytics**                                                           |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![ID Card Sample](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/front-id.png) | ![Print Queue Analytics](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/back-id.png) |
-|                                                  *Auto-generated PVC printable layout with QR code.*                                                  |                                                   *Real-time statistics on card issuing & print status.*                                                    |
+|                                                       **Digital Identity Card Front Preview**                                                        |                                                       **Digital Identity Card Back Preview**                                                       |
+|:----------------------------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
+| ![ID Card Front](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/front-id.png) | ![ID Card Back](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/back-id.png) |
+|                                                 *Auto-generated PVC printable layout with QR code.*                                                  |                                               *Real-time statistics on card issuing & print status.*                                               |
 
 ---
 
