@@ -295,7 +295,7 @@ body.light-theme .form-textarea {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3D Interactive Card Styling (Fixed Layout Dimensions & Perspective)
+   3D Interactive Card Styling
    ───────────────────────────────────────────────────────────── */
 .card-perspective-container {
   perspective: 1200px;
@@ -328,7 +328,7 @@ body.light-theme .form-textarea {
   -webkit-backface-visibility: hidden;
   overflow: hidden;
   /* Modern Sri Lanka NIC - purple-violet to indigo-blue gradient */
-  border: 1.5px solid rgba(167, 139, 250, 0.45);
+  border: 1.5px solid rgb(255, 255, 255);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.65),
     0 0 0 0.5px rgba(167, 139, 250, 0.2),
@@ -338,9 +338,9 @@ body.light-theme .form-textarea {
     radial-gradient(ellipse 60% 50% at 15% 20%, rgba(139, 92, 246, 0.28) 0%, transparent 70%),
     /* Right-side accent glow */
     radial-gradient(ellipse 40% 60% at 85% 75%, rgba(79, 70, 229, 0.22) 0%, transparent 65%),
-    /* Core gradient: purple-violet → deep indigo → dark navy */
-    linear-gradient(130deg, #2d1b69 0%, #1e1b4b 30%, #1a2060 55%, #1e3a8a 80%, #1e3058 100%);
-  color: #ffffff;
+    /* Core gradient*/
+    linear-gradient(130deg, #cbe8d8 0%, #e3f3e6 30%, #fff3d1 65%, #aee2eb 100%);
+  color: #000000;
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
@@ -353,7 +353,7 @@ body.light-theme .form-textarea {
   background:
     radial-gradient(ellipse 55% 55% at 80% 15%, rgba(99, 82, 220, 0.25) 0%, transparent 70%),
     radial-gradient(ellipse 45% 50% at 20% 85%, rgba(59, 130, 246, 0.18) 0%, transparent 65%),
-    linear-gradient(130deg, #1e1b4b 0%, #231e6b 25%, #1a2060 55%, #1d3074 80%, #1e3a8a 100%);
+    linear-gradient(130deg, #cbe8d8 0%, #e3f3e6 30%, #fff3d1 65%, #aee2eb 100%);
 }
 
 /* Glare Layer */
@@ -388,7 +388,8 @@ body.light-theme .form-textarea {
 
 .nic-native-sub {
   font-size: 0.62rem;
-  color: #fbbf24;
+  font-weight: bold;
+  color: #000000;
   font-weight: 600;
   letter-spacing: 0.3px;
   line-height: 1.2;
@@ -397,7 +398,7 @@ body.light-theme .form-textarea {
 .nic-main-title {
   font-size: 0.68rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #000000;
   letter-spacing: 0.8px;
 }
 
@@ -420,12 +421,12 @@ body.light-theme .form-textarea {
   height: 105px;
   border: 2px solid #eab308;
   border-radius: 6px;
-  background: #06111f;
+  background: #ffffff;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: #000000;
   font-size: 0.75rem;
 }
 
@@ -460,13 +461,13 @@ body.light-theme .form-textarea {
 }
 
 .nic-label {
-  color: #94a3b8;
+  color: #000000;
   font-size: 0.62rem;
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .nic-value {
-  color: #ffffff;
+  color: #000000;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -475,7 +476,7 @@ body.light-theme .form-textarea {
 
 .nic-id-number {
   font-family: var(--font-mono);
-  color: #fbbf24;
+  color: #000000;
   font-size: 0.8rem;
   font-weight: 700;
 }
