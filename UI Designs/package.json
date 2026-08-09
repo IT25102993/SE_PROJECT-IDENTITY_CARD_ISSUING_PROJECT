@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite",
+    "preview": "vite"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
