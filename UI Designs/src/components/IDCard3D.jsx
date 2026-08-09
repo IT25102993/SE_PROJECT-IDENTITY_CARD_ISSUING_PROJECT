@@ -16,7 +16,7 @@ export const IDCard3D = ({ cardData }) => {
     gender: cardData?.gender || 'Male',
     dob: cardData?.dob || '2005-01-01',
     address: cardData?.address || 'No. 12, Main Street, Malabe, Colombo',
-    signature: cardData?.signature || 'Thilina Sakalasooriya',
+    signature: cardData?.signature || 'Thilina',
     photoUrl: cardData?.photoUrl || ''
   };
 
@@ -40,7 +40,7 @@ export const IDCard3D = ({ cardData }) => {
     });
 
     setGlareStyle({
-      background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 65%)`
+      background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 65%)`
     });
   };
 
@@ -171,10 +171,11 @@ export const IDCard3D = ({ cardData }) => {
                   </div>
                   <div style={{ background: '#ffffff', padding: '3px', borderRadius: '4px' }}>
                     <QRCodeSVG
-                      value={`SRI_LANKA_NIC:${defaultData.nicNumber || 'NEXUS_GOV'}:${defaultData.fullNameEn}`}
-                      size={36}
+                        value={`SRI_LANKA_NIC:${defaultData.nicNumber || 'NEXUS_GOV'}:${defaultData.fullNameEn}`}
+                        size={36}
                     />
                   </div>
+
                 </div>
               </div>
             </div>
