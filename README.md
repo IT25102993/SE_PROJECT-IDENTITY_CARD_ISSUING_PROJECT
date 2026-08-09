@@ -36,7 +36,7 @@
 
 ## 🔬 Overview
 
-The **Identity Card Issuing System (ICIS)** addresses the operational bottlenecks, paper-heavy workflows, and security risks associated with manual identity card management. Built as part of the Software Engineering curriculum, this project provides a scalable, role-governed platform capable of handling citizen/student identity registration, biometric & document validation, automated unique national ID (NID/GUID) generation, QR/barcode encoding, high-throughput card print queuing, and audit logging.
+The ** Web-Based Identity Card Issuing System ** addresses the operational bottlenecks, paper-heavy workflows, and security risks associated with manual identity card management. Built as part of the Software Engineering curriculum, this project provides a scalable, role-governed platform capable of handling citizen/student identity registration, biometric & document validation, automated unique national ID (NID/GUID) generation, QR/barcode encoding, high-throughput card print queuing, and audit logging.
 
 ```
                   +----------------------------------------------+
