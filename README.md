@@ -134,10 +134,10 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 
 Below are visual previews of the key modules in the Identity Card Issuing System:
 
-| **Applicant Registration Dashboard** | **Verification Officer Portal** |
-| :---: | :---: |
-| ![Registration Preview](https://raw.githubusercontent.com/placeholder-repo/assets/main/dashboard-preview.png) | ![Verification Preview](https://raw.githubusercontent.com/placeholder-repo/assets/main/verification-preview.png) |
-| *Step-by-step citizen identity submission portal.* | *Review submitted documents, biometrics, and approve.* |
+|                                                            **Applicant Registration Dashboard**                                                             | **Verification Officer Portal** |
+|:-----------------------------------------------------------------------------------------------------------------------------------------------------------:| :---: |
+| ![Registration Preview](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/Readme/home-img.png) | ![Verification Preview](https://raw.githubusercontent.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT/main/UI%20Designs/images/index/home-img.png) |
+|                                                     *Step-by-step citizen identity submission portal.*                                                      | *Review submitted documents, biometrics, and approve.* |
 
 | **Digital Identity Card Front & Back Preview** | **Batch Print Queue & System Analytics** |
 | :---: | :---: |
