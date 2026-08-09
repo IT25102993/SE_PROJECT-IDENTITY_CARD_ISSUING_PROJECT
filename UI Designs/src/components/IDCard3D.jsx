@@ -116,7 +116,7 @@ export const IDCard3D = ({ cardData }) => {
                 <div className="nic-signature">
                   {defaultData.signature || 'Signature'}
                 </div>
-                <div style={{ fontSize: '0.55rem', color: '#94a3b8', textAlign: 'center' }}>
+                <div style={{ fontSize: '0.55rem', color: '#000000', textAlign: 'center' }}>
                   අත්සන / Signature
                 </div>
               </div>
@@ -166,7 +166,7 @@ export const IDCard3D = ({ cardData }) => {
                 </div>
 
                 <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div style={{ fontSize: '0.55rem', color: '#fbbf24', opacity: 0.8 }}>
+                  <div style={{ fontSize: '0.55rem', color: '#000000', opacity: 0.8 }}>
                     ★ Department of Registration of Persons
                   </div>
                   <div style={{ background: '#ffffff', padding: '3px', borderRadius: '4px' }}>
@@ -184,7 +184,6 @@ export const IDCard3D = ({ cardData }) => {
           {/* BACK FACE */}
           <div className="id-card-face back">
             <div className="nic-header">
-              <Shield size={20} color="#eab308" />
               <div className="nic-header-titles">
                 <div className="nic-main-title">DEPARTMENT OF REGISTRATION OF PERSONS</div>
                 <div className="nic-native-sub">ලිපිනය සහ නිකුත් කළ දිනය | முகவரி & வழங்கப்பட்ட திகதி</div>
@@ -193,28 +192,28 @@ export const IDCard3D = ({ cardData }) => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1, padding: '0.5rem 0' }}>
               <div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>ස්ථායී ලිපිනය / Address:</div>
-                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#ffffff' }}>
+                <div style={{ fontSize: '0.62rem', color: '#000000',fontWeight:"bold"}}>ස්ථායී ලිපිනය / Address:</div>
+                <div style={{ fontSize: '0.75rem', color: '#000000' }}>
                   {defaultData.address}
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.65rem' }}>
                 <div>
-                  <div style={{ color: '#94a3b8' }}>නිකුත් කළ දිනය / Issue Date:</div>
-                  <div style={{ fontWeight: 600, color: '#fbbf24' }}>
+                  <div style={{ color: '#000000',fontWeight:"bold"}}>නිකුත් කළ දිනය / Issue Date:</div>
+                  <div style={{ color: '#000000' }}>
                     {new Date().toISOString().split('T')[0]}
                   </div>
                 </div>
                 <div>
-                  <div style={{ color: '#94a3b8' }}>ස්ථානය / Place:</div>
-                  <div style={{ fontWeight: 600, color: '#ffffff' }}>Battaramulla, Sri Lanka</div>
+                  <div style={{ color: '#000000',fontWeight:"bold" }}>ස්ථානය / Place:</div>
+                  <div style={{ color: '#000000' }}>Battaramulla, Sri Lanka</div>
                 </div>
               </div>
 
               {/* Barcode & Security */}
-              <div style={{ marginTop: 'auto', background: 'rgba(0,0,0,0.4)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: '0.55rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+              <div style={{ marginTop: 'auto', background: 'rgba(255,255,255,0.4)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '0.55rem', color: '#000000', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
                   <CheckCircle2 size={12} /> CRYPTOGRAPHICALLY SECURED IDENTITY PAYLOAD
                 </div>
                 <div style={{
@@ -222,7 +221,7 @@ export const IDCard3D = ({ cardData }) => {
                   background: 'repeating-linear-gradient(90deg, #fff 0, #fff 2px, #000 2px, #000 5px)',
                   borderRadius: '2px'
                 }} />
-                <div style={{ fontSize: '0.55rem', textAlign: 'center', color: '#94a3b8', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: '0.55rem', textAlign: 'center', color: '#000000', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
                   *PDF417-{defaultData.nicNumber || 'NEXUS-GOV-2026'}*
                 </div>
               </div>
