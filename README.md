@@ -39,16 +39,16 @@
 The ** Web-Based Identity Card Issuing System ** addresses the operational bottlenecks, paper-heavy workflows, and security risks associated with manual identity card management. Built as part of the Software Engineering curriculum, this project provides a scalable, role-governed platform capable of handling citizen/student identity registration, biometric & document validation, automated unique national ID (NID/GUID) generation, QR/barcode encoding, high-throughput card print queuing, and audit logging.
 
 ```
-                  +----------------------------------------------+
-                  |           Smart Identity Card System         |
-                  +----------------------------------------------+
-                                         |
-     +-------------------+---------------+---------------+-------------------+
-     |                   |                               |                   |
-+----+----+     +--------+-------+             +---------+-------+     +-----+-----+
-| Citizen |     | Verification   |             | Card Production |     | Audit &   |
-| Portal  |     | & Approval     |             | & Print Engine  |     | Analytics |
-+---------+     +----------------+             +-----------------+     +-----------+
+                                         +----------------------------------------------+
+                                         |           Smart Identity Card System         |
+                                         +----------------------------------------------+
+                                                               |
+         +----------------------+-------------------+----------------------+--------------------+-------------------+
+         |                      |                   |                      |                    |                   |
++--------+-------+     +--------+-------+   +-------+---------+   +--------+--------+   +-------+-------+   +-------+-------+
+| Citizen        |     | ID Application |   | Document        |   | Approal & Issue |   | Admin & Audit |   | Operations    |
+| Management     |     | Management     |   | Management      |   | Management      |   | Management    |   | Management    |
++----------------+     +----------------+   +-----------------+   +-----------------+   +-------+-------+   +-------+-------+
 ```
 
 ---
