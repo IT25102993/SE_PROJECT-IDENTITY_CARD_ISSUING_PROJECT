@@ -31,7 +31,7 @@ function AppContent() {
       )}
       <BackgroundCanvas />
       <Navbar />
-      <main style={{ flex: 1 }}>
+      <main style={{ flex: 1, paddingTop: '72px' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/apply" element={<ApplyPage />} />
