@@ -13,6 +13,27 @@
 </head>
 
 <body>
+<!--  Loading Screen  -->
+<div id="loader" role="status" aria-label="Loading Nexus Gov">
+  <div class="loader-inner">
+    <div class="loader-icon">
+      <i class="fa-solid fa-id-card"></i>
+      <div class="loader-icon-ring"></div>
+    </div>
+    <div class="loader-brand">
+      <span class="loader-title">Nexus Gov</span>
+      <span class="loader-sub">Identity Issuing System</span>
+    </div>
+    <div class="loader-progress-wrap">
+      <div class="loader-progress-bar" id="loader-bar"></div>
+    </div>
+    <div class="loader-dots" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<canvas id="sketch-bg"></canvas>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
