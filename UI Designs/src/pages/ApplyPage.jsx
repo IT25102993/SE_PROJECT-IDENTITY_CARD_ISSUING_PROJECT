@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 export const ApplyPage = () => {
-  const { submitNewApplication } = useApp();
+  const { submitNewApplication, triggerLoading } = useApp();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
@@ -73,9 +73,17 @@ export const ApplyPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const trackingId = submitNewApplication(formData);
-    setSubmittedId(trackingId);
+    triggerLoading({
+      message: 'Encrypting & Filing Application...',
+      subtext: 'Department of Registration of Persons',
+      duration: 1800,
+      onComplete: () => {
+        const trackingId = submitNewApplication(formData);
+        setSubmittedId(trackingId);
+      }
+    });
   };
+
 
   return (
     <div style={{ position: 'relative', zIndex: 1, padding: '2rem 0 4rem 0' }}>
