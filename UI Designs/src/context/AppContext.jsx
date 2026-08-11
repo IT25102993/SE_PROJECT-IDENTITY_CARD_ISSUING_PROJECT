@@ -120,10 +120,48 @@ export const AppProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : INITIAL_APPLICATIONS;
   });
   const [toasts, setToasts] = useState([]);
+  const [loadingState, setLoadingState] = useState({
+    isLoading: false,
+    message: 'Loading...',
+    subtext: 'Department of Registration of Persons',
+    duration: 1500,
+    icon: null
+  });
 
   useEffect(() => {
-    localStorage.setItem('nexusgov-applications', JSON.stringify(applications));
-  }, [applications]);
+    // Hide initial HTML preloader when React app is mounted
+    if (window.hidePreloader) {
+      window.hidePreloader();
+    }
+  }, []);
+
+  const triggerLoading = (config = {}) => {
+    const {
+      message = 'Processing Request...',
+      subtext = 'Sri Lanka National Identity Database',
+      duration = 1500,
+      icon = null,
+      onComplete = null
+    } = typeof config === 'string' ? { message: config } : config;
+
+    setLoadingState({
+      isLoading: true,
+      message,
+      subtext,
+      duration,
+      icon
+    });
+
+    setTimeout(() => {
+      setLoadingState(prev => ({ ...prev, isLoading: false }));
+      if (onComplete) onComplete();
+    }, duration);
+  };
+
+  const hideLoading = () => {
+    setLoadingState(prev => ({ ...prev, isLoading: false }));
+  };
+
 
   useEffect(() => {
     localStorage.setItem('nexusgov-theme', theme);
@@ -304,7 +342,10 @@ export const AppProvider = ({ children }) => {
         markAsDispatched,
         toasts,
         addToast,
-        removeToast
+        removeToast,
+        loadingState,
+        triggerLoading,
+        hideLoading
       }}
     >
       {children}
