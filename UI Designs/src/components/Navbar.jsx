@@ -37,8 +37,11 @@ export const Navbar = () => {
   return (
     <nav
       style={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
         zIndex: 1000,
         background: 'var(--bg-glass-heavy)',
         backdropFilter: 'blur(16px)',
@@ -223,7 +226,7 @@ export const Navbar = () => {
             onClick={() => triggerLoading({
               message: 'Synchronizing National Identity Gateway...',
               subtext: 'Performing cryptographic handshake with central database',
-              duration: 1600
+              duration: 3000
             })}
             style={{
               background: 'rgba(255, 255, 255, 0.08)',
