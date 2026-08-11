@@ -10,11 +10,12 @@ import {
   UserCheck,
   Printer,
   ShieldAlert,
-  User
+  User,
+  Loader2
 } from 'lucide-react';
 
 export const Navbar = () => {
-  const { role, setRole, theme, toggleTheme } = useApp();
+  const { role, setRole, theme, toggleTheme, triggerLoading } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const getRoleBadge = () => {
@@ -217,6 +218,31 @@ export const Navbar = () => {
             />
           </div>
 
+          {/* Sync / Loader Trigger Button */}
+          <button
+            onClick={() => triggerLoading({
+              message: 'Synchronizing National Identity Gateway...',
+              subtext: 'Performing cryptographic handshake with central database',
+              duration: 1600
+            })}
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid var(--border-color)',
+              color: 'var(--accent-cyan)',
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            title="Trigger System Sync & Minimal Loading Screen"
+          >
+            <Loader2 size={18} className="animate-spin-slow" />
+          </button>
+
           {/* Theme Switcher Toggle */}
           <button
             onClick={toggleTheme}
@@ -233,9 +259,9 @@ export const Navbar = () => {
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
-            title="Toggle theme"
+            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Theme`}
           >
-            {theme === 'dark' ? <Sun size={18} color="#eab308" /> : <Moon size={18} color="#3b82f6" />}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
 
