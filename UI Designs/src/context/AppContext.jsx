@@ -124,7 +124,7 @@ export const AppProvider = ({ children }) => {
     isLoading: false,
     message: 'Loading...',
     subtext: 'Department of Registration of Persons',
-    duration: 1500,
+    duration: 3000,
     icon: null
   });
 
@@ -139,7 +139,7 @@ export const AppProvider = ({ children }) => {
     const {
       message = 'Processing Request...',
       subtext = 'Sri Lanka National Identity Database',
-      duration = 1500,
+      duration = 3000,
       icon = null,
       onComplete = null
     } = typeof config === 'string' ? { message: config } : config;
