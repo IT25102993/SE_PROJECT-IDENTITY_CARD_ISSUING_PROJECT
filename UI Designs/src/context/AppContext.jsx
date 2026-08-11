@@ -50,11 +50,68 @@ const INITIAL_APPLICATIONS = [
     photoUrl: '',
     signature: 'Kavindi P.',
     status: 'PENDING_VERIFICATION',
+    assignedOfficer: null,
+    priority: 'STANDARD',
     submittedDate: '2026-08-06',
     officerNotes: '',
     documents: ['Birth Certificate (PDF)', 'Grama Niladhari Certificate (JPG)'],
     trackingHistory: [
-      { status: 'Submitted', date: '2026-08-06 11:45 AM', note: 'Application submitted successfully. Awaiting verification officer assignment.' }
+      { status: 'Submitted', date: '2026-08-06 11:45 AM', note: 'Application submitted successfully. Queued in Unassigned Job Pool.' }
+    ]
+  },
+  {
+    id: 'NEX-2026-92881',
+    fullNameEn: 'Dilshan Senanayake',
+    fullNameSi: 'දිල්ෂාන් සේනානායක',
+    fullNameTa: 'தில்ஷான் சேனாநாயக்க',
+    nicNumber: '',
+    dob: '2003-09-12',
+    gender: 'Male',
+    civilStatus: 'Single',
+    address: 'No. 78, Highlevel Road, Nugegoda',
+    district: 'Colombo',
+    divisionalSecretariat: 'Sri Jayawardenepura',
+    gnDivision: 'Nugegoda West (512A)',
+    phone: '+94 77 888 9900',
+    email: 'dilshan.s@gmail.com',
+    photoUrl: '',
+    signature: 'D. Senanayake',
+    status: 'PENDING_VERIFICATION',
+    assignedOfficer: null,
+    priority: 'HIGH',
+    submittedDate: '2026-08-08',
+    officerNotes: '',
+    documents: ['Birth Certificate (PDF)', 'School Certificate (PDF)', 'GN Certificate (JPG)'],
+    trackingHistory: [
+      { status: 'Submitted', date: '2026-08-08 08:15 AM', note: 'Application queued for priority verification.' }
+    ]
+  },
+  {
+    id: 'NEX-2026-93102',
+    fullNameEn: 'Nimanthi Gunasekara',
+    fullNameSi: 'නිමංති ගුණසේකර',
+    fullNameTa: 'நிமந்தி குணசேகர',
+    nicNumber: '',
+    dob: '2001-12-04',
+    gender: 'Female',
+    civilStatus: 'Single',
+    address: 'No. 34, Kandy Road, Kiribathgoda',
+    district: 'Gampaha',
+    divisionalSecretariat: 'Kelaniya',
+    gnDivision: 'Kiribathgoda (204B)',
+    phone: '+94 70 123 9876',
+    email: 'nimanthi.g@gmail.com',
+    photoUrl: '',
+    signature: 'N. Gunasekara',
+    status: 'PENDING_VERIFICATION',
+    assignedOfficer: 'Officer Wickramasinghe',
+    priority: 'EXPRESS',
+    submittedDate: '2026-08-09',
+    officerNotes: 'Under active review on officer workbench.',
+    documents: ['Birth Certificate (PDF)', 'GN Certificate (JPG)'],
+    trackingHistory: [
+      { status: 'Submitted', date: '2026-08-09 10:00 AM', note: 'Application submitted.' },
+      { status: 'Claimed by Officer', date: '2026-08-09 10:30 AM', note: 'Assigned to Officer Wickramasinghe.' }
     ]
   },
   {
@@ -75,6 +132,7 @@ const INITIAL_APPLICATIONS = [
     photoUrl: '',
     signature: 'M. Rizwan',
     status: 'APPROVED',
+    assignedOfficer: 'Officer Wickramasinghe',
     submittedDate: '2026-08-05',
     officerNotes: 'Information verified against national registration database.',
     documents: ['Marriage Certificate (PDF)', 'Existing NIC Copy (JPG)', 'Grama Niladhari Certificate (PDF)'],
@@ -101,6 +159,7 @@ const INITIAL_APPLICATIONS = [
     photoUrl: '',
     signature: 'S. Kumar',
     status: 'PRINTED',
+    assignedOfficer: 'Officer Perera',
     submittedDate: '2026-08-04',
     officerNotes: 'First-time NIC application verified.',
     documents: ['Birth Certificate (PDF)', 'School Leaving Certificate (PDF)', 'Grama Niladhari Certificate (JPG)'],
@@ -327,6 +386,61 @@ export const AppProvider = ({ children }) => {
     addToast(`Application ${appId} marked as Dispatched!`, 'success');
   };
 
+  // Officer Job Pool Assignment
+  const claimJob = (appId, officerName = 'Officer Wickramasinghe') => {
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId) {
+        return {
+          ...app,
+          assignedOfficer: officerName,
+          trackingHistory: [
+            ...app.trackingHistory,
+            {
+              status: 'Claimed by Officer',
+              date: new Date().toLocaleString(),
+              note: `Assigned to ${officerName} from Verification Job Pool.`
+            }
+          ]
+        };
+      }
+      return app;
+    }));
+    addToast(`Job ${appId} claimed into your active workbench!`, 'info');
+  };
+
+  const unclaimJob = (appId) => {
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId) {
+        return {
+          ...app,
+          assignedOfficer: null,
+          trackingHistory: [
+            ...app.trackingHistory,
+            {
+              status: 'Returned to Job Pool',
+              date: new Date().toLocaleString(),
+              note: 'Released back to central job pool for available verification officers.'
+            }
+          ]
+        };
+      }
+      return app;
+    }));
+    addToast(`Job ${appId} returned to unassigned pool.`, 'info');
+  };
+
+  const claimNextJob = (officerName = 'Officer Wickramasinghe') => {
+    const unassigned = applications.find(
+      a => a.status === 'PENDING_VERIFICATION' && !a.assignedOfficer
+    );
+    if (!unassigned) {
+      addToast('No unassigned pending jobs available in the pool right now.', 'info');
+      return null;
+    }
+    claimJob(unassigned.id, officerName);
+    return unassigned;
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -345,7 +459,10 @@ export const AppProvider = ({ children }) => {
         removeToast,
         loadingState,
         triggerLoading,
-        hideLoading
+        hideLoading,
+        claimJob,
+        unclaimJob,
+        claimNextJob
       }}
     >
       {children}
