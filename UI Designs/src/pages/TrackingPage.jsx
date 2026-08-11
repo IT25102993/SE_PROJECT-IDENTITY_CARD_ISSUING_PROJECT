@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export const TrackingPage = () => {
-  const { applications } = useApp();
+  const { applications, triggerLoading } = useApp();
   const location = useLocation();
 
   const [searchId, setSearchId] = useState('');
@@ -46,9 +46,15 @@ export const TrackingPage = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchId.trim()) {
-      performSearch(searchId.trim());
+      triggerLoading({
+        message: `Searching Registry for "${searchId.trim()}"...`,
+        subtext: 'Central Department of Registration Database',
+        duration: 1200,
+        onComplete: () => performSearch(searchId.trim())
+      });
     }
   };
+
 
   const getStatusBadge = (status) => {
     switch (status) {
