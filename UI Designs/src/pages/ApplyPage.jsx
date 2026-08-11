@@ -76,7 +76,7 @@ export const ApplyPage = () => {
     triggerLoading({
       message: 'Encrypting & Filing Application...',
       subtext: 'Department of Registration of Persons',
-      duration: 1800,
+      duration: 3000,
       onComplete: () => {
         const trackingId = submitNewApplication(formData);
         setSubmittedId(trackingId);
