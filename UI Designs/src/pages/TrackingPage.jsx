@@ -49,7 +49,7 @@ export const TrackingPage = () => {
       triggerLoading({
         message: `Searching Registry for "${searchId.trim()}"...`,
         subtext: 'Central Department of Registration Database',
-        duration: 1200,
+        duration: 3000,
         onComplete: () => performSearch(searchId.trim())
       });
     }
