@@ -8,7 +8,7 @@
   <meta name="description" content="Nexus Gov – Modern Web-Based National Identity Card Issuing & Verification System for Sri Lanka." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Abhaya+Libre:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&family=Abhaya+Libre:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="/images/index/logo.png" type="image/png">
   <style>
     /* Critical Inline Preloader Styles */
@@ -20,7 +20,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Poppins', system-ui, sans-serif;
       color: #f1f5f9;
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
@@ -121,7 +121,7 @@
       width: 0%;
       background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
       border-radius: 999px;
-      animation: htmlProgress 1.2s ease-out forwards;
+      animation: htmlProgress 3s ease-out forwards;
     }
     @keyframes htmlSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes htmlSpinRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
@@ -175,8 +175,8 @@
         setTimeout(() => loader.remove(), 500);
       }
     };
-    // Fallback timer
-    setTimeout(window.hidePreloader, 2000);
+    // Fallback timer (3 sec)
+    setTimeout(window.hidePreloader, 3000);
   </script>
 </body>
 
