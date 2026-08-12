@@ -1,7 +1,7 @@
 # 🆔 Smart Identity Card Issuing System
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=github-actions)](https://github.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: GNU GPL v3](https://img.shields.io/badge/License-GNU-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/GNU)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](http://makeapullrequest.com)
 [![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge)](https://github.com)
 [![Code Coverage](https://img.shields.io/badge/coverage-94%25-success?style=for-the-badge)](https://github.com)
