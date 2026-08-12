@@ -13,7 +13,7 @@
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -70,7 +70,7 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 * **Strict Role-Based Access Control (RBAC):** Hierarchical permissions governing Applicant, Data Entry Clerk, Verification Officer, Super Administrator, and Printing Technician roles.
 
 
-* 📊 **Real-Time Analytics & Reporting:** Graphical breakdown of application statuses, average processing turnaround time (TAT), regional distribution, and audit trails.
+* **Real-Time Analytics & Reporting:** Graphical breakdown of application statuses, average processing turnaround time (TAT), regional distribution, and audit trails.
 
 
 * **Automated Notifications:** SMS and email integration (Twilio/SendGrid) for application status updates and card pickup notifications.
