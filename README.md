@@ -103,7 +103,7 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
                                  |
                                  v
                      +-----------------------+
-                     |  PostgreSQL Database  |
+                     |  MySQL Database  |
                      +-----------------------+
 ```
 
