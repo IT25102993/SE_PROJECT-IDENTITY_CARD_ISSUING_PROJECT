@@ -192,7 +192,7 @@ Follow these instructions to get a local copy of the project up and running for 
 Ensure you have the following installed on your machine:
 * **Node.js**  : v18.x or higher
 * **npm**: v9.x or higher (or `pnpm` / `yarn`)
-* **PostgreSQL**: v14.x or higher
+* **MySQL**: v14.x or higher
 * **Docker & Docker Compose** (Optional, but recommended)
 
 ---
