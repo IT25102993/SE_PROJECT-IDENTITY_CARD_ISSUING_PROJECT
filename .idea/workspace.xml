@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Vite_Client_Dev.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Vite_Client_Dev.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/node_modules/.vite/deps/_metadata.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/node_modules/.vite/deps/_metadata.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,6 +42,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -46,6 +50,7 @@
     "kotlin-language-version-configured": "true",
     "nodejs_package_manager_path": "npm",
     "npm.Node Server (Dev).executor": "Run",
+    "npm.Vite Client (Dev).executor": "Run",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
@@ -67,7 +72,7 @@
       <option name="presentableId" value="Default" />
       <updated>1786587882429</updated>
       <workItem from="1786587883471" duration="3224000" />
-      <workItem from="1786591218432" duration="500000" />
+      <workItem from="1786591218432" duration="1852000" />
     </task>
     <servers />
   </component>
