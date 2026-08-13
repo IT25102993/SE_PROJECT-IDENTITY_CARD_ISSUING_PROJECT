@@ -1,4 +1,4 @@
-# 🆔 Smart Identity Card Issuing System
+# Smart Identity Card Issuing System
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=github-actions)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
@@ -13,7 +13,7 @@
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -34,7 +34,7 @@
 
 ---
 
-## 🔬 Overview
+## Overview
 
 The ** Web-Based Identity Card Issuing System ** addresses the operational bottlenecks, paper-heavy workflows, and security risks associated with manual identity card management. Built as part of the Software Engineering curriculum, this project provides a scalable, role-governed platform capable of handling citizen/student identity registration, biometric & document validation, automated unique national ID (NID/GUID) generation, QR/barcode encoding, high-throughput card print queuing, and audit logging.
 
@@ -53,31 +53,31 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 
 ---
 
-## ⚡ Key Features
+## Key Features
 
-* 📝 **Citizen Online Registration Portal:** Intuitive, step-by-step form wizard for personal details, biometric/photo upload, and supporting document attachments.
-
-
-* 🔍 **Multi-Tier Verification Workflow:** Administrative dashboards for data verification, background checks, document verification, and one-click approvals/rejections.
+* **Citizen Online Registration Portal:** Intuitive, step-by-step form wizard for personal details, biometric/photo upload, and supporting document attachments.
 
 
-* 🆔 **Automated Unique ID & Smart Code Generation:** Cryptographically secure unique identification numbers with integrated 2D QR codes and PDF417 barcodes storing encrypted identity payloads.
+* **Multi-Tier Verification Workflow:** Administrative dashboards for data verification, background checks, document verification, and one-click approvals/rejections.
 
 
-* 🖨️ **Print Queue Management System:** Automated batch processing for thermal/PVC ID printers, exportable print-ready PDF/vector formats, and card dispatch tracking.
+* **Automated Unique ID & Smart Code Generation:** Cryptographically secure unique identification numbers with integrated 2D QR codes and PDF417 barcodes storing encrypted identity payloads.
 
 
-* 🔐 **Strict Role-Based Access Control (RBAC):** Hierarchical permissions governing Applicant, Data Entry Clerk, Verification Officer, Super Administrator, and Printing Technician roles.
+* **Print Queue Management System:** Automated batch processing for thermal/PVC ID printers, exportable print-ready PDF/vector formats, and card dispatch tracking.
 
 
-* 📊 **Real-Time Analytics & Reporting:** Graphical breakdown of application statuses, average processing turnaround time (TAT), regional distribution, and audit trails.
+* **Strict Role-Based Access Control (RBAC):** Hierarchical permissions governing Applicant, Data Entry Clerk, Verification Officer, Super Administrator, and Printing Technician roles.
 
 
-* 🔔 **Automated Notifications:** SMS and email integration (Twilio/SendGrid) for application status updates and card pickup notifications.
+* **Real-Time Analytics & Reporting:** Graphical breakdown of application statuses, average processing turnaround time (TAT), regional distribution, and audit trails.
+
+
+* **Automated Notifications:** SMS and email integration (Twilio/SendGrid) for application status updates and card pickup notifications.
 
 ---
 
-## 🛠️ System Architecture
+## System Architecture
 
 ```
                                     +-----------------------+
@@ -109,7 +109,7 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
@@ -130,7 +130,7 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 
 ---
 
-## 🖼️ UI & Application Gallery
+## UI & Application Gallery
 
 Below are visual previews of the key modules in the Identity Card Issuing System:
 
@@ -146,7 +146,7 @@ Below are visual previews of the key modules in the Identity Card Issuing System
 
 ---
 
-## 🔄 Workflow & Process Lifecycle
+## Workflow & Process Lifecycle
 
 > 
 > The lifecycle guarantees multi-tier validation before any physical card enters the print queue.
@@ -183,7 +183,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to get a local copy of the project up and running for development and testing.
 
@@ -320,7 +320,7 @@ Once the backend server is running, visit: `http://localhost:5000/api-docs`
 
 ---
 
-## 🛡️ Role-Based Access Control (RBAC)
+## Role-Based Access Control (RBAC)
 
 The system enforces granular authorization matrices:
 
@@ -338,7 +338,7 @@ The system enforces granular authorization matrices:
 
 ---
 
-## 🧪 Testing & Quality Assurance
+## Testing & Quality Assurance
 
 Run test suites to ensure code quality and system reliability:
 
@@ -356,7 +356,7 @@ npm run test:coverage
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions make the open-source community an incredible place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -368,7 +368,7 @@ Contributions make the open-source community an incredible place to learn, inspi
 
 ---
 
-## 📜 License & Acknowledgments
+## License & Acknowledgments
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
@@ -378,7 +378,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 - **UI/UX Designer & QA Engineer:** SE Department
 
 ---
-### 🙎🏻Team members
+### Team members
 - **IT25102040** - Nimesh K. G. N. -------------> Identity Approval & Issuance Workflow
 - **IT25102993** - Sakalasooriya S. A. T. S. --> Admin & Audit Management
 - **IT25200818** - Ranathunga K. A. L. D. ----> User and applicant manager
