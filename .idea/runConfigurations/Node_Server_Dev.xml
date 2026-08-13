@@ -1,14 +1,14 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Node Server (Dev)" type="js.build_tools.npm" factoryName="npm">
-    <package-json>$PROJECT_DIR$/server/package.json</package-json>
-    <command>run</command>
-    <scripts>
-      <script>dev</script>
-    </scripts>
-    <node-interpreter>project</node-interpreter>
+  <configuration default="false" name="Node Server (Dev)" type="js.build_tools.npm">
+    <command value="run" />
+    <scripts />
+    <node-interpreter value="project" />
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
+    <EXTENSION ID="com.intellij.javascript.debugger.execution.StartBrowserRunConfigurationExtension">
+      <browser with-js-debugger="true" />
+    </EXTENSION>
     <method v="2" />
   </configuration>
 </component>
