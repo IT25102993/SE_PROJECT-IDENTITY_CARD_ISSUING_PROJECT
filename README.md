@@ -303,7 +303,7 @@ Access the frontend at `http://localhost:3000` and API server at `http://localho
 
 ---
 
-## 📡 API Documentation
+## API Documentation
 
 The project includes an integrated Swagger UI for testing REST API endpoints.  
 Once the backend server is running, visit: `http://localhost:5000/api-docs`
