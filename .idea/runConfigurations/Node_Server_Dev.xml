@@ -1,18 +1,14 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Node Server (Dev)" type="NodeJSConfigurationType" factoryName="Node.js">
-    <node-parameters />
-    <script-parameters />
+  <configuration default="false" name="Node Server (Dev)" type="js.build_tools.npm" factoryName="npm">
+    <package-json>$PROJECT_DIR$/server/package.json</package-json>
+    <command>run</command>
+    <scripts>
+      <script>dev</script>
+    </scripts>
+    <node-interpreter>project</node-interpreter>
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
-    <working-dir>$PROJECT_DIR$/server</working-dir>
-    <method v="2">
-      <option name="Run npm script" value="true" />
-    </method>
-    <!-- Run via npm run dev (uses nodemon) -->
-    <package-json-path>$PROJECT_DIR$/server/package.json</package-json-path>
-    <script>dev</script>
-    <option name="INTERPRETER_OPTIONS" value="" />
-    <option name="PASS_PARENT_ENVS" value="true" />
+    <method v="2" />
   </configuration>
 </component>
