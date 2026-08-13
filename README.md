@@ -77,7 +77,7 @@ The ** Web-Based Identity Card Issuing System ** addresses the operational bottl
 
 ---
 
-## 🛠️ System Architecture
+## System Architecture
 
 ```
                                     +-----------------------+
