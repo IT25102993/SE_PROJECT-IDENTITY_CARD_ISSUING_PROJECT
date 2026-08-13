@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Vite Client (Dev)" type="js.build_tools.npm" factoryName="npm">
-    <package-json>$PROJECT_DIR$/client/package.json</package-json>
-    <command>run</command>
+    <package-json value="$PROJECT_DIR$/client/package.json" />
+    <command value="run" />
     <scripts>
-      <script>dev</script>
+      <script value="dev" />
     </scripts>
-    <node-interpreter>project</node-interpreter>
+    <node-interpreter value="project" />
     <envs />
     <method v="2" />
   </configuration>
