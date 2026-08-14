@@ -20,7 +20,7 @@ export const sendOtpEmail = async (toEmail, otp, fullName = 'Officer') => {
   const mailOptions = {
     from: `"NexusGov Identity System" <${process.env.MAIL_USER}>`,
     to: toEmail,
-    subject: '🔐 NexusGov — Your OTP Verification Code',
+    subject: 'NexusGov — Your OTP Verification Code',
     html: `
       <!DOCTYPE html>
       <html lang="en">
@@ -41,7 +41,7 @@ export const sendOtpEmail = async (toEmail, otp, fullName = 'Officer') => {
                   <td align="center"
                     style="background:linear-gradient(135deg,#10b981,#3b82f6);padding:32px 40px;">
                     <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:800;letter-spacing:-0.5px;">
-                      🛡️ NexusGov Identity System
+                      NexusGov Identity System
                     </h1>
                     <p style="margin:6px 0 0;color:rgba(255,255,255,0.85);font-size:13px;">
                       Department of Registration of Persons — Sri Lanka
@@ -52,32 +52,32 @@ export const sendOtpEmail = async (toEmail, otp, fullName = 'Officer') => {
                 <!-- Body -->
                 <tr>
                   <td style="padding:36px 40px;">
-                    <p style="margin:0 0 16px;color:#cbd5e1;font-size:15px;">
-                      Hello <strong style="color:#f1f5f9;">${fullName}</strong>,
+                    <p style="margin:0 0 16px;color:#ffffff;font-size:15px;">
+                      Hello <strong style="color:#ffffff;">${fullName}</strong>,
                     </p>
-                    <p style="margin:0 0 28px;color:#94a3b8;font-size:14px;line-height:1.6;">
+                    <p style="margin:0 0 28px;color:#ffffff;font-size:14px;line-height:1.6;">
                       Your One-Time Password (OTP) for officer account registration is:
                     </p>
 
                     <!-- OTP Box -->
                     <div align="center"
-                      style="background:#0f172a;border:2px solid #10b981;border-radius:12px;
+                      style="background:#ffffff;border:2px solid #00ccff;border-radius:12px;
                              padding:24px 32px;margin:0 0 28px;letter-spacing:12px;">
-                      <span style="font-size:42px;font-weight:900;color:#10b981;
+                      <span style="font-size:42px;font-weight:900;color:#000000;
                                    font-family:'Courier New',monospace;">
                         ${otp}
                       </span>
                     </div>
 
-                    <p style="margin:0 0 8px;color:#94a3b8;font-size:13px;text-align:center;">
+                    <p style="margin:0 0 8px;color:#ffffff;font-size:13px;text-align:center;">
                       ⏱ This code expires in <strong style="color:#f59e0b;">10 minutes</strong>.
                     </p>
-                    <p style="margin:0 0 28px;color:#64748b;font-size:12px;text-align:center;">
+                    <p style="margin:0 0 28px;color:#ffffff;font-size:12px;text-align:center;">
                       Do not share this code with anyone. NexusGov staff will never ask for your OTP.
                     </p>
 
                     <hr style="border:none;border-top:1px solid #334155;margin:0 0 24px;" />
-                    <p style="margin:0;color:#475569;font-size:12px;text-align:center;">
+                    <p style="margin:0;color:#ffffff;font-size:12px;text-align:center;">
                       If you did not request this, please ignore this email.<br/>
                       &copy; 2026 NexusGov — Sri Lanka Identity Management System
                     </p>
