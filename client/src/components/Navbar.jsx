@@ -77,11 +77,16 @@ export const Navbar = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#ffffff',
+              overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
             }}
           >
-            <IdCard size={24} />
+            <img
+              src="/images/gov_logo.png"
+              alt="Sri Lanka Emblem Logo"
+              style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+            />
           </div>
           <div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1 }}>
