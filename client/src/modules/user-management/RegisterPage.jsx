@@ -98,7 +98,10 @@ export const RegisterPage = () => {
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || 'Failed to send OTP.');
 
-      addToast(`Verification code sent to ${email}`, 'success');
+      addToast(data.message || `Verification code sent to ${email}`, 'success');
+      if (data.devOtp) {
+        setOtp(data.devOtp);
+      }
       setStep(STEP_OTP);
       startResendCooldown();
     } catch (err) {
@@ -120,7 +123,10 @@ export const RegisterPage = () => {
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || 'Failed to resend OTP.');
-      addToast('New OTP sent to your email!', 'info');
+      addToast(data.message || 'New OTP sent to your email!', 'info');
+      if (data.devOtp) {
+        setOtp(data.devOtp);
+      }
       startResendCooldown();
     } catch (err) {
       setErrorMessage(err.message);
