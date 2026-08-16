@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/client/dist/assets/index-CbRF_25T.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/user-management/RegisterPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/user-management/RegisterPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity_card_system.sql" beforeDir="false" afterPath="$PROJECT_DIR$/identity_card_system.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/controllers/authController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/authController.js" afterDir="false" />
-    </list>
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,7 +77,7 @@
       <workItem from="1786682331335" duration="142000" />
       <workItem from="1786682489414" duration="604000" />
       <workItem from="1786691796697" duration="1348000" />
-      <workItem from="1786848498847" duration="2296000" />
+      <workItem from="1786848498847" duration="2676000" />
     </task>
     <servers />
   </component>
