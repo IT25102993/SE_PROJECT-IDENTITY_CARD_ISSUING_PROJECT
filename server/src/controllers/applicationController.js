@@ -1,12 +1,15 @@
 import { queryDb, getDbStatus, inMemoryDb } from '../config/db.js';
 
-// Get all applications
+// Get all applications (with optional search query ?search=trackingId or NIC)
 export const getApplications = async (req, res) => {
   try {
+    const { search } = req.query;
+
     if (getDbStatus()) {
-      const sql = `
+      let sql = `
         SELECT 
           app.application_id,
+          CONCAT('NEX-2026-', app.application_id) AS tracking_id,
           app.application_type,
           app.status,
           app.remarks,
@@ -15,7 +18,7 @@ export const getApplications = async (req, res) => {
           a.first_name,
           a.last_name,
           CONCAT(a.first_name, ' ', a.last_name) AS fullNameEn,
-          a.national_id_number AS nicNumber,
+          a.national_id_number,
           a.date_of_birth AS dob,
           a.gender,
           a.address,
@@ -25,21 +28,41 @@ export const getApplications = async (req, res) => {
         FROM applications app
         JOIN applicants a ON app.applicant_id = a.applicant_id
         LEFT JOIN users u ON app.processed_by = u.user_id
-        ORDER BY app.submitted_at DESC
       `;
-      const rows = await queryDb(sql);
+
+      const params = [];
+      if (search) {
+        sql += ` WHERE a.national_id_number LIKE ? 
+                 OR CONCAT('NEX-2026-', app.application_id) = ? 
+                 OR CAST(app.application_id AS CHAR) = ?`;
+        params.push(`%${search}%`, search.toUpperCase(), search);
+      }
+
+      sql += ` ORDER BY app.submitted_at DESC`;
+      const rows = await queryDb(sql, params);
       return res.status(200).json({ success: true, count: rows.length, applications: rows });
     } else {
+      let apps = inMemoryDb.applications;
+      if (search) {
+        const term = search.toLowerCase();
+        apps = apps.filter(a =>
+          (a.tracking_id && a.tracking_id.toLowerCase().includes(term)) ||
+          (a.national_id_number && a.national_id_number.toLowerCase().includes(term)) ||
+          (String(a.application_id) === search)
+        );
+      }
       return res.status(200).json({
         success: true,
-        count: inMemoryDb.applications.length,
-        applications: inMemoryDb.applications
+        count: apps.length,
+        applications: apps
       });
     }
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
 
 // Create new citizen application
 export const createApplication = async (req, res) => {
@@ -62,14 +85,14 @@ export const createApplication = async (req, res) => {
       });
     }
 
-    const tempNic = `TEMP-${Math.floor(100000000 + Math.random() * 900000000)}`;
+    const officialNic = generateSriLankan12DigitNIC(dob, gender);
 
     if (getDbStatus()) {
       // Insert into applicants
       const appRes = await queryDb(
         `INSERT INTO applicants (national_id_number, first_name, last_name, date_of_birth, gender, address, phone_number, email)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [tempNic, first_name, last_name, dob, gender, address, phone_number, email]
+        [officialNic, first_name, last_name, dob, gender, address, phone_number, email]
       );
 
       const applicantId = appRes.insertId;
@@ -125,13 +148,70 @@ export const createApplication = async (req, res) => {
 };
 
 // Approve application & issue NIC number
+// ── Official 12-Digit Sri Lankan NIC Generator (YYYY DDD SSSS C) ─────────────────
+export const generateSriLankan12DigitNIC = (dobString, gender = 'Male', serialNum = null) => {
+  let dob = new Date(dobString);
+  if (isNaN(dob.getTime())) {
+    dob = new Date('2005-01-01');
+  }
+
+  // 1. Year of Birth (YYYY - 4 Digits)
+  const yyyy = dob.getFullYear();
+
+  // 2. Day of Year (DDD - 3 Digits): 001 to 366. For Females: add 500
+  const startOfYear = new Date(yyyy, 0, 1);
+  const diffInMs = dob - startOfYear;
+  const dayOfYear = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
+
+  const isFemale = (gender || '').toLowerCase().includes('female') || (gender || '').toLowerCase().includes('ස්ත්‍රී') || (gender || '').toLowerCase().includes('பெண்');
+  const dddVal = isFemale ? dayOfYear + 500 : dayOfYear;
+  const ddd = String(dddVal).padStart(3, '0');
+
+  // 3. Serial Number (SSSS - 4 Digits)
+  const serialVal = serialNum ? serialNum : Math.floor(1000 + Math.random() * 9000);
+  const ssss = String(serialVal).padStart(4, '0');
+
+  // 4. Check Digit (C - 1 Digit)
+  const rawBase = `${yyyy}${ddd}${ssss}`;
+  let checkSum = 0;
+  for (let i = 0; i < rawBase.length; i++) {
+    checkSum += parseInt(rawBase[i], 10) * (i + 1);
+  }
+  const c = checkSum % 10;
+
+  return `${yyyy}${ddd}${ssss}${c}`;
+};
+
+// Approve application & issue NIC number
 export const approveApplication = async (req, res) => {
   try {
     const { id } = req.params;
     const { remarks = 'Application approved.' } = req.body;
     const userId = req.user ? req.user.user_id : 1;
 
-    const generatedNic = `2005${Math.floor(10000000 + Math.random() * 90000000)}`;
+    let dob = '2005-01-01';
+    let gender = 'Male';
+
+    if (getDbStatus()) {
+      const applicantRows = await queryDb(
+        `SELECT a.date_of_birth, a.gender FROM applicants a 
+         JOIN applications app ON a.applicant_id = app.applicant_id 
+         WHERE app.application_id = ?`,
+        [id]
+      );
+      if (applicantRows && applicantRows.length > 0) {
+        dob = applicantRows[0].date_of_birth || '2005-01-01';
+        gender = applicantRows[0].gender || 'Male';
+      }
+    } else {
+      const memApp = inMemoryDb.applications.find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      if (memApp) {
+        dob = memApp.dob || '2005-01-01';
+        gender = memApp.gender || 'Male';
+      }
+    }
+
+    const generatedNic = generateSriLankan12DigitNIC(dob, gender);
 
     if (getDbStatus()) {
       await queryDb(
@@ -156,20 +236,21 @@ export const approveApplication = async (req, res) => {
 
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [userId, 'APPLICATION_APPROVED', `Application #${id} approved. NIC ${generatedNic} generated.`]
+        [userId, 'APPLICATION_APPROVED', `Application #${id} approved. Official 12-digit NIC ${generatedNic} generated.`]
       );
     } else {
       const app = inMemoryDb.applications.find(a => a.application_id === parseInt(id) || a.tracking_id === id);
       if (app) {
         app.status = 'Approved';
         app.nicNumber = generatedNic;
+        app.national_id_number = generatedNic;
         app.remarks = remarks;
       }
     }
 
     return res.status(200).json({
       success: true,
-      message: `Application #${id} approved! Issued NIC Number: ${generatedNic}`,
+      message: `Application #${id} approved! Issued Official 12-Digit NIC Number: ${generatedNic}`,
       nicNumber: generatedNic
     });
   } catch (error) {
