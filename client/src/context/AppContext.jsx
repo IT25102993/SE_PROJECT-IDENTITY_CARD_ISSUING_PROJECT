@@ -2,14 +2,48 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
+// ── Official 12-Digit Sri Lankan NIC Generator (YYYY DDD SSSS C) ─────────────────
+export const generateSriLankan12DigitNIC = (dobString, gender = 'Male', serialNum = null) => {
+  let dob = new Date(dobString);
+  if (isNaN(dob.getTime())) {
+    dob = new Date('2005-01-01');
+  }
+
+  // 1. Year of Birth (YYYY - 4 Digits)
+  const yyyy = dob.getFullYear();
+
+  // 2. Day of Year (DDD - 3 Digits): 001 to 366. For Females: add 500
+  const startOfYear = new Date(yyyy, 0, 1);
+  const diffInMs = dob - startOfYear;
+  const dayOfYear = Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
+
+  const isFemale = (gender || '').toLowerCase().includes('female') || (gender || '').toLowerCase().includes('ස්ත්‍රී') || (gender || '').toLowerCase().includes('பெண்');
+  const dddVal = isFemale ? dayOfYear + 500 : dayOfYear;
+  const ddd = String(dddVal).padStart(3, '0');
+
+  // 3. Serial Number (SSSS - 4 Digits)
+  const serialVal = serialNum ? serialNum : Math.floor(1000 + Math.random() * 9000);
+  const ssss = String(serialVal).padStart(4, '0');
+
+  // 4. Check Digit (C - 1 Digit)
+  const rawBase = `${yyyy}${ddd}${ssss}`;
+  let checkSum = 0;
+  for (let i = 0; i < rawBase.length; i++) {
+    checkSum += parseInt(rawBase[i], 10) * (i + 1);
+  }
+  const c = checkSum % 10;
+
+  return `${yyyy}${ddd}${ssss}${c}`;
+};
+
 const INITIAL_FALLBACK_APPLICATIONS = [
   {
     id: 'NEX-2026-90412',
     application_id: 1,
     fullNameEn: 'Thilina Sakalasooriya',
     fullNameSi: 'තිලිණ සකළසූරිය',
-    fullNameTa: 'තදලීන සකලසූරිය',
-    nicNumber: '200512345678',
+    fullNameTa: 'திலீன சகலசூரிய',
+    nicNumber: generateSriLankan12DigitNIC('2005-01-01', 'Male'),
     dob: '2005-01-01',
     gender: 'Male',
     civilStatus: 'Single',
