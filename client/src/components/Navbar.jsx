@@ -208,6 +208,12 @@ export const Navbar = () => {
                 </span>
               </div>
 
+              {(user?.role === 'Admin' || role === 'admin') && (
+                <NavLink to="/admin" className="btn btn-emerald btn-sm" style={{ borderRadius: '20px', fontSize: '0.8rem' }}>
+                  Admin Portal
+                </NavLink>
+              )}
+
               <button
                 type="button"
                 onClick={handleLogout}
