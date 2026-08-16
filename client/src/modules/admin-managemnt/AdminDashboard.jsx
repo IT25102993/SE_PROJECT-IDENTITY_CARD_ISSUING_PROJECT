@@ -206,7 +206,12 @@ export const AdminDashboard = () => {
             borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
           }}
         >
-          <Shield size={26} />
+          <img
+            src="/images/logo.png"
+            alt="FreshMart Logo"
+            style={{ height: '30px', objectFit: 'contain' }}
+            onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+          />
           <span>FreshMart</span>
         </div>
 
