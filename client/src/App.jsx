@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
@@ -9,18 +9,24 @@ import { ToastContainer } from './components/ToastContainer';
 import { LoadingScreen } from './components/LoadingScreen';
 
 import { HomePage } from './pages/HomePage';
-import { ApplyPage } from './pages/ApplyPage';
-import { TrackingPage } from './pages/TrackingPage';
-import { OfficerDashboard } from './pages/OfficerDashboard';
-import { PrintQueuePage } from './pages/PrintQueuePage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
+
+// Module Imports from src/modules/
+import { LoginPage } from './modules/user-management/LoginPage';
+import { RegisterPage } from './modules/user-management/RegisterPage';
+import { ApplyPage } from './modules/application-form-management/ApplyPage';
+import { TrackingPage } from './modules/application-form-management/TrackingPage';
+import { OfficerDashboard } from './modules/verification-management/OfficerDashboard';
+import { PrintQueuePage } from './modules/operation-management/PrintQueuePage';
+import { AnalyticsPage } from './modules/operation-management/AnalyticsPage';
+import { AdminDashboard } from './modules/admin-managemnt/AdminDashboard';
 
 function AppContent() {
   const { loadingState } = useApp();
+  const location = useLocation();
+
+  const isAdminPath = location.pathname === '/admin';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
@@ -29,12 +35,11 @@ function AppContent() {
           message={loadingState.message}
           subtext={loadingState.subtext}
           duration={loadingState.duration}
-          icon={loadingState.icon || undefined}
         />
       )}
-      <BackgroundCanvas />
-      <Navbar />
-      <main style={{ flex: 1, paddingTop: '72px' }}>
+      {!isAdminPath && <BackgroundCanvas />}
+      {!isAdminPath && <Navbar />}
+      <main style={{ flex: 1, paddingTop: isAdminPath ? '0' : '72px' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/apply" element={<ApplyPage />} />
@@ -46,9 +51,10 @@ function AppContent() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
-      <Footer />
+      {!isAdminPath && <Footer />}
       <ToastContainer />
     </div>
   );
