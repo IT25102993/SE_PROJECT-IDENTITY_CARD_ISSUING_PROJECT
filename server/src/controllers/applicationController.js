@@ -176,3 +176,66 @@ export const approveApplication = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Reject Application
+export const rejectApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { remarks = 'Application rejected.' } = req.body;
+
+    if (getDbStatus()) {
+      await queryDb('UPDATE applications SET status = "Rejected", remarks = ? WHERE application_id = ?', [remarks, id]);
+    } else {
+      const app = inMemoryDb.applications.find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      if (app) app.status = 'Rejected';
+    }
+
+    return res.status(200).json({ success: true, message: `Application #${id} rejected.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update Application Status (Printed, Dispatched, Pending, etc.)
+export const updateStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, remarks } = req.body;
+
+    if (getDbStatus()) {
+      await queryDb(
+        'UPDATE applications SET status = COALESCE(?, status), remarks = COALESCE(?, remarks) WHERE application_id = ?',
+        [status, remarks, id]
+      );
+    } else {
+      const app = inMemoryDb.applications.find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      if (app) {
+        if (status) app.status = status;
+        if (remarks) app.remarks = remarks;
+      }
+    }
+
+    return res.status(200).json({ success: true, message: `Application #${id} status updated to ${status}.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete Application
+export const deleteApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getDbStatus()) {
+      await queryDb('DELETE FROM applications WHERE application_id = ?', [id]);
+    } else {
+      const idx = inMemoryDb.applications.findIndex(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      if (idx !== -1) inMemoryDb.applications.splice(idx, 1);
+    }
+
+    return res.status(200).json({ success: true, message: `Application #${id} deleted successfully.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
