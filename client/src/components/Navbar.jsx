@@ -229,31 +229,6 @@ export const Navbar = () => {
             </div>
           )}
 
-          {/* Sync / Loader Trigger Button */}
-          <button
-            onClick={() => triggerLoading({
-              message: 'Synchronizing National Identity Gateway...',
-              subtext: 'Performing cryptographic handshake with central database',
-              duration: 2500
-            })}
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--accent-cyan)',
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            title="Trigger System Sync & Minimal Loading Screen"
-          >
-            <Loader2 size={16} className="animate-spin-slow" />
-          </button>
-
           {/* Theme Switcher Toggle */}
           <button
             onClick={toggleTheme}
