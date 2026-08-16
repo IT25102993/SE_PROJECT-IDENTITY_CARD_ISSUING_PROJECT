@@ -13,14 +13,176 @@ import {
   ArrowLeft,
   Upload,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Languages
 } from 'lucide-react';
+
+// Dictionaries & Transliteration Helpers for English, Sinhala & Tamil
+const NAME_DICTIONARY_TA = {
+  "thilina": "திலீன",
+  "sakalasooriya": "சகலசூரிய",
+  "thilina sakalasooriya": "திலீன சகலசூரிய",
+  "තිලිණ සකළසූරිය": "திலீன சகலசூரிய",
+  "kavindi": "காவிந்தி",
+  "perera": "பெரேரா",
+  "kavindi perera": "காவிந்தி பெரேரா",
+  "කාවින්දි පෙරේරා": "காவிந்தி பெரேரா",
+  "dilshan": "தில்ஷான்",
+  "senanayake": "சேனாநாயக்க",
+  "dilshan senanayake": "தில்ஷான் சேனாநாயக்க",
+  "දිල්ෂාන් සේනානායක": "தில்ஷான் சேனாநாயக்க",
+  "nimal": "நிமால்",
+  "kamal": "கமால்",
+  "sunil": "சுனில்",
+  "bandara": "பண்டார",
+  "wickramasinghe": "விக்ரමසිங்க",
+  "jayawardena": "ஜயவர்தன",
+  "fernando": "பெර්නාண்டෝ",
+  "silva": "சில்வா",
+  "de silva": "டி சில்வா",
+  "rajapaksa": "ராஜபக்ஷ"
+};
+
+const NAME_DICTIONARY_SI = {
+  "thilina": "තිලිණ",
+  "sakalasooriya": "සකළසූරිය",
+  "thilina sakalasooriya": "තිලිණ සකළසූරිය",
+  "kavindi": "කාවින්දි",
+  "perera": "පෙරේරා",
+  "kavindi perera": "කාවින්දි පෙරේරා",
+  "dilshan": "දිල්ෂාන්",
+  "senanayake": "සේනානායක",
+  "dilshan senanayake": "දිල්ෂාන් සේනානායක",
+  "nimal": "නිමාල්",
+  "kamal": "කමාල්",
+  "sunil": "සුනිල්",
+  "bandara": "බණ්ඩාර",
+  "wickramasinghe": "වික්‍රමසිංහ",
+  "jayawardena": "ජයවර්ධන",
+  "fernando": "ප්‍රනාන්දු",
+  "silva": "සිල්වා",
+  "de silva": "ද සිල්වා",
+  "rajapaksa": "රාජපක්ෂ"
+};
+
+const SINHALA_TO_TAMIL_MAP = {
+  'අ': 'அ', 'ආ': 'ஆ', 'ඇ': 'அ', 'ඉ': 'இ', 'ඊ': 'ஈ', 'උ': 'உ', 'ඌ': 'ஊ',
+  'එ': 'எ', 'ඒ': 'ஏ', 'ඓ': 'ஐ', 'ඔ': 'ஒ', 'ඕ': 'ஓ', 'ඖ': 'ஔ',
+  'ක': 'க', 'ඛ': 'க', 'ග': 'க', 'ඝ': 'க', 'ඞ': 'ங',
+  'ච': 'ச', 'ඡ': 'ச', 'ජ': 'ஜ', 'ඣ': 'ஜ', 'ඤ': 'ஞ',
+  'ට': 'ட', 'ඨ': 'ட', 'ඩ': 'ட', 'ඪ': 'ட', 'ණ': 'ண',
+  'ත': 'த', 'ථ': 'த', 'ද': 'த', 'ධ': 'த', 'න': 'ந',
+  'ප': 'ப', 'ඵ': 'ப', 'බ': 'ப', 'භ': 'ப', 'ම': 'ம',
+  'ය': 'ய', 'ර': 'ர', 'ල': 'ல', 'ව': 'வ', 'ශ': 'ஶ', 'ෂ': 'ஷ', 'ස': 'ச', 'හ': 'ஹ', 'ළ': 'ள', 'ෆ': 'ப',
+  'ා': 'ா', 'ැ': 'ா', 'ි': 'ி', 'ී': 'ீ', 'ු': 'ු', 'ූ': 'ූ',
+  'ෘ': 'ிரு', 'ෙ': 'ெ', 'ේ': 'ே', 'ෛ': 'ை', 'ො': 'ொ', 'ෝ': 'ோ', 'ෞ': 'ௗ',
+  '්': '්', 'ං': 'ம்', 'ඃ': 'ஃ'
+};
+
+const transliterateWordToTamil = (word) => {
+  if (!word) return '';
+  const lower = word.toLowerCase().trim();
+  if (NAME_DICTIONARY_TA[lower]) return NAME_DICTIONARY_TA[lower];
+
+  if (/[\u0D80-\u0DFF]/.test(word)) {
+    let result = '';
+    for (let char of word) {
+      result += SINHALA_TO_TAMIL_MAP[char] || char;
+    }
+    return result;
+  }
+
+  let str = lower;
+  str = str.replace(/th/g, 'த')
+           .replace(/sh/g, 'ஷ')
+           .replace(/ch/g, 'ச')
+           .replace(/kh/g, 'க')
+           .replace(/ph/g, 'ப')
+           .replace(/bh/g, 'ப')
+           .replace(/dh/g, 'த')
+           .replace(/gh/g, 'க')
+           .replace(/ng/g, 'ங்');
+
+  let res = '';
+  for (let char of str) {
+    switch (char) {
+      case 'a': res += 'ா'; break;
+      case 'b': res += 'ப'; break;
+      case 'c': res += 'க'; break;
+      case 'd': res += 'த'; break;
+      case 'e': res += 'ே'; break;
+      case 'f': res += 'ப'; break;
+      case 'g': res += 'க'; break;
+      case 'h': res += 'ஹ'; break;
+      case 'i': res += 'ீ'; break;
+      case 'j': res += 'ஜ'; break;
+      case 'k': res += 'க'; break;
+      case 'l': res += 'ல'; break;
+      case 'm': res += 'ம'; break;
+      case 'n': res += 'ந'; break;
+      case 'o': res += 'ோ'; break;
+      case 'p': res += 'ப'; break;
+      case 'q': res += 'க'; break;
+      case 'r': res += 'ர'; break;
+      case 's': res += 'ச'; break;
+      case 't': res += 'த'; break;
+      case 'u': res += 'ූ'; break;
+      case 'v': res += 'வ'; break;
+      case 'w': res += 'வ'; break;
+      case 'x': res += 'க்ஷ'; break;
+      case 'y': res += 'ய'; break;
+      case 'z': res += 'ஸ'; break;
+      default: res += char; break;
+    }
+  }
+
+  if (res.startsWith('ா')) res = 'அ' + res.slice(1);
+  if (res.startsWith('ි') || res.startsWith('ී')) res = 'இ' + res.slice(1);
+  if (res.startsWith('ෙ') || res.startsWith('ේ')) res = 'எ' + res.slice(1);
+  if (res.startsWith('ො') || res.startsWith('ෝ')) res = 'ஒ' + res.slice(1);
+
+  return res;
+};
+
+export const autoGenerateTamilName = (nameEn = '', nameSi = '') => {
+  if (nameSi.trim()) {
+    const siLower = nameSi.trim();
+    if (NAME_DICTIONARY_TA[siLower]) return NAME_DICTIONARY_TA[siLower];
+    const wordsSi = nameSi.trim().split(/\s+/);
+    return wordsSi.map(w => transliterateWordToTamil(w)).join(' ');
+  }
+
+  if (nameEn.trim()) {
+    const enLower = nameEn.toLowerCase().trim();
+    if (NAME_DICTIONARY_TA[enLower]) return NAME_DICTIONARY_TA[enLower];
+    const wordsEn = nameEn.trim().split(/\s+/);
+    return wordsEn.map(w => transliterateWordToTamil(w)).join(' ');
+  }
+
+  return '';
+};
+
+export const autoGenerateSinhalaName = (nameEn = '') => {
+  if (!nameEn.trim()) return '';
+  const enLower = nameEn.toLowerCase().trim();
+  if (NAME_DICTIONARY_SI[enLower]) return NAME_DICTIONARY_SI[enLower];
+
+  const words = nameEn.trim().split(/\s+/);
+  return words.map(word => {
+    const wLower = word.toLowerCase();
+    if (NAME_DICTIONARY_SI[wLower]) return NAME_DICTIONARY_SI[wLower];
+    return word;
+  }).join(' ');
+};
 
 export const ApplyPage = () => {
   const { submitNewApplication, triggerLoading } = useApp();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
+  const [isSiManuallyEdited, setIsSiManuallyEdited] = useState(false);
+  const [isTaManuallyEdited, setIsTaManuallyEdited] = useState(false);
+
   const [formData, setFormData] = useState({
     fullNameEn: '',
     fullNameSi: '',
@@ -43,6 +205,44 @@ export const ApplyPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'fullNameTa') {
+      setIsTaManuallyEdited(value.trim().length > 0);
+      setFormData(prev => ({ ...prev, fullNameTa: value }));
+      return;
+    }
+
+    if (name === 'fullNameSi') {
+      setIsSiManuallyEdited(value.trim().length > 0);
+      setFormData(prev => {
+        const updated = { ...prev, fullNameSi: value };
+        if (!isTaManuallyEdited) {
+          updated.fullNameTa = autoGenerateTamilName(prev.fullNameEn, value);
+        }
+        return updated;
+      });
+      return;
+    }
+
+    if (name === 'fullNameEn') {
+      setFormData(prev => {
+        const updated = { ...prev, fullNameEn: value };
+        
+        let currentSi = prev.fullNameSi;
+        if (!isSiManuallyEdited) {
+          currentSi = autoGenerateSinhalaName(value);
+          updated.fullNameSi = currentSi;
+        }
+
+        if (!isTaManuallyEdited) {
+          updated.fullNameTa = autoGenerateTamilName(value, currentSi);
+        }
+
+        return updated;
+      });
+      return;
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -126,6 +326,8 @@ export const ApplyPage = () => {
                 onClick={() => {
                   setSubmittedId(null);
                   setStep(1);
+                  setIsSiManuallyEdited(false);
+                  setIsTaManuallyEdited(false);
                 }}
               >
                 Submit Another Application
@@ -203,7 +405,12 @@ export const ApplyPage = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Full Name in Sinhala (සම්පූර්ණ නම)</label>
+                      <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>Full Name in Sinhala (සම්පූර්ණ නම)</span>
+                        <span style={{ fontSize: '0.72rem', color: isSiManuallyEdited ? 'var(--accent-primary)' : 'var(--accent-emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                          <Languages size={12} /> {isSiManuallyEdited ? 'Custom Input' : 'Auto-Transliterating'}
+                        </span>
+                      </label>
                       <input
                         type="text"
                         name="fullNameSi"
@@ -215,7 +422,12 @@ export const ApplyPage = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Full Name in Tamil (முழு பெயர்)</label>
+                      <label className="form-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>Full Name in Tamil (முழு பெயர்)</span>
+                        <span style={{ fontSize: '0.72rem', color: isTaManuallyEdited ? 'var(--accent-primary)' : 'var(--accent-emerald)', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                          <Languages size={12} /> {isTaManuallyEdited ? 'Custom Input' : 'Auto-Transliterating'}
+                        </span>
+                      </label>
                       <input
                         type="text"
                         name="fullNameTa"
@@ -224,6 +436,11 @@ export const ApplyPage = () => {
                         value={formData.fullNameTa}
                         onChange={handleChange}
                       />
+                      <div style={{ fontSize: '0.75rem', color: isTaManuallyEdited ? 'var(--accent-primary)' : 'var(--text-muted)', marginTop: '0.3rem' }}>
+                        {isTaManuallyEdited
+                          ? '✓ Custom manual Tamil input active (Clear field to re-enable auto-typing)'
+                          : '⚡ Auto-typed using both English & Sinhala names. You can also edit Tamil directly anytime.'}
+                      </div>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -416,8 +633,16 @@ export const ApplyPage = () => {
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>Full Name:</span>
+                        <span style={{ color: 'var(--text-secondary)' }}>Full Name (En):</span>
                         <span style={{ fontWeight: 600 }}>{formData.fullNameEn || 'N/A'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Full Name (Si):</span>
+                        <span style={{ fontWeight: 600 }}>{formData.fullNameSi || 'N/A'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Full Name (Ta):</span>
+                        <span style={{ fontWeight: 600 }}>{formData.fullNameTa || 'N/A'}</span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>DOB & Gender:</span>
