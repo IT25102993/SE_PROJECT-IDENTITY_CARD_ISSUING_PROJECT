@@ -116,7 +116,7 @@ export const verifyOtp = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { username, email, password, full_name, role = 'Officer' } = req.body;
+    const { username, email, password, full_name, role = 'Citizen' } = req.body;
 
     if (!username || !email || !password || !full_name) {
       return res.status(400).json({
@@ -131,9 +131,9 @@ export const register = async (req, res) => {
       return res.status(400).json({ success: false, message: pwdError });
     }
 
-    // Ensure OTP was verified for this email
+    // Ensure OTP was verified for this email if present in otpStore
     const otpRecord = otpStore.get(email);
-    if (!otpRecord || !otpRecord.verified) {
+    if (otpRecord && !otpRecord.verified) {
       return res.status(400).json({
         success: false,
         message: 'Email not verified. Please complete OTP verification before registering.'
@@ -141,7 +141,7 @@ export const register = async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const validRole = ['Admin', 'Officer', 'Approver'].includes(role) ? role : 'Officer';
+    const validRole = ['Admin', 'Officer', 'Approver', 'Citizen', 'Verification Officer'].includes(role) ? role : 'Citizen';
 
     let newUser = null;
 
@@ -180,13 +180,14 @@ export const register = async (req, res) => {
         log_id: inMemoryDb.audit_logs.length + 1,
         user_id: newUser.user_id,
         action: 'USER_REGISTER',
-        details: `Registered: ${username}`,
+        details: `Registered: ${username} (${validRole})`,
         timestamp: new Date().toISOString()
       });
     }
 
-    // Clean up OTP after successful registration
-    otpStore.delete(email);
+    if (otpStore.has(email)) {
+      otpStore.delete(email);
+    }
 
     const token = generateToken(newUser);
 
@@ -203,6 +204,126 @@ export const register = async (req, res) => {
   } catch (error) {
     console.error('Registration Error:', error);
     return res.status(500).json({ success: false, message: 'Internal server error during registration.', error: error.message });
+  }
+};
+
+// ── Admin: Register Staff / Officers ──────────────────────────────────────────
+
+export const registerStaff = async (req, res) => {
+  try {
+    const { username, email, password, full_name, role } = req.body;
+
+    if (!username || !email || !password || !full_name || !role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username, email, password, full name, and role are required.'
+      });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    let newUser = null;
+
+    if (getDbStatus()) {
+      const existing = await queryDb('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
+      if (existing && existing.length > 0) {
+        return res.status(400).json({ success: false, message: 'Username or Email is already registered.' });
+      }
+
+      const result = await queryDb(
+        'INSERT INTO users (username, password_hash, full_name, email, role) VALUES (?, ?, ?, ?, ?)',
+        [username, password_hash, full_name, email, role]
+      );
+
+      newUser = { user_id: result.insertId, username, email, full_name, role, created_at: new Date().toISOString() };
+
+      await queryDb(
+        'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
+        [req.user ? req.user.user_id : null, 'ADMIN_CREATE_USER', `Admin created staff user: ${username} (${role})`]
+      );
+    } else {
+      const existing = inMemoryDb.users.find(u => u.username === username || u.email === email);
+      if (existing) {
+        return res.status(400).json({ success: false, message: 'Username or Email is already registered.' });
+      }
+
+      newUser = {
+        user_id: inMemoryDb.users.length + 1,
+        username, email, password_hash, full_name, role,
+        created_at: new Date().toISOString()
+      };
+      inMemoryDb.users.push(newUser);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: `Successfully registered new staff member: ${full_name} (${role})`,
+      user: newUser
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ── Admin: Get All Users ──────────────────────────────────────────────────────
+
+export const getAllUsers = async (req, res) => {
+  try {
+    if (getDbStatus()) {
+      const users = await queryDb('SELECT user_id, username, full_name, email, role, created_at FROM users ORDER BY user_id DESC');
+      return res.status(200).json({ success: true, count: users.length, users });
+    } else {
+      const users = inMemoryDb.users.map(({ password_hash, ...u }) => u);
+      return res.status(200).json({ success: true, count: users.length, users });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ── Admin: Update User ────────────────────────────────────────────────────────
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { full_name, email, role } = req.body;
+
+    if (getDbStatus()) {
+      await queryDb(
+        'UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, role) WHERE user_id = ?',
+        [full_name, email, role, id]
+      );
+    } else {
+      const user = inMemoryDb.users.find(u => u.user_id === parseInt(id));
+      if (user) {
+        if (full_name) user.full_name = full_name;
+        if (email) user.email = email;
+        if (role) user.role = role;
+      }
+    }
+
+    return res.status(200).json({ success: true, message: `User #${id} updated successfully.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ── Admin: Delete User ────────────────────────────────────────────────────────
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getDbStatus()) {
+      await queryDb('DELETE FROM users WHERE user_id = ?', [id]);
+    } else {
+      const index = inMemoryDb.users.findIndex(u => u.user_id === parseInt(id));
+      if (index !== -1) inMemoryDb.users.splice(index, 1);
+    }
+
+    return res.status(200).json({ success: true, message: `User #${id} deleted successfully.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -304,3 +425,4 @@ export const getMe = async (req, res) => {
 export const logout = async (req, res) => {
   return res.status(200).json({ success: true, message: 'Logged out successfully.' });
 };
+
