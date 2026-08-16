@@ -20,6 +20,15 @@ export const inMemoryDb = {
     },
     {
       user_id: 2,
+      username: 'thilina_admin',
+      email: 'thilinasakalasooriya@gmail.com',
+      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      full_name: 'Thilina Sakalasooriya',
+      role: 'Admin',
+      created_at: new Date().toISOString()
+    },
+    {
+      user_id: 3,
       username: 'officer',
       email: 'officer@nexusgov.lk',
       password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
@@ -28,7 +37,7 @@ export const inMemoryDb = {
       created_at: new Date().toISOString()
     },
     {
-      user_id: 3,
+      user_id: 4,
       username: 'approver',
       email: 'approver@nexusgov.lk',
       password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
@@ -134,6 +143,13 @@ export const initDb = async () => {
     `;
 
     await pool.query(createTablesSQL);
+
+    // Seed Admin User thilinasakalasooriya@gmail.com if not exists
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('thilina_admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Thilina Sakalasooriya', 'thilinasakalasooriya@gmail.com', 'Admin');
+    `);
+
     isConnected = true;
     console.log('✅ Connected to MySQL Database successfully!');
   } catch (error) {
