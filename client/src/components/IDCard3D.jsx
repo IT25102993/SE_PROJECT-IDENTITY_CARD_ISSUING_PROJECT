@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Shield, RotateCw, User, CheckCircle2 } from 'lucide-react';
+import { generateSriLankan12DigitNIC } from '../context/AppContext';
 
 export const IDCard3D = ({ cardData }) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -8,8 +9,17 @@ export const IDCard3D = ({ cardData }) => {
   const [glareStyle, setGlareStyle] = useState({});
   const cardRef = useRef(null);
 
-  const defaultData = {
-    nicNumber: cardData?.nicNumber || '200512345678',
+  // Generate a unique random serial ONCE per card mount (stable across re-renders/hover)
+  const serialRef = useRef(Math.floor(1000 + Math.random() * 9000));
+
+  // Memoize computed NIC so mouse movement / tilt hover does NOT recalculate random serial
+  const computedNic = useMemo(() => {
+    if (cardData?.nicNumber) return cardData.nicNumber;
+    return generateSriLankan12DigitNIC(cardData?.dob || '2005-01-01', cardData?.gender || 'Male', serialRef.current);
+  }, [cardData?.nicNumber, cardData?.dob, cardData?.gender]);
+
+  const defaultData = useMemo(() => ({
+    nicNumber: computedNic,
     fullNameEn: cardData?.fullNameEn || 'Thilina Sakalasooriya',
     fullNameSi: cardData?.fullNameSi || 'තිලිණ සකළසූරිය',
     fullNameTa: cardData?.fullNameTa || 'திலீன சகலசூரிய',
@@ -17,8 +27,33 @@ export const IDCard3D = ({ cardData }) => {
     dob: cardData?.dob || '2005-01-01',
     address: cardData?.address || 'No. 12, Main Street, Malabe, Colombo',
     signature: cardData?.signature || 'Thilina',
-    photoUrl: cardData?.photoUrl || ''
-  };
+    photoUrl: cardData?.photoUrl || '',
+    phone: cardData?.phone || '',
+    email: cardData?.email || '',
+    civilStatus: cardData?.civilStatus || 'Single',
+    district: cardData?.district || '',
+    divisionalSecretariat: cardData?.divisionalSecretariat || '',
+    gnDivision: cardData?.gnDivision || ''
+  }), [computedNic, cardData?.fullNameEn, cardData?.fullNameSi, cardData?.fullNameTa, cardData?.gender, cardData?.dob, cardData?.address, cardData?.signature, cardData?.photoUrl, cardData?.phone, cardData?.email, cardData?.civilStatus, cardData?.district, cardData?.divisionalSecretariat, cardData?.gnDivision]);
+
+  // Full card details QR payload (memoized so it never changes on hover)
+  const qrPayload = useMemo(() => [
+    `NIC:${defaultData.nicNumber}`,
+    `NAME_EN:${defaultData.fullNameEn}`,
+    `NAME_SI:${defaultData.fullNameSi}`,
+    `NAME_TA:${defaultData.fullNameTa}`,
+    `DOB:${defaultData.dob}`,
+    `GENDER:${defaultData.gender}`,
+    `CIVIL_STATUS:${defaultData.civilStatus}`,
+    `ADDRESS:${defaultData.address}`,
+    `DISTRICT:${defaultData.district}`,
+    `DS_DIVISION:${defaultData.divisionalSecretariat}`,
+    `GN_DIVISION:${defaultData.gnDivision}`,
+    `PHONE:${defaultData.phone}`,
+    `EMAIL:${defaultData.email}`,
+    `ISSUED_BY:Department of Registration of Persons, Sri Lanka`,
+    `ISSUE_DATE:${new Date().toISOString().split('T')[0]}`
+  ].join('|'), [defaultData]);
 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
@@ -171,8 +206,9 @@ export const IDCard3D = ({ cardData }) => {
                   </div>
                   <div style={{ background: '#ffffff', padding: '3px', borderRadius: '4px' }}>
                     <QRCodeSVG
-                      value={`SRI_LANKA_NIC:${defaultData.nicNumber || 'NEXUS_GOV'}:${defaultData.fullNameEn}`}
+                      value={qrPayload}
                       size={36}
+                      level="M"
                     />
                   </div>
                 </div>
