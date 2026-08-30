@@ -125,7 +125,7 @@ export const verifyOtp = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { username, email, password, full_name, role = 'Citizen' } = req.body;
+    const { username, email, password, full_name, role = 'Officer' } = req.body;
 
     if (!username || !email || !password || !full_name) {
       return res.status(400).json({
@@ -150,7 +150,7 @@ export const register = async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const validRole = ['Admin', 'Officer', 'Approver', 'Citizen', 'Verification Officer'].includes(role) ? role : 'Citizen';
+    const validRole = ['Admin', 'Officer', 'Approver'].includes(role) ? role : 'Officer';
 
     let newUser = null;
 

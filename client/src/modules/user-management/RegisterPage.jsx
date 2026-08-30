@@ -44,7 +44,7 @@ export const RegisterPage = () => {
   const [step, setStep] = useState(STEP_FORM);
 
   const [formData, setFormData] = useState({
-    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Citizen'
+    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Officer'
   });
   const [showPassword, setShowPassword]     = useState(false);
   const [errorMessage, setErrorMessage]     = useState('');
@@ -151,9 +151,9 @@ export const RegisterPage = () => {
       if (!vRes.ok || !vData.success) throw new Error(vData.message || 'OTP verification failed.');
 
       const { full_name, username, email, password } = formData;
-      const newUser = await registerUser({ full_name, username, email, password, role: 'Citizen' });
+      const newUser = await registerUser({ full_name, username, email, password, role: 'Officer' });
 
-      setRole('citizen');
+      setRole('officer');
 
       triggerLoading({
         message: 'Account Created Successfully!',
@@ -230,13 +230,13 @@ export const RegisterPage = () => {
             {step === STEP_OTP ? (
               <>Email <span style={{ color: 'var(--accent-primary)' }}>Verification</span></>
             ) : (
-              <>Citizen <span style={{ color: 'var(--accent-emerald)' }}>Registration</span></>
+              <>Officer <span style={{ color: 'var(--accent-emerald)' }}>Registration</span></>
             )}
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
             {step === STEP_OTP
               ? `Enter the 6-digit code sent to ${formData.email}`
-              : 'Create Citizen Account for National Identity Portal Services'}
+              : 'Create System Officer Account for National Identity Portal'}
           </p>
         </div>
 
