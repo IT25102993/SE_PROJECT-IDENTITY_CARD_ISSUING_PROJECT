@@ -175,7 +175,7 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', width: '100%', backgroundColor: '#f1f5f9', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div style={{ display: 'flex', minHeight: '100vh', width: '100%', backgroundColor: '#f1f5f9', fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", color: '#1e293b' }}>
       {/* Sidebar */}
       <aside style={{ width: '260px', backgroundColor: '#0f172a', color: '#ffffff', display: 'flex', flexDirection: 'column', flexShrink: 0, zIndex: 10 }}>
         <div style={{ padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.25rem', fontWeight: 800, borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
@@ -226,7 +226,7 @@ export const AdminDashboard = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <div style={{ position: 'relative' }}>
-                    <input type="text" placeholder="Search application..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ padding: '0.5rem 1rem 0.5rem 2.4rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }} />
+                    <input type="text" placeholder="Search application..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ padding: '0.5rem 1rem 0.5rem 2.4rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', color: '#0f172a', backgroundColor: '#ffffff' }} />
                     <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
                   </div>
                   <button onClick={fetchAdminData} style={{ padding: '0.5rem 1rem', borderRadius: '8px', backgroundColor: '#3b82f6', color: '#ffffff', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}><RefreshCw size={14} /> Refresh</button>
@@ -245,15 +245,26 @@ export const AdminDashboard = () => {
                 <tbody>
                   {dbApplications.map((app, index) => (
                     <tr key={index} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>#{app.application_id || app.id}</td>
-                      <td style={{ padding: '0.85rem 1rem' }}>{app.first_name} {app.last_name}</td>
-                      <td style={{ padding: '0.85rem 1rem' }}>{app.application_type || 'New'}</td>
-                      <td style={{ padding: '0.85rem 1rem' }}>{app.status || 'Pending'}</td>
+                      <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: '#0f172a' }}>#{app.application_id || app.id}</td>
+                      <td style={{ padding: '0.85rem 1rem', color: '#1e293b', fontWeight: 500 }}>{app.first_name} {app.last_name}</td>
+                      <td style={{ padding: '0.85rem 1rem', color: '#475569' }}>{app.application_type || 'New'}</td>
+                      <td style={{ padding: '0.85rem 1rem', color: '#0f172a' }}>
+                        <span style={{
+                          padding: '0.2rem 0.55rem',
+                          borderRadius: '6px',
+                          fontWeight: 600,
+                          fontSize: '0.8rem',
+                          backgroundColor: (app.status === 'Approved' ? '#dcfce7' : app.status === 'Rejected' ? '#fee2e2' : '#fef3c7'),
+                          color: (app.status === 'Approved' ? '#15803d' : app.status === 'Rejected' ? '#b91c1c' : '#b45309')
+                        }}>
+                          {app.status || 'Pending'}
+                        </span>
+                      </td>
                       <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                          <button onClick={() => handleUpdateAppStatus(app.application_id, 'Approved')} style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#10b981', color: '#fff', border: 'none', cursor: 'pointer' }}><CheckCircle size={14} /></button>
-                          <button onClick={() => handleUpdateAppStatus(app.application_id, 'Rejected')} style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer' }}><XCircle size={14} /></button>
-                          <button onClick={() => handleDeleteApp(app.application_id)} style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#64748b', color: '#fff', border: 'none', cursor: 'pointer' }}><Trash2 size={14} /></button>
+                          <button onClick={() => handleUpdateAppStatus(app.application_id, 'Approved')} title="Approve" style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#10b981', color: '#fff', border: 'none', cursor: 'pointer' }}><CheckCircle size={14} /></button>
+                          <button onClick={() => handleUpdateAppStatus(app.application_id, 'Rejected')} title="Reject" style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#ef4444', color: '#fff', border: 'none', cursor: 'pointer' }}><XCircle size={14} /></button>
+                          <button onClick={() => handleDeleteApp(app.application_id)} title="Delete" style={{ padding: '0.35rem 0.6rem', borderRadius: '6px', backgroundColor: '#64748b', color: '#fff', border: 'none', cursor: 'pointer' }}><Trash2 size={14} /></button>
                         </div>
                       </td>
                     </tr>
@@ -283,9 +294,12 @@ export const AdminDashboard = () => {
                 <tbody>
                   {dbUsers.map((u, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '0.85rem 1rem', fontWeight: 600 }}>#{u.user_id}</td>
-                      <td style={{ padding: '0.85rem 1rem' }}>{u.full_name}</td>
-                      <td style={{ padding: '0.85rem 1rem', color: '#475569' }}>{u.email}<br/><small>{u.username}</small></td>
+                      <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: '#0f172a' }}>#{u.user_id}</td>
+                      <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: '#0f172a' }}>{u.full_name}</td>
+                      <td style={{ padding: '0.85rem 1rem' }}>
+                        <div style={{ color: '#0f172a', fontWeight: 500 }}>{u.email}</div>
+                        <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '2px' }}>{u.username}</div>
+                      </td>
                       <td style={{ padding: '0.85rem 1rem' }}>
                         <span style={{ padding: '0.2rem 0.5rem', borderRadius: '6px', backgroundColor: '#e0f2fe', color: '#0369a1', fontWeight: 700, fontSize: '0.8rem' }}>{u.role}</span>
                       </td>
@@ -307,16 +321,16 @@ export const AdminDashboard = () => {
               <form onSubmit={handleRegisterStaff}>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>Full Official Name</label>
-                  <input type="text" placeholder="e.g. Officer Perera" value={staffForm.full_name} onChange={e => setStaffForm({ ...staffForm, full_name: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
+                  <input type="text" placeholder="e.g. Officer Perera" value={staffForm.full_name} onChange={e => setStaffForm({ ...staffForm, full_name: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', color: '#0f172a', backgroundColor: '#ffffff' }} required />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>Username</label>
-                    <input type="text" placeholder="e.g. officer_perera" value={staffForm.username} onChange={e => setStaffForm({ ...staffForm, username: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
+                    <input type="text" placeholder="e.g. officer_perera" value={staffForm.username} onChange={e => setStaffForm({ ...staffForm, username: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', color: '#0f172a', backgroundColor: '#ffffff' }} required />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>Assigned Role</label>
-                    <select value={staffForm.role} onChange={e => setStaffForm({ ...staffForm, role: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff' }}>
+                    <select value={staffForm.role} onChange={e => setStaffForm({ ...staffForm, role: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', color: '#0f172a' }}>
                       <option value="Officer">Officer</option>
                       <option value="Approver">Approver</option>
                       <option value="Admin">Admin</option>
@@ -325,11 +339,11 @@ export const AdminDashboard = () => {
                 </div>
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>Email Address</label>
-                  <input type="email" placeholder="e.g. officer@nexusgov.lk" value={staffForm.email} onChange={e => setStaffForm({ ...staffForm, email: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
+                  <input type="email" placeholder="e.g. officer@nexusgov.lk" value={staffForm.email} onChange={e => setStaffForm({ ...staffForm, email: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', color: '#0f172a', backgroundColor: '#ffffff' }} required />
                 </div>
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.35rem' }}>Initial Password</label>
-                  <input type="password" placeholder="••••••••••••" value={staffForm.password} onChange={e => setStaffForm({ ...staffForm, password: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
+                  <input type="password" placeholder="••••••••••••" value={staffForm.password} onChange={e => setStaffForm({ ...staffForm, password: e.target.value })} style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid #cbd5e1', color: '#0f172a', backgroundColor: '#ffffff' }} required />
                 </div>
                 <button type="submit" style={{ width: '100%', padding: '0.85rem', borderRadius: '8px', backgroundColor: '#3b82f6', color: '#ffffff', border: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                   <UserPlus size={18} /> Register Staff Account
@@ -343,17 +357,17 @@ export const AdminDashboard = () => {
       {/* Edit Role Modal Overlay */}
       {editingUser && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div style={{ backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', width: '400px' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 700 }}>Edit User Role</h3>
-            <p style={{ marginBottom: '1rem', color: '#475569' }}>User: <strong>{editingUser.username}</strong></p>
-            <select value={newRole} onChange={(e) => setNewRole(e.target.value)} style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '1.5rem' }}>
+          <div style={{ backgroundColor: '#ffffff', color: '#0f172a', padding: '2rem', borderRadius: '12px', width: '400px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Edit User Role</h3>
+            <p style={{ marginBottom: '1rem', color: '#475569' }}>User: <strong style={{ color: '#0f172a' }}>{editingUser.username}</strong></p>
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value)} style={{ width: '100%', padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '1.5rem', color: '#0f172a', backgroundColor: '#ffffff' }}>
               <option value="Officer">Officer</option>
               <option value="Approver">Approver</option>
               <option value="Admin">Admin</option>
             </select>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
               <button onClick={() => setEditingUser(null)} style={{ padding: '0.65rem 1.2rem', borderRadius: '8px', backgroundColor: '#e2e8f0', border: 'none', cursor: 'pointer', color: '#475569', fontWeight: 600 }}>Cancel</button>
-              <button onClick={handleUpdateRole} style={{ padding: '0.65rem 1.2rem', borderRadius: '8px', backgroundColor: '#3b82f6', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Save Role</button>
+              <button onClick={handleUpdateRole} style={{ padding: '0.65rem 1.2rem', borderRadius: '8px', backgroundColor: '#3b82f6', color: '#ffffff', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Save Role</button>
             </div>
           </div>
         </div>
