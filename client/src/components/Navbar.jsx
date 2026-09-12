@@ -184,7 +184,7 @@ export const Navbar = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
+                  background: 'var(--bg-nested)',
                   border: `1px solid ${currentRole.color}`,
                   borderRadius: '20px',
                   padding: '0.35rem 0.85rem',
