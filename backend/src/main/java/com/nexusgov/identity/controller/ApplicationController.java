@@ -3,13 +3,11 @@ package com.nexusgov.identity.controller;
 import com.nexusgov.identity.dto.ApplicationDtos;
 import com.nexusgov.identity.model.User;
 import com.nexusgov.identity.service.ApplicationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +18,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/applications")
-@RequiredArgsConstructor
 public class ApplicationController {
 
     private final ApplicationService applicationService;
+
+    public ApplicationController(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     // ── GET /api/applications?search=... ─────────────────────────────────────
 
