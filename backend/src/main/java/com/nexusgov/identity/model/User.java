@@ -1,11 +1,6 @@
 package com.nexusgov.identity.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
 
 /**
@@ -14,10 +9,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class User {
 
     @Id
@@ -44,12 +35,74 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public User() {}
+
+    public User(Long userId, String username, String passwordHash, String fullName, String email, UserRole role, LocalDateTime createdAt) {
+        this.userId = userId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
     public enum UserRole {
         Admin, Officer, Approver
+    }
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long userId;
+        private String username;
+        private String passwordHash;
+        private String fullName;
+        private String email;
+        private UserRole role;
+        private LocalDateTime createdAt;
+
+        public Builder userId(Long userId) { this.userId = userId; return this; }
+        public Builder username(String username) { this.username = username; return this; }
+        public Builder passwordHash(String passwordHash) { this.passwordHash = passwordHash; return this; }
+        public Builder fullName(String fullName) { this.fullName = fullName; return this; }
+        public Builder email(String email) { this.email = email; return this; }
+        public Builder role(UserRole role) { this.role = role; return this; }
+        public Builder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+
+        public User build() {
+            return new User(userId, username, passwordHash, fullName, email, role, createdAt);
+        }
     }
 }
