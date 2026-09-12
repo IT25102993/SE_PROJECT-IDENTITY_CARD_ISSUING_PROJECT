@@ -43,9 +43,21 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
 
+  --bg-surface: #0e1524;
+  --bg-surface-hover: #172136;
+  --bg-table-header: rgba(255, 255, 255, 0.03);
+  --bg-table-row-hover: rgba(59, 130, 246, 0.06);
+  --input-bg: rgba(15, 23, 42, 0.6);
+  --input-border: rgba(255, 255, 255, 0.12);
+
   --font-main: 'Poppins', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-sinhala: 'Noto Sans Sinhala', serif;
+
+  /* Nested surface/panel bg (used for inset panels inside cards) */
+  --bg-nested: rgba(0, 0, 0, 0.2);
+  --bg-nested-heavy: rgba(0, 0, 0, 0.3);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.8);
 }
 
 /* Light Theme Overrides */
@@ -55,9 +67,16 @@ body.light-theme {
   --bg-card: rgba(255, 255, 255, 0.85);
   --bg-card-hover: rgba(241, 245, 249, 0.95);
   --bg-glass: rgba(255, 255, 255, 0.75);
-  --bg-glass-heavy: rgba(255, 255, 255, 0.92);
+  --bg-glass-heavy: rgba(255, 255, 255, 0.95);
 
-  --border-color: rgba(0, 0, 0, 0.08);
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f1f5f9;
+  --bg-table-header: #f8fafc;
+  --bg-table-row-hover: rgba(59, 130, 246, 0.04);
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+
+  --border-color: rgba(0, 0, 0, 0.1);
   --border-glow: rgba(59, 130, 246, 0.2);
 
   --text-primary: #0f172a;
@@ -69,6 +88,15 @@ body.light-theme {
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+
+  /* Button light-mode overrides */
+  --btn-secondary-bg: rgba(15, 23, 42, 0.06);
+  --btn-secondary-hover: rgba(15, 23, 42, 0.1);
+
+  /* Light mode nested surface overrides */
+  --bg-nested: rgba(15, 23, 42, 0.04);
+  --bg-nested-heavy: rgba(15, 23, 42, 0.06);
+  --bg-modal-overlay: rgba(15, 23, 42, 0.65);
 }
 
 /* Base Styles */
@@ -165,13 +193,13 @@ a:hover {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--btn-secondary-bg, rgba(255, 255, 255, 0.06));
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--btn-secondary-hover, rgba(255, 255, 255, 0.12));
   border-color: var(--accent-primary);
   color: var(--text-primary);
 }
@@ -550,7 +578,7 @@ body.light-theme .custom-table th {
 }
 
 .custom-table tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--bg-table-row-hover);
 }
 
 @media (max-width: 768px) {
