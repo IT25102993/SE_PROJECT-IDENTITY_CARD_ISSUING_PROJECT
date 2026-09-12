@@ -1,11 +1,6 @@
 package com.nexusgov.identity.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
 
 /**
@@ -13,10 +8,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "applications")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Application {
 
     @Id
@@ -49,6 +40,21 @@ public class Application {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public Application() {}
+
+    public Application(Long applicationId, Applicant applicant, ApplicationType applicationType,
+                       ApplicationStatus status, User processedBy, String remarks,
+                       LocalDateTime submittedAt, LocalDateTime updatedAt) {
+        this.applicationId = applicationId;
+        this.applicant = applicant;
+        this.applicationType = applicationType;
+        this.status = status;
+        this.processedBy = processedBy;
+        this.remarks = remarks;
+        this.submittedAt = submittedAt;
+        this.updatedAt = updatedAt;
+    }
+
     @PrePersist
     protected void onCreate() {
         submittedAt = LocalDateTime.now();
@@ -67,5 +73,58 @@ public class Application {
 
     public enum ApplicationStatus {
         Pending, Approved, Rejected, Processing, Printed, Issued
+    }
+
+    public Long getApplicationId() { return applicationId; }
+    public void setApplicationId(Long applicationId) { this.applicationId = applicationId; }
+
+    public Applicant getApplicant() { return applicant; }
+    public void setApplicant(Applicant applicant) { this.applicant = applicant; }
+
+    public ApplicationType getApplicationType() { return applicationType; }
+    public void setApplicationType(ApplicationType applicationType) { this.applicationType = applicationType; }
+
+    public ApplicationStatus getStatus() { return status; }
+    public void setStatus(ApplicationStatus status) { this.status = status; }
+
+    public User getProcessedBy() { return processedBy; }
+    public void setProcessedBy(User processedBy) { this.processedBy = processedBy; }
+
+    public String getRemarks() { return remarks; }
+    public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public LocalDateTime getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long applicationId;
+        private Applicant applicant;
+        private ApplicationType applicationType;
+        private ApplicationStatus status;
+        private User processedBy;
+        private String remarks;
+        private LocalDateTime submittedAt;
+        private LocalDateTime updatedAt;
+
+        public Builder applicationId(Long applicationId) { this.applicationId = applicationId; return this; }
+        public Builder applicant(Applicant applicant) { this.applicant = applicant; return this; }
+        public Builder applicationType(ApplicationType applicationType) { this.applicationType = applicationType; return this; }
+        public Builder status(ApplicationStatus status) { this.status = status; return this; }
+        public Builder processedBy(User processedBy) { this.processedBy = processedBy; return this; }
+        public Builder remarks(String remarks) { this.remarks = remarks; return this; }
+        public Builder submittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; return this; }
+        public Builder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+
+        public Application build() {
+            return new Application(applicationId, applicant, applicationType, status, processedBy, remarks, submittedAt, updatedAt);
+        }
     }
 }
