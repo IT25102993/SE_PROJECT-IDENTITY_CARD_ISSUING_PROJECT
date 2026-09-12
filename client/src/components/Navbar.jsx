@@ -49,6 +49,11 @@ export const Navbar = () => {
   const currentRole = getRoleBadge();
   const RoleIcon = currentRole.icon;
 
+  const userRoleName = (user?.role ? user.role.toLowerCase() : role || '').toLowerCase();
+  const isAdminRole = userRoleName === 'admin';
+  const isOfficerRole = userRoleName === 'officer';
+  const isApproverRole = userRoleName === 'approver';
+
   return (
     <nav
       style={{
@@ -307,8 +312,19 @@ export const Navbar = () => {
           <NavLink to="/" onClick={() => setMobileOpen(false)}>Home</NavLink>
           <NavLink to="/apply" onClick={() => setMobileOpen(false)}>Apply Online</NavLink>
           <NavLink to="/track" onClick={() => setMobileOpen(false)}>Track Status</NavLink>
-          <NavLink to="/officer" onClick={() => setMobileOpen(false)}>Verification Portal</NavLink>
-          <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
+          {(isOfficerRole || isAdminRole) && (
+            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>Officer Portal</NavLink>
+          )}
+          {(isApproverRole || isAdminRole) && (
+            <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Portal</NavLink>
+          )}
+          {isAdminRole && (
+            <NavLink to="/admin" onClick={() => setMobileOpen(false)}>Admin Portal</NavLink>
+          )}
+          {(userRoleName === 'printer' || isAdminRole) && (
+            <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
+          )}
+          <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
 
           {isAuthenticated ? (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
