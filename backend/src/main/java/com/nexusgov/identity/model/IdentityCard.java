@@ -38,7 +38,7 @@ public class IdentityCard {
     private CardStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "issued_by")
+    @JoinColumn(name = "issued_by", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User issuedBy;
 
     @Column(name = "created_at", nullable = false, updatable = false)
