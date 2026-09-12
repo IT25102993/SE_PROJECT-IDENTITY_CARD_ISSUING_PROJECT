@@ -1,7 +1,7 @@
 package com.nexusgov.identity.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,15 @@ import jakarta.mail.internet.MimeMessage;
  * Mirrors Node.js sendOtpEmail in mailer.js.
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class EmailService {
 
+    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
+
     private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     /**
      * Send an OTP verification email with HTML styling.
