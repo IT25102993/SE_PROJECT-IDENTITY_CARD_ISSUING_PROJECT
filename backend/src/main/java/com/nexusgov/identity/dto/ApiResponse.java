@@ -1,32 +1,40 @@
 package com.nexusgov.identity.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
  * Generic API response wrapper — mirrors the Node.js { success, message, ... } pattern.
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ApiResponse<T> {
 
     private boolean success;
     private String message;
     private T data;
 
+    public ApiResponse() {}
+
+    public ApiResponse(boolean success, String message, T data) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
+    }
+
+    public boolean isSuccess() { return success; }
+    public void setSuccess(boolean success) { this.success = success; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public T getData() { return data; }
+    public void setData(T data) { this.data = data; }
+
     public static <T> ApiResponse<T> ok(String message, T data) {
-        return ApiResponse.<T>builder().success(true).message(message).data(data).build();
+        return new ApiResponse<>(true, message, data);
     }
 
     public static <T> ApiResponse<T> ok(String message) {
-        return ApiResponse.<T>builder().success(true).message(message).build();
+        return new ApiResponse<>(true, message, null);
     }
 
     public static <T> ApiResponse<T> error(String message) {
-        return ApiResponse.<T>builder().success(false).message(message).build();
+        return new ApiResponse<>(false, message, null);
     }
 }
