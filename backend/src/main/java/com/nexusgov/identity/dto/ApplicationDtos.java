@@ -1,55 +1,55 @@
 package com.nexusgov.identity.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import java.util.Map;
-
+/**
+ * All application-related DTOs matching the Node.js request/response shapes.
+ */
 public class ApplicationDtos {
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class ApplicationRequest {
-        @NotBlank(message = "First name is required")
         private String first_name;
-
-        @NotBlank(message = "Last name is required")
         private String last_name;
-
-        @NotBlank(message = "Date of birth is required")
         private String dob;
-
-        @NotBlank(message = "Gender is required")
         private String gender;
-
-        @NotBlank(message = "Address is required")
         private String address;
-
-        @NotBlank(message = "Phone number is required")
         private String phone_number;
-
         private String email;
-
         private String application_type = "New";
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class StatusUpdateRequest {
         private String status;
         private String remarks;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class ApproveRequest {
         private String remarks = "Application approved.";
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class RejectRequest {
         private String remarks = "Application rejected.";
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ApplicationDto {
         private Long application_id;
         private String tracking_id;
