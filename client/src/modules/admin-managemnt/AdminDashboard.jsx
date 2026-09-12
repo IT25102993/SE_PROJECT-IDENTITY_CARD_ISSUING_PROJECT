@@ -19,6 +19,7 @@ import {
   Sun,
   Home,
   ShieldCheck,
+  UserCheck,
   CheckCircle2,
   Clock,
   AlertCircle
@@ -323,6 +324,53 @@ export const AdminDashboard = () => {
           >
             <UserPlus size={18} /> Register Staff
           </button>
+
+          {/* Direct Staff Oversight Links for Admin */}
+          <div style={{ margin: '0.65rem 0 0.35rem 0', padding: '0 0.5rem', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+            Staff Oversight
+          </div>
+
+          <NavLink
+            to="/officer?view=officer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.85rem',
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              color: 'var(--accent-emerald)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <UserCheck size={18} /> Officer Panel
+          </NavLink>
+
+          <NavLink
+            to="/officer?view=approver"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.85rem',
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(6, 182, 212, 0.25)',
+              backgroundColor: 'rgba(6, 182, 212, 0.08)',
+              color: 'var(--accent-cyan)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <ShieldCheck size={18} /> Approver Panel
+          </NavLink>
 
           <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
             <NavLink
@@ -685,15 +733,18 @@ export const AdminDashboard = () => {
                               backgroundColor:
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.15)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.15)' :
-                                'rgba(16, 185, 129, 0.15)',
+                                u.role === 'Officer' ? 'rgba(16, 185, 129, 0.15)' :
+                                'rgba(245, 158, 11, 0.15)',
                               color:
                                 u.role === 'Admin' ? 'var(--accent-purple)' :
                                 u.role === 'Approver' ? 'var(--accent-cyan)' :
-                                'var(--accent-emerald)',
+                                u.role === 'Officer' ? 'var(--accent-emerald)' :
+                                'var(--accent-amber)',
                               border: `1px solid ${
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.3)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.3)' :
-                                'rgba(16, 185, 129, 0.3)'
+                                u.role === 'Officer' ? 'rgba(16, 185, 129, 0.3)' :
+                                'rgba(245, 158, 11, 0.3)'
                               }`
                             }}
                           >
@@ -957,9 +1008,10 @@ export const AdminDashboard = () => {
                 fontSize: '0.92rem'
               }}
             >
-              <option value="Officer">Officer</option>
-              <option value="Approver">Approver</option>
-              <option value="Admin">Admin</option>
+              <option value="Citizen">Citizen (Applicant)</option>
+              <option value="Officer">Officer (Verification)</option>
+              <option value="Approver">Approver (Senior Officer)</option>
+              <option value="Admin">Admin (System Administrator)</option>
             </select>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>

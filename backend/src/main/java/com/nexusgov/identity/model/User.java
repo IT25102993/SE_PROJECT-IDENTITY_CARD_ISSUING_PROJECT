@@ -55,7 +55,7 @@ public class User {
     }
 
     public enum UserRole {
-        Admin, Officer, Approver
+        Admin, Officer, Approver, Citizen
     }
 
     public Long getUserId() { return userId; }

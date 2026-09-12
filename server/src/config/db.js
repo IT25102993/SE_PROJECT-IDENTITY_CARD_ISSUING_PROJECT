@@ -44,6 +44,15 @@ export const inMemoryDb = {
       full_name: 'Senior Approver Jayawardena',
       role: 'Approver',
       created_at: new Date().toISOString()
+    },
+    {
+      user_id: 5,
+      username: 'Citizen_Thilina',
+      email: 'spokenengadamin@gmail.com',
+      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      full_name: 'Thilina Citizen',
+      role: 'Citizen',
+      created_at: new Date().toISOString()
     }
   ],
   applications: [
@@ -100,7 +109,7 @@ export const initDb = async () => {
         \`password_hash\` VARCHAR(255) NOT NULL,
         \`full_name\` VARCHAR(100) NOT NULL,
         \`email\` VARCHAR(100) NOT NULL UNIQUE,
-        \`role\` ENUM('Admin', 'Officer', 'Approver') NOT NULL DEFAULT 'Officer',
+        \`role\` ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen',
         \`created_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`user_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
@@ -143,6 +152,13 @@ export const initDb = async () => {
     `;
 
     await pool.query(createTablesSQL);
+
+    // Safely update existing table column ENUM to include Citizen
+    try {
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+    } catch (alterErr) {
+      // Column might already be up to date
+    }
 
     // Seed Admin User thilinasakalasooriya@gmail.com if not exists
     await pool.query(`

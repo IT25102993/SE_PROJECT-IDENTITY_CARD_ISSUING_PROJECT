@@ -44,7 +44,7 @@ export const RegisterPage = () => {
   const [step, setStep] = useState(STEP_FORM);
 
   const [formData, setFormData] = useState({
-    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Officer'
+    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Citizen'
   });
   const [showPassword, setShowPassword]     = useState(false);
   const [errorMessage, setErrorMessage]     = useState('');
@@ -151,13 +151,13 @@ export const RegisterPage = () => {
       if (!vRes.ok || !vData.success) throw new Error(vData.message || 'OTP verification failed.');
 
       const { full_name, username, email, password } = formData;
-      const newUser = await registerUser({ full_name, username, email, password, role: 'Officer' });
+      const newUser = await registerUser({ full_name, username, email, password, role: 'Citizen' });
 
-      setRole('officer');
+      setRole('citizen');
 
       triggerLoading({
-        message: 'Account Created Successfully!',
-        subtext: `Welcome aboard, ${newUser.full_name}`,
+        message: 'Citizen Account Created Successfully!',
+        subtext: `Welcome to NexusGov, ${newUser.full_name}`,
         duration: 1500,
         onComplete: () => {
           addToast(`Registration complete! Logged in as ${newUser.username}`, 'success');
@@ -218,10 +218,10 @@ export const RegisterPage = () => {
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{
             width: '56px', height: '56px', borderRadius: '16px',
-            background: step === STEP_OTP ? 'var(--gradient-primary)' : 'var(--gradient-emerald)',
+            background: step === STEP_OTP ? 'var(--gradient-primary)' : 'var(--gradient-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: '#ffffff', margin: '0 auto 1rem auto',
-            boxShadow: step === STEP_OTP ? '0 8px 24px rgba(59,130,246,0.4)' : '0 8px 24px rgba(16,185,129,0.4)',
+            boxShadow: '0 8px 24px rgba(59,130,246,0.35)',
             transition: 'all 0.4s ease'
           }}>
             {step === STEP_OTP ? <ShieldCheck size={28} /> : <UserPlus size={28} />}
@@ -230,14 +230,27 @@ export const RegisterPage = () => {
             {step === STEP_OTP ? (
               <>Email <span style={{ color: 'var(--accent-primary)' }}>Verification</span></>
             ) : (
-              <>Officer <span style={{ color: 'var(--accent-emerald)' }}>Registration</span></>
+              <>Citizen <span style={{ color: 'var(--accent-primary)' }}>Registration</span></>
             )}
           </h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
             {step === STEP_OTP
               ? `Enter the 6-digit code sent to ${formData.email}`
-              : 'Create System Officer Account for National Identity Portal'}
+              : 'Create Official Citizen Account for National Identity Portal'}
           </p>
+
+          <div style={{
+            marginTop: '0.85rem',
+            padding: '0.5rem 0.75rem',
+            background: 'rgba(59, 130, 246, 0.08)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '8px',
+            fontSize: '0.78rem',
+            color: 'var(--text-muted)',
+            lineHeight: 1.4
+          }}>
+            ℹ️ <strong>Official Notice:</strong> Public registration is strictly for <strong>Citizen</strong> applicants. Staff accounts (Admin, Officer, Approver) are provisioned exclusively through the internal Admin Console.
+          </div>
         </div>
 
         <StepDots />
@@ -327,7 +340,7 @@ export const RegisterPage = () => {
               </div>
             )}
 
-            <button type="submit" className="btn btn-emerald" disabled={sendingOtp}
+            <button type="submit" className="btn btn-primary" disabled={sendingOtp}
               style={{ width: '100%', padding: '0.875rem', fontSize: '1rem', fontWeight: 700, gap: '0.6rem', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
               {sendingOtp ? <span>Sending Code...</span> : <><Send size={18} /> Send Verification Code</>}
             </button>
@@ -384,7 +397,7 @@ export const RegisterPage = () => {
               style={{ width: '100%', padding: '0.875rem', fontSize: '1rem', fontWeight: 700, gap: '0.6rem', marginBottom: '1rem' }}>
               {(verifyingOtp || authLoading)
                 ? <span>Verifying & Registering...</span>
-                : <><ShieldCheck size={20} /> Verify & Complete Registration</>}
+                : <><ShieldCheck size={20} /> Verify & Complete Citizen Registration</>}
             </button>
 
             <button type="button" onClick={() => { setStep(STEP_FORM); setOtp(''); setErrorMessage(''); }}

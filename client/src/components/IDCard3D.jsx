@@ -124,7 +124,8 @@ export const IDCard3D = ({ cardData }) => {
                 alt="Sri Lanka Emblem"
                 className="nic-emblem"
                 onError={(e) => {
-                  e.target.src = '/images/index/gov_logo.png';
+                  e.target.onerror = null;
+                  e.target.src = '/gov_logo.png';
                 }}
               />
               <div className="nic-header-titles">
@@ -140,7 +141,16 @@ export const IDCard3D = ({ cardData }) => {
               <div className="nic-photo-col">
                 <div className="nic-photo-box">
                   {defaultData.photoUrl ? (
-                    <img src={defaultData.photoUrl} alt="Applicant" />
+                    <img
+                      src={defaultData.photoUrl}
+                      alt="Applicant"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        if (e.target.parentNode) {
+                          e.target.parentNode.innerHTML = '<div style=\"text-align: center; opacity: 0.6\"><svg width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/></svg><div style=\"font-size: 0.6rem; margin-top: 2px\">PHOTO</div></div>';
+                        }
+                      }}
+                    />
                   ) : (
                     <div style={{ textAlign: 'center', opacity: 0.6 }}>
                       <User size={36} />

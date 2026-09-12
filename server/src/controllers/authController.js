@@ -150,7 +150,8 @@ export const register = async (req, res) => {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
-    const validRole = ['Admin', 'Officer', 'Approver'].includes(role) ? role : 'Officer';
+    // Public / default registration is strictly for Citizens
+    const validRole = 'Citizen';
 
     let newUser = null;
 
@@ -169,7 +170,7 @@ export const register = async (req, res) => {
 
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [result.insertId, 'USER_REGISTER', `New user registered: ${username} (${validRole})`]
+        [result.insertId, 'USER_REGISTER', `New citizen registered: ${username} (${validRole})`]
       );
     } else {
       const existing = inMemoryDb.users.find(u => u.username === username || u.email === email);
@@ -226,6 +227,13 @@ export const registerStaff = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Username, email, password, full name, and role are required.'
+      });
+    }
+
+    if (!['Admin', 'Officer', 'Approver'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid staff role. Admin, Officer, and Approver roles are the only roles that can be registered by an Admin.'
       });
     }
 

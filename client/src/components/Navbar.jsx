@@ -137,21 +137,35 @@ export const Navbar = () => {
                 Track Status
               </NavLink>
             </li>
-            {(role === 'officer' || role === 'admin' || role === 'approver' || isAuthenticated) && (
+            {(isOfficerRole || isAdminRole) && (
               <li>
                 <NavLink
-                  to="/officer"
+                  to="/officer?view=officer"
                   style={({ isActive }) => ({
                     color: isActive ? 'var(--accent-emerald)' : 'var(--text-secondary)',
                     fontWeight: isActive ? 600 : 500,
                     fontSize: '0.92rem'
                   })}
                 >
-                  Verification Portal
+                  Officer Portal
                 </NavLink>
               </li>
             )}
-            {(role === 'printer' || role === 'admin') && (
+            {(isApproverRole || isAdminRole) && (
+              <li>
+                <NavLink
+                  to="/officer?view=approver"
+                  style={({ isActive }) => ({
+                    color: isActive ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: '0.92rem'
+                  })}
+                >
+                  Approver Portal
+                </NavLink>
+              </li>
+            )}
+            {(userRoleName === 'printer' || isAdminRole) && (
               <li>
                 <NavLink
                   to="/print-queue"

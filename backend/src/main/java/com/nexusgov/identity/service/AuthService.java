@@ -134,8 +134,7 @@ public class AuthService {
                 "Username or Email address is already registered.", null, null);
         }
 
-        String validRole = List.of("Admin", "Officer", "Approver").contains(req.getRole())
-            ? req.getRole() : "Officer";
+        String validRole = "Citizen";
 
         User user = User.builder()
             .username(req.getUsername())

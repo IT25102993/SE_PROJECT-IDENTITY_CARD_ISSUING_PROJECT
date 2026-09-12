@@ -22,11 +22,11 @@ router.post('/login', login);
 router.get('/me', verifyToken, getMe);
 router.post('/logout', verifyToken, logout);
 
-// Admin staff and user management routes
-router.get('/users', verifyToken, getAllUsers);
-router.post('/register-staff', verifyToken, registerStaff);
-router.patch('/users/:id', verifyToken, updateUser);
-router.delete('/users/:id', verifyToken, deleteUser);
+// Admin staff and user management routes (Only System Administrators can access)
+router.get('/users', verifyToken, requireRole('Admin'), getAllUsers);
+router.post('/register-staff', verifyToken, requireRole('Admin'), registerStaff);
+router.patch('/users/:id', verifyToken, requireRole('Admin'), updateUser);
+router.delete('/users/:id', verifyToken, requireRole('Admin'), deleteUser);
 
 export default router;
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useSearchParams, NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { IDCard3D } from '../../components/IDCard3D';
 import {
   UserCheck,
@@ -14,7 +16,9 @@ import {
   Sparkles,
   RotateCcw,
   ShieldCheck,
-  Check
+  Check,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 
 export const OfficerDashboard = () => {
@@ -30,13 +34,27 @@ export const OfficerDashboard = () => {
     triggerLoading
   } = useApp();
 
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const userRole = (user?.role || role || 'Officer');
+  const isAdmin = userRole.toLowerCase() === 'admin' || role === 'admin';
+  const isApproverUser = userRole.toLowerCase() === 'approver' || role === 'approver';
+  const isOfficerUser = userRole.toLowerCase() === 'officer' || role === 'officer';
+  const isCitizen = userRole.toLowerCase() === 'citizen' && !isAdmin && !isApproverUser && !isOfficerUser;
+
+  const urlView = searchParams.get('view');
+  const currentView = urlView || (isApproverUser ? 'approver' : 'officer');
+  const isApproverMode = currentView === 'approver';
+
   const [activeTab, setActiveTab] = useState('POOL'); // 'POOL' | 'WORKBENCH' | 'ALL'
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedApp, setSelectedApp] = useState(null);
   const [officerComment, setOfficerComment] = useState('');
 
-  const currentOfficer = 'Officer Wickramasinghe';
+  const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
 
   const unassignedPoolApps = applications.filter(
     a => a.status === 'PENDING_VERIFICATION' && (!a.assignedOfficer || a.assignedOfficer === '')
@@ -152,50 +170,137 @@ export const OfficerDashboard = () => {
     });
   };
 
+  const currentOfficer = currentStaffName;
+
+  if (isCitizen) {
+    return (
+      <div style={{ position: 'relative', zIndex: 1, padding: '4rem 1rem' }}>
+        <div className="container" style={{ maxWidth: '640px' }}>
+          <div className="glass-card animate-fade-in" style={{ padding: '2.5rem 2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem', color: 'var(--accent-amber)' }}>
+              <AlertTriangle size={36} />
+            </div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Restricted Staff Portal</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+              The Verification Officer and Senior Approver panels are reserved for authorized government staff. As an applicant, please use the citizen portals below.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <NavLink to="/apply" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+                Apply Online <ArrowRight size={16} />
+              </NavLink>
+              <NavLink to="/track" className="btn btn-secondary" style={{ padding: '0.75rem 1.5rem' }}>
+                Track Application Status
+              </NavLink>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: 'relative', zIndex: 1, padding: '2rem 0 4rem 0' }}>
       <div className="container">
-        {role !== 'officer' && role !== 'admin' && (
-          <div className="glass-card" style={{ padding: '1.25rem 1.5rem', marginBottom: '2rem', borderColor: 'var(--accent-amber)', background: 'rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <AlertTriangle color="var(--accent-amber)" size={24} />
+        {/* Admin Multi-Panel Oversight Switcher */}
+        {isAdmin && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+            marginBottom: '1.75rem',
+            background: 'var(--bg-nested)',
+            padding: '0.85rem 1.25rem',
+            borderRadius: '14px',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            boxShadow: '0 4px 16px rgba(139, 92, 246, 0.08)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: 'rgba(139, 92, 246, 0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--accent-purple)'
+              }}>
+                <ShieldCheck size={18} />
+              </div>
               <div>
-                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Viewing in Citizen Mode</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Switch to Officer Mode to claim and verify jobs.</div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  Administrator Oversight Mode
+                </div>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                  You have full executive clearance to view both Officer and Approver workflows
+                </div>
               </div>
             </div>
-            <button className="btn btn-emerald btn-sm" onClick={() => setRole('officer')}>
-              Switch to Officer Mode
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setSearchParams({ view: 'officer' })}
+                className={`btn btn-sm ${!isApproverMode ? 'btn-emerald' : 'btn-secondary'}`}
+                style={{ borderRadius: '8px', fontSize: '0.82rem', gap: '0.4rem' }}
+              >
+                <UserCheck size={15} /> Officer View
+              </button>
+              <button
+                onClick={() => setSearchParams({ view: 'approver' })}
+                className={`btn btn-sm ${isApproverMode ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ borderRadius: '8px', fontSize: '0.82rem', gap: '0.4rem' }}
+              >
+                <ShieldCheck size={15} /> Approver View
+              </button>
+              <NavLink
+                to="/admin"
+                className="btn btn-secondary btn-sm"
+                style={{ borderRadius: '8px', fontSize: '0.82rem', gap: '0.4rem', border: '1px solid var(--border-color)' }}
+              >
+                Back to Admin Panel
+              </NavLink>
+            </div>
           </div>
         )}
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1.25rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <UserCheck size={32} color="var(--accent-emerald)" />
-              <h1 style={{ fontSize: '2.1rem', fontWeight: 800 }}>Verification Officer Portal</h1>
+              {isApproverMode ? (
+                <ShieldCheck size={32} color="var(--accent-cyan)" />
+              ) : (
+                <UserCheck size={32} color="var(--accent-emerald)" />
+              )}
+              <h1 style={{ fontSize: '2.1rem', fontWeight: 800 }}>
+                {isApproverMode ? 'Senior Approver Portal' : 'Verification Officer Portal'}
+              </h1>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.2rem' }}>
-              Central Verification Job Pool & Biometric Validation Workbench.
+              {isApproverMode
+                ? 'Executive Authorization, Biometric Verification Sign-Off & Official Card Issuance.'
+                : 'Central Verification Job Pool & Biometric Validation Workbench.'}
             </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
             <div className="glass-card" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-emerald)', boxShadow: '0 0 8px var(--accent-emerald)' }} />
+              <div style={{
+                width: '10px', height: '10px', borderRadius: '50%',
+                background: isApproverMode ? 'var(--accent-cyan)' : 'var(--accent-emerald)',
+                boxShadow: `0 0 8px ${isApproverMode ? 'var(--accent-cyan)' : 'var(--accent-emerald)'}`
+              }} />
               <div>
                 <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{currentOfficer}</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Unit #04 • Senior Registrar</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  {isAdmin ? 'System Administrator (Executive Oversight)' : isApproverMode ? 'Executive Sign-Off Authority' : 'Unit #04 • Senior Registrar'}
+                </div>
               </div>
             </div>
 
             <button
-              className="btn btn-emerald btn-lg"
+              className={`btn ${isApproverMode ? 'btn-primary' : 'btn-emerald'} btn-lg`}
               onClick={handleClaimAndReviewNext}
               disabled={unassignedPoolApps.length === 0}
             >
-              <Sparkles size={18} /> Claim Next Priority Job
+              <Sparkles size={18} /> {isApproverMode ? 'Review Next for Approval' : 'Claim Next Priority Job'}
             </button>
           </div>
         </div>
