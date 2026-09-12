@@ -55,6 +55,7 @@ export const OfficerDashboard = () => {
   const [officerComment, setOfficerComment] = useState('');
 
   const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
+  const currentOfficer = currentStaffName;
 
   const unassignedPoolApps = applications.filter(
     a => a.status === 'PENDING_VERIFICATION' && (!a.assignedOfficer || a.assignedOfficer === '')
@@ -169,8 +170,6 @@ export const OfficerDashboard = () => {
       }
     });
   };
-
-  const currentOfficer = currentStaffName;
 
   if (isCitizen) {
     return (
