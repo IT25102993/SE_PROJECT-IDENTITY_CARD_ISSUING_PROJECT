@@ -28,7 +28,7 @@ public class Application {
     private ApplicationStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "processed_by")
+    @JoinColumn(name = "processed_by", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User processedBy;
 
     @Column(name = "remarks", columnDefinition = "TEXT")
