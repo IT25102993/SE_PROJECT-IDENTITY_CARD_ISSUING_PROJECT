@@ -3,7 +3,6 @@ package com.nexusgov.identity.controller;
 import com.nexusgov.identity.dto.AuthDtos;
 import com.nexusgov.identity.model.User;
 import com.nexusgov.identity.service.AuthService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,10 +18,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     // ── POST /api/auth/send-otp ───────────────────────────────────────────────
 
