@@ -48,7 +48,7 @@ export const RegisterPage = () => {
   const [step, setStep] = useState(STEP_FORM);
 
   const [formData, setFormData] = useState({
-    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Officer'
+    full_name: '', username: '', email: '', password: '', confirm_password: '', role: 'Citizen'
   });
   const [showPassword, setShowPassword]         = useState(false);
   const [errorMessage, setErrorMessage]         = useState('');
@@ -154,18 +154,18 @@ export const RegisterPage = () => {
       if (!vRes.ok || !vData.success) throw new Error(vData.message || 'OTP verification failed.');
 
       // Register
-      const { full_name, username, email, password, role } = formData;
-      const newUser = await registerUser({ full_name, username, email, password, role });
+      const { full_name, username, email, password } = formData;
+      const newUser = await registerUser({ full_name, username, email, password, role: 'Citizen' });
 
-      if (newUser.role) setRole(newUser.role.toLowerCase());
+      setRole('citizen');
 
       triggerLoading({
-        message: 'Account Created Successfully!',
-        subtext: `Welcome aboard, ${newUser.full_name} (${newUser.role})`,
+        message: 'Citizen Account Created Successfully!',
+        subtext: `Welcome to NexusGov, ${newUser.full_name}`,
         duration: 1500,
         onComplete: () => {
           addToast(`Registration complete! Logged in as ${newUser.username}`, 'success');
-          navigate('/officer');
+          navigate('/');
         }
       });
     } catch (err) {
@@ -267,30 +267,15 @@ export const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Username + Role */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="reg-username">Username</label>
-                <div style={{ position: 'relative' }}>
-                  <input id="reg-username" type="text" name="username" className="form-control"
-                    placeholder="e.g. officer_wick"
-                    value={formData.username} onChange={handleChange}
-                    style={inputStyle} required />
-                  <IdCard size={18} style={iconStyle} />
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label" htmlFor="reg-role">Assigned Role</label>
-                <div style={{ position: 'relative' }}>
-                  <select id="reg-role" name="role" className="form-select"
-                    value={formData.role} onChange={handleChange}
-                    style={inputStyle}>
-                    <option value="Officer">Officer</option>
-                    <option value="Approver">Approver</option>
-                    <option value="Admin">Admin</option>
-                  </select>
-                  <Briefcase size={18} style={iconStyle} />
-                </div>
+            {/* Username */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reg-username">Username</label>
+              <div style={{ position: 'relative' }}>
+                <input id="reg-username" type="text" name="username" className="form-control"
+                  placeholder="e.g. thilina_citizen"
+                  value={formData.username} onChange={handleChange}
+                  style={inputStyle} required />
+                <IdCard size={18} style={iconStyle} />
               </div>
             </div>
 
