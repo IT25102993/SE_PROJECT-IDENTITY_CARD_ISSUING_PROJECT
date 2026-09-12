@@ -6,8 +6,8 @@ import com.nexusgov.identity.model.User;
 import com.nexusgov.identity.repository.AuditLogRepository;
 import com.nexusgov.identity.repository.UserRepository;
 import com.nexusgov.identity.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +20,9 @@ import java.util.Optional;
  * This is the Java equivalent of authController.js.
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final AuditLogRepository auditLogRepository;
@@ -30,6 +30,20 @@ public class AuthService {
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+
+    public AuthService(UserRepository userRepository,
+                       AuditLogRepository auditLogRepository,
+                       OtpService otpService,
+                       EmailService emailService,
+                       JwtUtil jwtUtil,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.auditLogRepository = auditLogRepository;
+        this.otpService = otpService;
+        this.emailService = emailService;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // ── Password Validation ──────────────────────────────────────────────────
 
