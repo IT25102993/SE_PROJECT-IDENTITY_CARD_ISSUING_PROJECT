@@ -1,11 +1,6 @@
 package com.nexusgov.identity.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
 import java.time.LocalDateTime;
 
 /**
@@ -13,10 +8,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "audit_logs")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AuditLog {
 
     @Id
@@ -37,8 +28,58 @@ public class AuditLog {
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp;
 
+    public AuditLog() {}
+
+    public AuditLog(Long logId, User user, String action, String details, LocalDateTime timestamp) {
+        this.logId = logId;
+        this.user = user;
+        this.action = action;
+        this.details = details;
+        this.timestamp = timestamp;
+    }
+
     @PrePersist
     protected void onCreate() {
-        timestamp = LocalDateTime.now();
+        if (timestamp == null) {
+            timestamp = LocalDateTime.now();
+        }
+    }
+
+    public Long getLogId() { return logId; }
+    public void setLogId(Long logId) { this.logId = logId; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
+
+    public String getDetails() { return details; }
+    public void setDetails(String details) { this.details = details; }
+
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long logId;
+        private User user;
+        private String action;
+        private String details;
+        private LocalDateTime timestamp;
+
+        public Builder logId(Long logId) { this.logId = logId; return this; }
+        public Builder user(User user) { this.user = user; return this; }
+        public Builder action(String action) { this.action = action; return this; }
+        public Builder details(String details) { this.details = details; return this; }
+        public Builder timestamp(LocalDateTime timestamp) { this.timestamp = timestamp; return this; }
+
+        public AuditLog build() {
+            return new AuditLog(logId, user, action, details, timestamp);
+        }
     }
 }
