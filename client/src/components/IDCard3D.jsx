@@ -120,11 +120,11 @@ export const IDCard3D = ({ cardData }) => {
             {/* Header */}
             <div className="nic-header">
               <img
-                src="/images/index/gov_logo.png"
+                src="/images/gov_logo.png"
                 alt="Sri Lanka Emblem"
                 className="nic-emblem"
                 onError={(e) => {
-                  e.target.style.opacity = '0.5';
+                  e.target.src = '/images/index/gov_logo.png';
                 }}
               />
               <div className="nic-header-titles">
@@ -159,7 +159,7 @@ export const IDCard3D = ({ cardData }) => {
               {/* Details */}
               <div className="nic-details-col">
                 <div className="nic-field-row">
-                  <span className="nic-label">අංකය / No:</span>
+                  <span className="nic-label">අංකය / No</span>
                   <span>:</span>
                   <span className="nic-value nic-id-number">
                     {defaultData.nicNumber || 'PENDING'}
@@ -167,7 +167,7 @@ export const IDCard3D = ({ cardData }) => {
                 </div>
 
                 <div className="nic-field-row">
-                  <span className="nic-label">නම:</span>
+                  <span className="nic-label">නම</span>
                   <span>:</span>
                   <span className="nic-value" style={{ fontFamily: 'var(--font-sinhala)' }}>
                     {defaultData.fullNameSi}
@@ -175,19 +175,19 @@ export const IDCard3D = ({ cardData }) => {
                 </div>
 
                 <div className="nic-field-row">
-                  <span className="nic-label">பெயர்:</span>
+                  <span className="nic-label">பெயர்</span>
                   <span>:</span>
                   <span className="nic-value">{defaultData.fullNameTa}</span>
                 </div>
 
                 <div className="nic-field-row">
-                  <span className="nic-label">Name:</span>
+                  <span className="nic-label">Name</span>
                   <span>:</span>
                   <span className="nic-value">{defaultData.fullNameEn}</span>
                 </div>
 
                 <div className="nic-field-row">
-                  <span className="nic-label">Sex:</span>
+                  <span className="nic-label">Sex</span>
                   <span>:</span>
                   <span className="nic-value">
                     {defaultData.gender === 'Male' ? 'පුරුෂ / Male' : 'ස්ත්‍රී / Female'}
@@ -195,7 +195,7 @@ export const IDCard3D = ({ cardData }) => {
                 </div>
 
                 <div className="nic-field-row">
-                  <span className="nic-label">DOB:</span>
+                  <span className="nic-label">DOB</span>
                   <span>:</span>
                   <span className="nic-value">{defaultData.dob}</span>
                 </div>

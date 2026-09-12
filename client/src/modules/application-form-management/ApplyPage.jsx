@@ -23,6 +23,12 @@ const NAME_DICTIONARY_TA = {
   "sakalasooriya": "சகலசூரிய",
   "thilina sakalasooriya": "திலீன சகலசூரிய",
   "තිලිණ සකළසූරිය": "திலீன சகலசூரிய",
+  "raluwage": "ராலுவகே",
+  "imasha": "இமாஷா",
+  "prabhani": "பிரபானி",
+  "raluwage imasha prabhani": "ராலுவகே இமாஷா பிரபானி",
+  "රළුවගේ ඉමාෂා ප්‍රභානී": "ராலுவகே இமாஷா பிரபானி",
+  "රලුවගේ ඉමාෂා ප්‍රභානි": "ராலுவகே இமாஷா பிரபானி",
   "kavindi": "காவிந்தி",
   "perera": "பெரேரா",
   "kavindi perera": "காவிந்தி பெரேரா",
@@ -35,18 +41,28 @@ const NAME_DICTIONARY_TA = {
   "kamal": "கமால்",
   "sunil": "சுனில்",
   "bandara": "பண்டார",
-  "wickramasinghe": "விக்ரමසිங்க",
+  "wickramasinghe": "விக்ரமசிங்க",
   "jayawardena": "ஜயவர்தன",
-  "fernando": "பெර්නාண்டෝ",
+  "fernando": "பெர்னாண்டோ",
   "silva": "சில்வா",
   "de silva": "டி சில்வா",
-  "rajapaksa": "ராஜபக்ஷ"
+  "rajapaksa": "ராஜபக்ஷ",
+  "kasun": "கசுன்",
+  "sandun": "சந்துன்",
+  "pradeep": "பிரதீப்",
+  "hasitha": "ஹசித",
+  "dinesh": "தினேஷ்",
+  "suresh": "சுரேஷ்"
 };
 
 const NAME_DICTIONARY_SI = {
   "thilina": "තිලිණ",
   "sakalasooriya": "සකළසූරිය",
   "thilina sakalasooriya": "තිලිණ සකළසූරිය",
+  "raluwage": "රළුවගේ",
+  "imasha": "ඉමාෂා",
+  "prabhani": "ප්‍රභානී",
+  "raluwage imasha prabhani": "රළුවගේ ඉමාෂා ප්‍රභානී",
   "kavindi": "කාවින්දි",
   "perera": "පෙරේරා",
   "kavindi perera": "කාවින්දි පෙරේරා",
@@ -62,11 +78,17 @@ const NAME_DICTIONARY_SI = {
   "fernando": "ප්‍රනාන්දු",
   "silva": "සිල්වා",
   "de silva": "ද සිල්වා",
-  "rajapaksa": "රාජපක්ෂ"
+  "rajapaksa": "රාජපක්ෂ",
+  "kasun": "කසුන්",
+  "sandun": "සඳුන්",
+  "pradeep": "ප්‍රදීප්",
+  "hasitha": "හසිත",
+  "dinesh": "දිනේෂ්",
+  "suresh": "සුරේෂ්"
 };
 
 const SINHALA_TO_TAMIL_MAP = {
-  'අ': 'அ', 'ආ': 'ஆ', 'ඇ': 'அ', 'ඉ': 'இ', 'ඊ': 'ஈ', 'උ': 'உ', 'ඌ': 'ஊ',
+  'අ': 'அ', 'ආ': 'ஆ', 'ඇ': 'அ', 'ඈ': 'ஆ', 'ඉ': 'இ', 'ඊ': 'ஈ', 'උ': 'உ', 'ඌ': 'ஊ',
   'එ': 'எ', 'ඒ': 'ஏ', 'ඓ': 'ஐ', 'ඔ': 'ஒ', 'ඕ': 'ஓ', 'ඖ': 'ஔ',
   'ක': 'க', 'ඛ': 'க', 'ග': 'க', 'ඝ': 'க', 'ඞ': 'ங',
   'ච': 'ச', 'ඡ': 'ச', 'ජ': 'ஜ', 'ඣ': 'ஜ', 'ඤ': 'ஞ',
@@ -74,89 +96,229 @@ const SINHALA_TO_TAMIL_MAP = {
   'ත': 'த', 'ථ': 'த', 'ද': 'த', 'ධ': 'த', 'න': 'ந',
   'ප': 'ப', 'ඵ': 'ப', 'බ': 'ப', 'භ': 'ப', 'ම': 'ம',
   'ය': 'ய', 'ර': 'ர', 'ල': 'ல', 'ව': 'வ', 'ශ': 'ஶ', 'ෂ': 'ஷ', 'ස': 'ச', 'හ': 'ஹ', 'ළ': 'ள', 'ෆ': 'ப',
-  'ා': 'ா', 'ැ': 'ா', 'ි': 'ி', 'ී': 'ீ', 'ු': 'ු', 'ූ': 'ූ',
+  'ඳ': 'ந்த', 'ඟ': 'ங்க', 'ඬ': 'ண்ட', 'ඹ': 'ம்ப', 'ඥ': 'ஞ',
+  'ා': 'ா', 'ැ': 'ா', 'ෑ': 'ா', 'ි': 'ி', 'ී': 'ீ',
+  'ු': '\u0BC1', 'ූ': '\u0BC2',
   'ෘ': 'ிரு', 'ෙ': 'ெ', 'ේ': 'ே', 'ෛ': 'ை', 'ො': 'ொ', 'ෝ': 'ோ', 'ෞ': 'ௗ',
-  '්': '්', 'ං': 'ம்', 'ඃ': 'ஃ'
+  '්': '\u0BCD', 'ං': 'ம்', 'ඃ': 'ஃ'
 };
 
-const transliterateWordToTamil = (word) => {
+export const transliterateSinhalaToTamil = (word) => {
+  if (!word) return '';
+  const cleanWord = word.replace(/\u200D/g, '').trim();
+  if (NAME_DICTIONARY_TA[cleanWord]) return NAME_DICTIONARY_TA[cleanWord];
+
+  let result = '';
+  for (let char of cleanWord) {
+    result += SINHALA_TO_TAMIL_MAP[char] || char;
+  }
+  return result;
+};
+
+export const transliterateEnglishToTamil = (word) => {
   if (!word) return '';
   const lower = word.toLowerCase().trim();
   if (NAME_DICTIONARY_TA[lower]) return NAME_DICTIONARY_TA[lower];
 
-  if (/[\u0D80-\u0DFF]/.test(word)) {
-    let result = '';
-    for (let char of word) {
-      result += SINHALA_TO_TAMIL_MAP[char] || char;
-    }
-    return result;
+  let str = lower;
+  let prefix = '';
+  if (str.startsWith('pr')) {
+    prefix = 'பிர';
+    str = str.slice(2);
+  } else if (str.startsWith('kr')) {
+    prefix = 'கிர';
+    str = str.slice(2);
+  } else if (str.startsWith('tr')) {
+    prefix = 'திர';
+    str = str.slice(2);
   }
 
-  let str = lower;
-  str = str.replace(/th/g, 'த')
-           .replace(/sh/g, 'ஷ')
-           .replace(/ch/g, 'ச')
-           .replace(/kh/g, 'க')
-           .replace(/ph/g, 'ப')
-           .replace(/bh/g, 'ப')
-           .replace(/dh/g, 'த')
-           .replace(/gh/g, 'க')
-           .replace(/ng/g, 'ங்');
+  const vowels = ['aa', 'ai', 'au', 'ee', 'ea', 'ii', 'oo', 'ou', 'uu', 'a', 'e', 'i', 'o', 'u'];
+  const consonants = [
+    'ksh', 'sh', 'th', 'ch', 'kh', 'gh', 'dh', 'ph', 'bh', 'ng', 'gn', 'ny', 'zh',
+    'k', 'g', 'c', 'j', 't', 'd', 'n', 'p', 'b', 'm', 'y', 'r', 'l', 'v', 'w', 's', 'z', 'h', 'f'
+  ];
+
+  const INDEPENDENT_VOWELS = {
+    'aa': 'ஆ', 'a': 'அ', 'ee': 'ஈ', 'ea': 'ஏ', 'ii': 'ஈ', 'i': 'இ',
+    'oo': 'ஊ', 'uu': 'ஊ', 'u': 'உ', 'e': 'எ', 'ai': 'ஐ', 'au': 'ஔ', 'ou': 'ஔ', 'o': 'ஒ'
+  };
+
+  const DEPENDENT_VOWELS = {
+    'aa': 'ா', 'a': 'ா', 'ee': 'ே', 'ea': 'ே', 'ii': 'ீ', 'i': 'ி',
+    'oo': 'ோ', 'uu': 'ூ', 'u': '\u0BC1', 'e': 'ே', 'ai': 'ை', 'au': 'ௌ', 'ou': 'ௌ', 'o': 'ோ'
+  };
+
+  const CONSONANTS = {
+    'ksh': 'க்ஷ', 'sh': 'ஷ', 'th': 'த', 'ch': 'ச', 'kh': 'க', 'gh': 'க', 'dh': 'த',
+    'ph': 'ப', 'bh': 'ப', 'ng': 'ங', 'gn': 'ஞ', 'ny': 'ஞ', 'zh': 'ழ',
+    'k': 'க', 'g': 'க', 'c': 'க', 'j': 'ஜ', 't': 'த', 'd': 'த', 'n': 'ந',
+    'p': 'ப', 'b': 'ப', 'm': 'ம', 'y': 'ய', 'r': 'ர', 'l': 'ல', 'v': 'ව' ? 'வ' : 'வ', 'w': 'வ',
+    's': 'ச', 'z': 'ஸ', 'h': 'ஹ', 'f': 'ப'
+  };
+
+  let res = prefix;
+  let i = 0;
+
+  while (i < str.length) {
+    if (res === '' && i === 0) {
+      let matchedV = vowels.find(v => str.startsWith(v, i));
+      if (matchedV) {
+        res += INDEPENDENT_VOWELS[matchedV] || '';
+        i += matchedV.length;
+        continue;
+      }
+    }
+
+    let matchedC = consonants.find(c => str.startsWith(c, i));
+    if (matchedC) {
+      let baseC = CONSONANTS[matchedC];
+      i += matchedC.length;
+
+      let matchedV = vowels.find(v => str.startsWith(v, i));
+      if (matchedV) {
+        i += matchedV.length;
+        if (matchedV === 'a') {
+          if (i >= str.length || (matchedC === 'r' && i <= 3) || (matchedC === 'sh')) {
+            res += baseC + 'ா';
+          } else {
+            res += baseC;
+          }
+        } else {
+          res += baseC + DEPENDENT_VOWELS[matchedV];
+        }
+      } else {
+        if (i >= str.length && matchedC === 'n') {
+          res += 'ன்';
+        } else if (i >= str.length && matchedC === 'l') {
+          res += 'ல்';
+        } else if (i >= str.length && matchedC === 'r') {
+          res += 'ர்';
+        } else {
+          res += baseC + '\u0BCD';
+        }
+      }
+    } else {
+      let matchedV = vowels.find(v => str.startsWith(v, i));
+      if (matchedV) {
+        res += INDEPENDENT_VOWELS[matchedV] || '';
+        i += matchedV.length;
+      } else {
+        res += str[i];
+        i++;
+      }
+    }
+  }
+
+  return res;
+};
+
+export const transliterateEnglishToSinhala = (word) => {
+  if (!word) return '';
+  const lower = word.toLowerCase().trim();
+  if (NAME_DICTIONARY_SI[lower]) return NAME_DICTIONARY_SI[lower];
+
+  const VOWELS = {
+    'aa': 'ආ', 'a': 'අ', 'ae': 'ඇ', 'ii': 'ඊ', 'ee': 'ඊ', 'i': 'ඉ',
+    'uu': 'ඌ', 'oo': 'ඌ', 'u': 'උ', 'ea': 'ඒ', 'e': 'එ', 'ai': 'ඓ', 'o': 'ඔ', 'au': 'ඖ'
+  };
+  const DEP_VOWELS = {
+    'aa': 'ා', 'a': '', 'ae': 'ැ', 'ii': 'ී', 'ee': 'ී', 'i': 'ි',
+    'uu': 'ූ', 'oo': 'ූ', 'u': 'ු', 'ea': 'ේ', 'e': 'ෙ', 'ai': 'ෛ', 'o': 'ො', 'au': 'ෞ'
+  };
+  const CONSONANTS = {
+    'sh': 'ෂ', 'th': 'ත', 'ch': 'ච', 'kh': 'ඛ', 'gh': 'ඝ', 'dh': 'ධ', 'ph': 'ඵ', 'bh': 'භ',
+    'ng': 'ඟ', 'nd': 'ඳ', 'mb': 'ඹ',
+    'k': 'ක', 'g': 'ග', 'c': 'ක', 'j': 'ජ', 't': 'ට', 'd': 'ද', 'n': 'න',
+    'p': 'ප', 'b': 'බ', 'm': 'ම', 'y': 'ය', 'r': 'ර', 'l': 'ල', 'v': 'ව', 'w': 'ව',
+    's': 'ස', 'h': 'හ', 'f': 'ෆ'
+  };
+
+  const vKeys = Object.keys(VOWELS).sort((a,b) => b.length - a.length);
+  const cKeys = Object.keys(CONSONANTS).sort((a,b) => b.length - a.length);
 
   let res = '';
-  for (let char of str) {
-    switch (char) {
-      case 'a': res += 'ா'; break;
-      case 'b': res += 'ப'; break;
-      case 'c': res += 'க'; break;
-      case 'd': res += 'த'; break;
-      case 'e': res += 'ே'; break;
-      case 'f': res += 'ப'; break;
-      case 'g': res += 'க'; break;
-      case 'h': res += 'ஹ'; break;
-      case 'i': res += 'ீ'; break;
-      case 'j': res += 'ஜ'; break;
-      case 'k': res += 'க'; break;
-      case 'l': res += 'ல'; break;
-      case 'm': res += 'ம'; break;
-      case 'n': res += 'ந'; break;
-      case 'o': res += 'ோ'; break;
-      case 'p': res += 'ப'; break;
-      case 'q': res += 'க'; break;
-      case 'r': res += 'ர'; break;
-      case 's': res += 'ச'; break;
-      case 't': res += 'த'; break;
-      case 'u': res += 'ූ'; break;
-      case 'v': res += 'வ'; break;
-      case 'w': res += 'வ'; break;
-      case 'x': res += 'க்ஷ'; break;
-      case 'y': res += 'ய'; break;
-      case 'z': res += 'ஸ'; break;
-      default: res += char; break;
-    }
+  let i = 0;
+
+  if (lower.startsWith('pr')) {
+    res += 'ප්‍ර';
+    i = 2;
+  } else if (lower.startsWith('kr')) {
+    res += 'ක්‍ර';
+    i = 2;
+  } else if (lower.startsWith('tr')) {
+    res += 'ත්‍ර';
+    i = 2;
   }
 
-  if (res.startsWith('ா')) res = 'அ' + res.slice(1);
-  if (res.startsWith('ි') || res.startsWith('ී')) res = 'இ' + res.slice(1);
-  if (res.startsWith('ෙ') || res.startsWith('ේ')) res = 'எ' + res.slice(1);
-  if (res.startsWith('ො') || res.startsWith('ෝ')) res = 'ஒ' + res.slice(1);
+  while (i < lower.length) {
+    if (res === '' && i === 0) {
+      let matchedV = vKeys.find(v => lower.startsWith(v, i));
+      if (matchedV) {
+        res += VOWELS[matchedV];
+        i += matchedV.length;
+        continue;
+      }
+    }
+
+    let matchedC = cKeys.find(c => lower.startsWith(c, i));
+    if (matchedC) {
+      let baseC = CONSONANTS[matchedC];
+      i += matchedC.length;
+
+      let matchedV = vKeys.find(v => lower.startsWith(v, i));
+      if (matchedV) {
+        i += matchedV.length;
+        if (matchedV === 'a') {
+          if (i >= lower.length) {
+            res += baseC + 'ා';
+          } else {
+            res += baseC;
+          }
+        } else {
+          res += baseC + DEP_VOWELS[matchedV];
+        }
+      } else {
+        res += baseC + '්';
+      }
+    } else {
+      let matchedV = vKeys.find(v => lower.startsWith(v, i));
+      if (matchedV) {
+        res += VOWELS[matchedV];
+        i += matchedV.length;
+      } else {
+        res += lower[i];
+        i++;
+      }
+    }
+  }
 
   return res;
 };
 
 export const autoGenerateTamilName = (nameEn = '', nameSi = '') => {
-  if (nameSi.trim()) {
+  // If user entered Sinhala text with Sinhala Unicode characters:
+  if (nameSi && /[\u0D80-\u0DFF]/.test(nameSi)) {
     const siLower = nameSi.trim();
     if (NAME_DICTIONARY_TA[siLower]) return NAME_DICTIONARY_TA[siLower];
     const wordsSi = nameSi.trim().split(/\s+/);
-    return wordsSi.map(w => transliterateWordToTamil(w)).join(' ');
+    return wordsSi.map(w => {
+      const wClean = w.trim();
+      if (NAME_DICTIONARY_TA[wClean]) return NAME_DICTIONARY_TA[wClean];
+      return transliterateSinhalaToTamil(wClean);
+    }).join(' ');
   }
 
-  if (nameEn.trim()) {
+  // Otherwise, transliterate from English:
+  if (nameEn && nameEn.trim()) {
     const enLower = nameEn.toLowerCase().trim();
     if (NAME_DICTIONARY_TA[enLower]) return NAME_DICTIONARY_TA[enLower];
     const wordsEn = nameEn.trim().split(/\s+/);
-    return wordsEn.map(w => transliterateWordToTamil(w)).join(' ');
+    return wordsEn.map(w => {
+      const wLower = w.toLowerCase().trim();
+      if (NAME_DICTIONARY_TA[wLower]) return NAME_DICTIONARY_TA[wLower];
+      return transliterateEnglishToTamil(wLower);
+    }).join(' ');
   }
 
   return '';
@@ -169,9 +331,9 @@ export const autoGenerateSinhalaName = (nameEn = '') => {
 
   const words = nameEn.trim().split(/\s+/);
   return words.map(word => {
-    const wLower = word.toLowerCase();
+    const wLower = word.toLowerCase().trim();
     if (NAME_DICTIONARY_SI[wLower]) return NAME_DICTIONARY_SI[wLower];
-    return word;
+    return transliterateEnglishToSinhala(wLower);
   }).join(' ');
 };
 
