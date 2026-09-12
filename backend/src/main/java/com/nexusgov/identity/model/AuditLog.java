@@ -16,7 +16,7 @@ public class AuditLog {
     private Long logId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @Column(name = "action", nullable = false, length = 100)
