@@ -1,70 +1,75 @@
 package com.nexusgov.identity.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+/**
+ * All authentication-related DTOs — matching the Node.js request/response shapes.
+ * Using explicit @Getter/@Setter for Java 24 Lombok compatibility.
+ */
 public class AuthDtos {
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class LoginRequest {
-        @NotBlank(message = "Username or email is required")
         private String usernameOrEmail;
-
-        @NotBlank(message = "Password is required")
         private String password;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class RegisterRequest {
-        @NotBlank(message = "Username is required")
         private String username;
-
-        @NotBlank(message = "Email is required")
-        @Email(message = "Invalid email format")
         private String email;
-
-        @NotBlank(message = "Password is required")
         private String password;
-
-        @NotBlank(message = "Full name is required")
         private String full_name;
-
         private String role = "Officer";
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class RegisterStaffRequest {
-        @NotBlank private String username;
-        @NotBlank @Email private String email;
-        @NotBlank private String password;
-        @NotBlank private String full_name;
-        @NotBlank private String role;
+        private String username;
+        private String email;
+        private String password;
+        private String full_name;
+        private String role;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class OtpRequest {
-        @NotBlank(message = "Email is required")
-        @Email
         private String email;
-
         private String full_name;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class VerifyOtpRequest {
-        @NotBlank private String email;
-        @NotBlank private String otp;
+        private String email;
+        private String otp;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class UpdateUserRequest {
         private String full_name;
         private String email;
         private String role;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserDto {
         private Long user_id;
         private String username;
@@ -74,7 +79,10 @@ public class AuthDtos {
         private String created_at;
     }
 
-    @Data
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AuthResponse {
         private boolean success;
         private String message;
