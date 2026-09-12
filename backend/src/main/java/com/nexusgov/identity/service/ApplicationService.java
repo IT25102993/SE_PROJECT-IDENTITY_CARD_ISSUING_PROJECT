@@ -3,15 +3,13 @@ package com.nexusgov.identity.service;
 import com.nexusgov.identity.dto.ApplicationDtos;
 import com.nexusgov.identity.model.*;
 import com.nexusgov.identity.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 
@@ -20,9 +18,9 @@ import java.util.Random;
  * Java port of applicationController.js.
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class ApplicationService {
+
+    private static final Logger log = LoggerFactory.getLogger(ApplicationService.class);
 
     private final ApplicationRepository applicationRepository;
     private final ApplicantRepository applicantRepository;
@@ -31,6 +29,18 @@ public class ApplicationService {
     private final UserRepository userRepository;
 
     private final Random random = new Random();
+
+    public ApplicationService(ApplicationRepository applicationRepository,
+                              ApplicantRepository applicantRepository,
+                              IdentityCardRepository identityCardRepository,
+                              AuditLogRepository auditLogRepository,
+                              UserRepository userRepository) {
+        this.applicationRepository = applicationRepository;
+        this.applicantRepository = applicantRepository;
+        this.identityCardRepository = identityCardRepository;
+        this.auditLogRepository = auditLogRepository;
+        this.userRepository = userRepository;
+    }
 
     // ── NIC Generator ─────────────────────────────────────────────────────────
 
@@ -170,12 +180,14 @@ public class ApplicationService {
         application = applicationRepository.save(application);
 
         // Audit log
-        auditLogRepository.save(AuditLog.builder()
-            .user(currentUser)
-            .action("APPLICATION_CREATED")
-            .details("Application #" + application.getApplicationId() + " created for " +
-                req.getFirst_name() + " " + req.getLast_name())
-            .build());
+        if (currentUser != null) {
+            auditLogRepository.save(AuditLog.builder()
+                .user(currentUser)
+                .action("APPLICATION_CREATED")
+                .details("Application #" + application.getApplicationId() + " created for " +
+                    req.getFirst_name() + " " + req.getLast_name())
+                .build());
+        }
 
         return new CreateResult(true, "Application submitted successfully!",
             application.getApplicationId(),
@@ -229,11 +241,13 @@ public class ApplicationService {
                 () -> identityCardRepository.save(card)
             );
 
-        auditLogRepository.save(AuditLog.builder()
-            .user(officer)
-            .action("APPLICATION_APPROVED")
-            .details("Application #" + id + " approved. Official 12-digit NIC " + generatedNic + " generated.")
-            .build());
+        if (officer != null) {
+            auditLogRepository.save(AuditLog.builder()
+                .user(officer)
+                .action("APPLICATION_APPROVED")
+                .details("Application #" + id + " approved. Official 12-digit NIC " + generatedNic + " generated.")
+                .build());
+        }
 
         return new ApproveResult(true,
             "Application #" + id + " approved! Issued Official 12-Digit NIC Number: " + generatedNic,
@@ -249,7 +263,16 @@ public class ApplicationService {
 
         app.setStatus(Application.ApplicationStatus.Rejected);
         app.setRemarks(remarks != null ? remarks : "Application rejected.");
+        app.setProcessedBy(officer);
         applicationRepository.save(app);
+
+        if (officer != null) {
+            auditLogRepository.save(AuditLog.builder()
+                .user(officer)
+                .action("APPLICATION_REJECTED")
+                .details("Application #" + id + " rejected. Remarks: " + remarks)
+                .build());
+        }
 
         return "Application #" + id + " rejected.";
     }
