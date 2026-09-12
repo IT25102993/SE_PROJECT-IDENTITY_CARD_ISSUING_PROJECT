@@ -1,6 +1,5 @@
 package com.nexusgov.identity.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -13,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Stores { email -> { otp, expiresAt, fullName, verified } }
  */
 @Service
-@Slf4j
 public class OtpService {
 
     private record OtpRecord(String otp, long expiresAt, String fullName, boolean verified) {
