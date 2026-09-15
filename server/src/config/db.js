@@ -67,13 +67,37 @@ export const inMemoryDb = {
       address: 'No. 12, Main Street, Malabe, Colombo',
       phone_number: '+94 77 123 4567',
       email: 'thilina.s@gmail.com',
-      status: 'Issued',
+      status: 'Verification-Passed',
       application_type: 'New',
       remarks: 'All biometrics approved.',
+      bot_verified: true,
+      bot_score: 92,
+      bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
+      bot_verified_at: '2026-08-01 09:35:00',
       submitted_at: '2026-08-01'
     }
   ],
-  audit_logs: []
+  audit_logs: [],
+  documents: [
+    {
+      document_id: 1,
+      application_id: 1,
+      document_type: 'Birth Certificate (Original Scan)',
+      file_name: 'birth_certificate_scan_2005.pdf',
+      file_path: '/uploads/documents/sample_birth_cert.pdf',
+      file_size: '1.42 MB',
+      uploaded_at: '2026-08-01 09:32:00'
+    },
+    {
+      document_id: 2,
+      application_id: 1,
+      document_type: 'Grama Niladhari Certificate (Form DRP-1)',
+      file_name: 'grama_niladhari_cert_malabe.jpg',
+      file_path: '/uploads/documents/sample_grama_cert.jpg',
+      file_size: '890 KB',
+      uploaded_at: '2026-08-01 09:33:00'
+    }
+  ]
 };
 
 export const initDb = async () => {
@@ -133,12 +157,32 @@ export const initDb = async () => {
         \`application_id\` INT NOT NULL AUTO_INCREMENT,
         \`applicant_id\` INT NOT NULL,
         \`application_type\` ENUM('New', 'Renewal', 'Replacement') NOT NULL DEFAULT 'New',
-        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued') NOT NULL DEFAULT 'Pending',
+        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending',
+        \`bot_verified\` TINYINT(1) NOT NULL DEFAULT 0,
+        \`bot_score\` INT NOT NULL DEFAULT 0,
+        \`bot_notes\` TEXT NULL,
+        \`bot_verified_at\` DATETIME NULL,
         \`processed_by\` INT NULL,
         \`remarks\` TEXT NULL,
         \`submitted_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         \`updated_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (\`application_id\`)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+      CREATE TABLE IF NOT EXISTS \`documents\` (
+        \`document_id\` INT NOT NULL AUTO_INCREMENT,
+        \`application_id\` INT NOT NULL,
+        \`document_type\` VARCHAR(100) NOT NULL,
+        \`file_name\` VARCHAR(255) NOT NULL,
+        \`file_path\` LONGTEXT NOT NULL,
+        \`file_size\` VARCHAR(50) NULL,
+        \`uploaded_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (\`document_id\`),
+        CONSTRAINT \`fk_documents_applications\`
+          FOREIGN KEY (\`application_id\`)
+          REFERENCES \`applications\` (\`application_id\`)
+          ON DELETE CASCADE
+          ON UPDATE CASCADE
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
 
       CREATE TABLE IF NOT EXISTS \`audit_logs\` (
@@ -156,8 +200,13 @@ export const initDb = async () => {
     // Safely update existing table column ENUM to include Citizen
     try {
       await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending';`);
+      await pool.query(`ALTER TABLE applications ADD COLUMN IF NOT EXISTS bot_verified TINYINT(1) NOT NULL DEFAULT 0;`);
+      await pool.query(`ALTER TABLE applications ADD COLUMN IF NOT EXISTS bot_score INT NOT NULL DEFAULT 0;`);
+      await pool.query(`ALTER TABLE applications ADD COLUMN IF NOT EXISTS bot_notes TEXT NULL;`);
+      await pool.query(`ALTER TABLE applications ADD COLUMN IF NOT EXISTS bot_verified_at DATETIME NULL;`);
     } catch (alterErr) {
-      // Column might already be up to date
+      // Columns or ENUM might already be up to date
     }
 
     // Seed Admin User thilinasakalasooriya@gmail.com if not exists
