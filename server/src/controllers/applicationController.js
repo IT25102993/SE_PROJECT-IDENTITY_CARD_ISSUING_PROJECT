@@ -1,4 +1,6 @@
 import { queryDb, getDbStatus, inMemoryDb } from '../config/db.js';
+import { saveDocumentFile } from '../utils/documentStorage.js';
+import { evaluateBotVerification } from '../utils/botVerification.js';
 
 // Get all applications (with optional search query ?search=trackingId or NIC)
 export const getApplications = async (req, res) => {
@@ -12,6 +14,10 @@ export const getApplications = async (req, res) => {
           CONCAT('NEX-2026-', app.application_id) AS tracking_id,
           app.application_type,
           app.status,
+          app.bot_verified,
+          app.bot_score,
+          app.bot_notes,
+          app.bot_verified_at,
           app.remarks,
           app.submitted_at,
           app.updated_at,
@@ -40,9 +46,37 @@ export const getApplications = async (req, res) => {
 
       sql += ` ORDER BY app.submitted_at DESC`;
       const rows = await queryDb(sql, params);
+
+      // Fetch attached documents for all retrieved applications
+      if (rows && rows.length > 0) {
+        const appIds = rows.map(r => r.application_id);
+        const placeholders = appIds.map(() => '?').join(',');
+        const docRows = await queryDb(
+          `SELECT document_id, application_id, document_type, file_name, file_path, file_size, uploaded_at 
+           FROM documents WHERE application_id IN (${placeholders}) ORDER BY uploaded_at ASC`,
+          appIds
+        );
+
+        const docsByApp = {};
+        if (docRows) {
+          docRows.forEach(d => {
+            if (!docsByApp[d.application_id]) docsByApp[d.application_id] = [];
+            docsByApp[d.application_id].push(d);
+          });
+        }
+
+        rows.forEach(r => {
+          r.documents = docsByApp[r.application_id] || [];
+        });
+      }
+
       return res.status(200).json({ success: true, count: rows.length, applications: rows });
     } else {
-      let apps = inMemoryDb.applications;
+      let apps = inMemoryDb.applications.map(app => ({
+        ...app,
+        documents: inMemoryDb.documents.filter(d => String(d.application_id) === String(app.application_id))
+      }));
+
       if (search) {
         const term = search.toLowerCase();
         apps = apps.filter(a =>
@@ -75,7 +109,8 @@ export const createApplication = async (req, res) => {
       address,
       phone_number,
       email,
-      application_type = 'New'
+      application_type = 'New',
+      documents = []
     } = req.body;
 
     if (!first_name || !last_name || !dob || !gender || !address || !phone_number) {
@@ -104,33 +139,117 @@ export const createApplication = async (req, res) => {
         [applicantId, application_type]
       );
 
+      const newApplicationId = applicationRes.insertId;
+
+      // Save and insert uploaded documents if provided
+      if (Array.isArray(documents) && documents.length > 0) {
+        for (const doc of documents) {
+          const docType = doc.document_type || doc.type || 'Supporting Document';
+          const fileName = doc.file_name || doc.name || 'document.pdf';
+          const fileData = doc.file_data || doc.data || doc.url;
+          const fileSize = doc.file_size || doc.size || 'Unknown';
+
+          let savedPath = null;
+          if (fileData) {
+            savedPath = await saveDocumentFile(fileData, fileName);
+          } else {
+            savedPath = '/uploads/documents/birth_certificate.pdf';
+          }
+
+          await queryDb(
+            `INSERT INTO documents (application_id, document_type, file_name, file_path, file_size, uploaded_at)
+             VALUES (?, ?, ?, ?, ?, NOW())`,
+            [newApplicationId, docType, fileName, savedPath, fileSize]
+          );
+        }
+      }
+
+      // Run Automated AI Bot Verification
+      const botResult = evaluateBotVerification(
+        { first_name, last_name, fullNameEn: `${first_name} ${last_name}`, dob, gender, address },
+        documents
+      );
+
+      // Update application record with bot evaluation
+      await queryDb(
+        `UPDATE applications 
+         SET status = ?, bot_verified = ?, bot_score = ?, bot_notes = ?, bot_verified_at = NOW() 
+         WHERE application_id = ?`,
+        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, newApplicationId]
+      );
+
       // Audit Log
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'APPLICATION_CREATED', `Application #${applicationRes.insertId} created for ${first_name} ${last_name}`]
+        [req.user ? req.user.user_id : null, 'APPLICATION_CREATED', `Application #${newApplicationId} created for ${first_name} ${last_name}. Bot Verification: ${botResult.status} (Score: ${botResult.score}%)`]
       );
 
       return res.status(201).json({
         success: true,
         message: 'Application submitted successfully!',
-        applicationId: applicationRes.insertId,
-        trackingId: `NEX-2026-${applicationRes.insertId}`
+        applicationId: newApplicationId,
+        trackingId: `NEX-2026-${newApplicationId}`,
+        botVerification: botResult
       });
     } else {
+      const newAppId = inMemoryDb.applications.length + 1;
+      const trackingId = `NEX-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+
+      const savedDocs = [];
+      if (Array.isArray(documents) && documents.length > 0) {
+        for (const doc of documents) {
+          const docType = doc.document_type || doc.type || 'Supporting Document';
+          const fileName = doc.file_name || doc.name || 'document.pdf';
+          const fileData = doc.file_data || doc.data || doc.url;
+          const fileSize = doc.file_size || doc.size || 'Unknown';
+
+          let savedPath = null;
+          if (fileData) {
+            savedPath = await saveDocumentFile(fileData, fileName);
+          } else {
+            savedPath = '/uploads/documents/birth_certificate.pdf';
+          }
+
+          const docObj = {
+            document_id: inMemoryDb.documents.length + 1,
+            application_id: newAppId,
+            document_type: docType,
+            file_name: fileName,
+            file_path: savedPath,
+            file_size: fileSize,
+            uploaded_at: new Date().toISOString()
+          };
+          inMemoryDb.documents.push(docObj);
+          savedDocs.push(docObj);
+        }
+      }
+
+      // Run Automated AI Bot Verification
+      const botResult = evaluateBotVerification(
+        { first_name, last_name, fullNameEn: `${first_name} ${last_name}`, dob, gender, address },
+        savedDocs
+      );
+
       const newApp = {
-        application_id: inMemoryDb.applications.length + 1,
-        tracking_id: `NEX-2026-${Math.floor(10000 + Math.random() * 90000)}`,
+        application_id: newAppId,
+        tracking_id: trackingId,
         first_name,
         last_name,
         fullNameEn: `${first_name} ${last_name}`,
         dob,
         gender,
         address,
-        phone,
+        phone: phone_number,
+        phone_number,
         email,
-        status: 'Pending',
+        status: botResult.status,
         application_type,
-        submitted_at: new Date().toISOString().split('T')[0]
+        bot_verified: botResult.passed,
+        bot_score: botResult.score,
+        bot_notes: botResult.notes,
+        bot_verified_at: new Date().toISOString(),
+        submitted_at: new Date().toISOString().split('T')[0],
+        documents: savedDocs
       };
 
       inMemoryDb.applications.unshift(newApp);
@@ -139,7 +258,93 @@ export const createApplication = async (req, res) => {
         success: true,
         message: 'Application submitted successfully!',
         applicationId: newApp.application_id,
-        trackingId: newApp.tracking_id
+        trackingId: newApp.tracking_id,
+        botVerification: botResult
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Re-run automated bot verification on demand
+export const triggerBotVerification = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getDbStatus()) {
+      const rows = await queryDb(
+        `SELECT app.application_id, a.first_name, a.last_name, a.date_of_birth AS dob, a.gender, a.address, app.status
+         FROM applications app
+         JOIN applicants a ON app.applicant_id = a.applicant_id
+         WHERE app.application_id = ?`,
+        [id]
+      );
+
+      if (!rows || rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Application not found' });
+      }
+
+      const appData = rows[0];
+      const docs = await queryDb(
+        `SELECT * FROM documents WHERE application_id = ?`,
+        [id]
+      );
+
+      const botResult = evaluateBotVerification(
+        {
+          first_name: appData.first_name,
+          last_name: appData.last_name,
+          fullNameEn: `${appData.first_name} ${appData.last_name}`,
+          dob: appData.dob,
+          gender: appData.gender,
+          address: appData.address
+        },
+        docs
+      );
+
+      await queryDb(
+        `UPDATE applications 
+         SET status = ?, bot_verified = ?, bot_score = ?, bot_notes = ?, bot_verified_at = NOW() 
+         WHERE application_id = ?`,
+        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, id]
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: `Bot verification completed: ${botResult.status}`,
+        botResult
+      });
+    } else {
+      const app = inMemoryDb.applications.find(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      if (!app) {
+        return res.status(404).json({ success: false, message: 'Application not found' });
+      }
+
+      const docs = inMemoryDb.documents.filter(d => String(d.application_id) === String(app.application_id));
+      const botResult = evaluateBotVerification(
+        {
+          first_name: app.first_name,
+          last_name: app.last_name,
+          fullNameEn: app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`,
+          dob: app.dob,
+          gender: app.gender,
+          address: app.address
+        },
+        docs
+      );
+
+      app.status = botResult.status;
+      app.bot_verified = botResult.passed;
+      app.bot_score = botResult.score;
+      app.bot_notes = botResult.notes;
+      app.bot_verified_at = new Date().toISOString();
+
+      return res.status(200).json({
+        success: true,
+        message: `Bot verification completed: ${botResult.status}`,
+        botResult,
+        application: app
       });
     }
   } catch (error) {

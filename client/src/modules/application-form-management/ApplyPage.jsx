@@ -758,12 +758,12 @@ export const ApplyPage = () => {
 
                 {step === 4 && (
                   <div className="animate-fade-in">
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <FileText size={20} color="var(--accent-primary)" /> Supporting Documents
                     </h3>
 
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                      Upload digital scans of required verification documents.
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                      Upload scans of required verification documents. Supported: PDF, JPG, PNG (max 10MB each).
                     </p>
 
                     {[
@@ -771,19 +771,80 @@ export const ApplyPage = () => {
                       'Grama Niladhari Certificate (Form DRP-1)',
                       'Police Clearance Report (For Lost NIC)',
                       'Marriage Certificate (If Name Changed)'
-                    ].map((docName, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', marginBottom: '0.75rem' }}>
-                        <span style={{ fontSize: '0.88rem', color: 'var(--text-primary)' }}>{docName}</span>
-                        <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
-                          <Upload size={14} /> Attach
-                          <input type="file" hidden onChange={() => {
-                            if (!formData.documents.includes(docName)) {
-                              setFormData(prev => ({ ...prev, documents: [...prev.documents, docName] }));
-                            }
-                          }} />
-                        </label>
+                    ].map((docName, idx) => {
+                      const attached = formData.documents.find(d => (d.document_type || d) === docName);
+                      return (
+                        <div key={idx} style={{ padding: '0.85rem 1rem', background: attached ? 'rgba(16,185,129,0.07)' : 'rgba(0,0,0,0.2)', border: `1px solid ${attached ? 'rgba(16,185,129,0.3)' : 'var(--border-color)'}`, borderRadius: 'var(--radius-md)', marginBottom: '0.75rem', transition: 'all 0.2s ease' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <FileText size={16} color={attached ? 'var(--accent-emerald)' : 'var(--text-muted)'} />
+                              <span style={{ fontSize: '0.88rem', color: attached ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: attached ? 600 : 400 }}>{docName}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              {attached && (
+                                <>
+                                  <span style={{ fontSize: '0.78rem', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                    <CheckCircle2 size={13} /> {attached.file_name} ({attached.file_size})
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, documents: prev.documents.filter(d => (d.document_type || d) !== docName) }))}
+                                    style={{ background: 'rgba(244,63,94,0.12)', border: '1px solid rgba(244,63,94,0.25)', borderRadius: '6px', color: 'var(--accent-rose)', cursor: 'pointer', padding: '0.2rem 0.5rem', fontSize: '0.75rem' }}
+                                  >Remove</button>
+                                </>
+                              )}
+                              <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', margin: 0 }}>
+                                <Upload size={13} /> {attached ? 'Replace' : 'Attach File'}
+                                <input
+                                  type="file"
+                                  hidden
+                                  accept=".pdf,.png,.jpg,.jpeg"
+                                  onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (!file) return;
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                      const docObj = {
+                                        document_type: docName,
+                                        file_name: file.name,
+                                        file_size: file.size > 1024 * 1024 ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : (file.size / 1024).toFixed(0) + ' KB',
+                                        file_data: reader.result,
+                                        preview_url: reader.result
+                                      };
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        documents: [
+                                          ...prev.documents.filter(d => (d.document_type || d) !== docName),
+                                          docObj
+                                        ]
+                                      }));
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                          {/* Inline preview for image attachments */}
+                          {attached && attached.preview_url && attached.file_name && !attached.file_name.toLowerCase().endsWith('.pdf') && (
+                            <div style={{ marginTop: '0.6rem', borderRadius: '8px', overflow: 'hidden', maxHeight: '140px', display: 'flex', justifyContent: 'center', background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border-color)' }}>
+                              <img src={attached.preview_url} alt={attached.file_name} style={{ maxHeight: '140px', objectFit: 'contain', width: '100%' }} />
+                            </div>
+                          )}
+                          {attached && attached.file_name && attached.file_name.toLowerCase().endsWith('.pdf') && (
+                            <div style={{ marginTop: '0.6rem', padding: '0.5rem 0.75rem', background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--accent-primary)' }}>
+                              <FileText size={14} /> PDF document ready for submission.
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {formData.documents.length > 0 && (
+                      <div style={{ marginTop: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '8px', fontSize: '0.83rem', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <CheckCircle2 size={14} /> {formData.documents.length} document{formData.documents.length > 1 ? 's' : ''} attached and ready for upload.
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
 
@@ -813,6 +874,12 @@ export const ApplyPage = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Address:</span>
                         <span style={{ fontWeight: 600 }}>{formData.address || 'N/A'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Documents Attached:</span>
+                        <span style={{ fontWeight: 700, color: formData.documents.length > 0 ? 'var(--accent-emerald)' : 'var(--accent-amber)' }}>
+                          {formData.documents.length > 0 ? `✓ ${formData.documents.length} document${formData.documents.length > 1 ? 's' : ''}` : 'None attached'}
+                        </span>
                       </div>
                     </div>
                   </div>
