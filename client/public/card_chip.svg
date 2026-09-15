@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" fill="none">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="100" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="35%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <!-- Main Chip Body -->
+  <rect x="2" y="2" width="96" height="76" rx="10" fill="url(#gold)" stroke="#78350f" stroke-width="2"/>
+  
+  <!-- Contact Grid Cuts -->
+  <path d="M 2 30 L 32 30 L 40 40 L 32 50 L 2 50" stroke="#78350f" stroke-width="2.5" fill="none"/>
+  <path d="M 98 30 L 68 30 L 60 40 L 68 50 L 98 50" stroke="#78350f" stroke-width="2.5" fill="none"/>
+  <line x1="40" y1="40" x2="60" y2="40" stroke="#78350f" stroke-width="2.5"/>
+  <line x1="50" y1="2" x2="50" y2="30" stroke="#78350f" stroke-width="2.5"/>
+  <line x1="50" y1="50" x2="50" y2="78" stroke="#78350f" stroke-width="2.5"/>
+  <rect x="42" y="32" width="16" height="16" rx="4" fill="#fbbf24" stroke="#78350f" stroke-width="2"/>
+</svg>
