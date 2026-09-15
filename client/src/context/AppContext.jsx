@@ -89,16 +89,30 @@ export const AppProvider = ({ children }) => {
           const formatted = data.applications.map(app => ({
             id: app.tracking_id || `NEX-2026-${app.application_id}`,
             application_id: app.application_id,
+            first_name: app.first_name || '',
+            last_name: app.last_name || '',
             fullNameEn: app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`,
             nicNumber: app.nicNumber || app.national_id_number || '',
+            national_id_number: app.national_id_number || '',
             dob: app.dob || app.date_of_birth || '2000-01-01',
             gender: app.gender || 'Male',
             address: app.address || '',
             phone: app.phone || app.phone_number || '',
+            phone_number: app.phone_number || app.phone || '',
             email: app.email || '',
             status: app.status || 'Pending',
+            application_type: app.application_type || 'New',
+            // ── Bot Verification Fields ──
+            bot_verified: app.bot_verified === 1 || app.bot_verified === true,
+            bot_score: app.bot_score || 0,
+            bot_notes: app.bot_notes || '',
+            bot_verified_at: app.bot_verified_at || null,
+            // ────────────────────────────
             submittedDate: app.submitted_at || new Date().toISOString().split('T')[0],
+            submitted_at: app.submitted_at || '',
             officerNotes: app.remarks || '',
+            remarks: app.remarks || '',
+            documents: Array.isArray(app.documents) ? app.documents : [],
             trackingHistory: [
               { status: app.status || 'Submitted', date: app.submitted_at || 'Recent', note: app.remarks || 'Database synced' }
             ]
@@ -176,6 +190,14 @@ export const AppProvider = ({ children }) => {
     const first_name = nameParts[0] || 'Applicant';
     const last_name = nameParts.slice(1).join(' ') || 'Citizen';
 
+    // Convert the documents array into the format expected by the backend
+    const documentsPayload = (formData.documents || []).map(doc => ({
+      document_type: doc.document_type || doc.type || 'Supporting Document',
+      file_name: doc.file_name || doc.name || 'document.pdf',
+      file_data: doc.file_data || doc.data || doc.url || null,
+      file_size: doc.file_size || doc.size || 'Unknown'
+    }));
+
     try {
       const res = await fetch('/api/applications', {
         method: 'POST',
@@ -188,7 +210,8 @@ export const AppProvider = ({ children }) => {
           address: formData.address || 'Colombo, Sri Lanka',
           phone_number: formData.phone || '+94 77 000 0000',
           email: formData.email || '',
-          application_type: 'New'
+          application_type: 'New',
+          documents: documentsPayload
         })
       });
 
