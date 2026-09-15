@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none">
+  <!-- Outer Gold Aura & Border -->
+  <circle cx="100" cy="115" r="92" fill="#78350f" stroke="#eab308" stroke-width="4"/>
+  <circle cx="100" cy="115" r="86" fill="#991b1b" stroke="#f59e0b" stroke-width="2"/>
+  
+  <!-- Blue Lotus Petal Ring Background -->
+  <circle cx="100" cy="115" r="76" fill="#1e1b4b" stroke="#fbbf24" stroke-width="1.5"/>
+  
+  <!-- Decorative Lotus Petals (Sunburst effect) -->
+  <g stroke="#f59e0b" stroke-width="2" opacity="0.6">
+    <line x1="100" y1="39" x2="100" y2="47"/>
+    <line x1="100" y1="183" x2="100" y2="191"/>
+    <line x1="24" y1="115" x2="32" y2="115"/>
+    <line x1="168" y1="115" x2="176" y2="115"/>
+    <line x1="46" y1="61" x2="52" y2="67"/>
+    <line x1="154" y1="169" x2="148" y2="163"/>
+    <line x1="154" y1="61" x2="148" y2="67"/>
+    <line x1="46" y1="169" x2="52" y2="163"/>
+  </g>
+
+  <!-- Central Red Disc with Gold Lion -->
+  <circle cx="100" cy="115" r="56" fill="#7f1d1d" stroke="#f59e0b" stroke-width="2"/>
+  
+  <!-- Golden Lion with Sword Motif -->
+  <!-- Tail -->
+  <path d="M 68 128 C 62 110, 68 88, 80 84 C 84 82, 85 86, 81 90 C 76 96, 74 112, 78 124 Z" fill="#fbbf24"/>
+  <circle cx="82" cy="84" r="3.5" fill="#f59e0b"/>
+  <!-- Body & Mane -->
+  <path d="M 74 125 C 72 115, 82 104, 94 104 C 104 104, 114 98, 118 90 C 122 82, 126 82, 128 86 C 130 90, 128 98, 122 104 C 126 106, 128 112, 124 116 C 120 120, 114 120, 110 122 C 108 128, 96 134, 84 133 C 78 132, 74 130, 74 125 Z" fill="#fbbf24"/>
+  <!-- Head & Crown -->
+  <path d="M 118 86 C 122 78, 132 80, 134 88 C 135 94, 130 100, 124 100 C 120 100, 116 94, 118 86 Z" fill="#f59e0b"/>
+  <circle cx="128" cy="88" r="1.5" fill="#1e1b4b"/> <!-- Eye -->
+  <path d="M 128 80 L 132 72 L 136 80 Z" fill="#fbbf24"/> <!-- Crown peak -->
+  <!-- Forelegs -->
+  <path d="M 112 122 L 122 140 L 126 140 L 118 122 Z" fill="#f59e0b"/>
+  <path d="M 104 122 L 110 142 L 114 142 L 110 122 Z" fill="#fbbf24"/>
+  <!-- Hindlegs -->
+  <path d="M 80 128 L 76 142 L 82 142 L 86 128 Z" fill="#f59e0b"/>
+  <path d="M 88 128 L 88 142 L 94 142 L 96 128 Z" fill="#fbbf24"/>
+  <!-- Raised Right Paw holding Kastane Sword -->
+  <path d="M 120 104 L 134 98 L 138 102 L 124 110 Z" fill="#fbbf24"/>
+  <!-- Sword (Blade & Hilt) -->
+  <line x1="130" y1="108" x2="138" y2="92" stroke="#eab308" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="134" y1="95" x2="148" y2="70" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"/>
+  <line x1="128" y1="103" x2="134" y2="106" stroke="#fbbf24" stroke-width="3"/>
+
+  <!-- Dharmachakra (Wheel of Law) at Top -->
+  <g transform="translate(100, 20)">
+    <circle cx="0" cy="0" r="14" fill="#78350f" stroke="#fbbf24" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="5" fill="#f59e0b"/>
+    <!-- 8 Spokes -->
+    <line x1="0" y1="-14" x2="0" y2="14" stroke="#fbbf24" stroke-width="1.5"/>
+    <line x1="-14" y1="0" x2="14" y2="0" stroke="#fbbf24" stroke-width="1.5"/>
+    <line x1="-10" y1="-10" x2="10" y2="10" stroke="#fbbf24" stroke-width="1.5"/>
+    <line x1="10" y1="-10" x2="-10" y2="10" stroke="#fbbf24" stroke-width="1.5"/>
+  </g>
+
+  <!-- Sun (Suriya) on Left -->
+  <g transform="translate(42, 195)">
+    <circle cx="0" cy="0" r="9" fill="#f59e0b" stroke="#fbbf24" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="5" fill="#fef08a"/>
+    <path d="M0 -12 L0 -9 M0 9 L0 12 M-12 0 L-9 0 M9 0 L12 0 M-8 -8 L-6 -6 M6 6 L8 8 M8 -8 L6 -6 M-8 8 L-6 6" stroke="#f59e0b" stroke-width="1.2"/>
+  </g>
+
+  <!-- Moon (Chandra) on Right -->
+  <g transform="translate(158, 195)">
+    <circle cx="0" cy="0" r="9" fill="#fef08a" stroke="#fbbf24" stroke-width="1.5"/>
+    <circle cx="3" cy="-2" r="7" fill="#78350f"/>
+  </g>
+
+  <!-- Traditional Pun-Kalasa (Vase of Plenty) Base -->
+  <g transform="translate(100, 212)">
+    <ellipse cx="0" cy="8" rx="22" ry="5" fill="#78350f" stroke="#f59e0b" stroke-width="2"/>
+    <path d="M -16 8 C -20 -4, -10 -12, 0 -12 C 10 -12, 20 -4, 16 8 Z" fill="#991b1b" stroke="#fbbf24" stroke-width="2"/>
+    <!-- Sprouting Rice Grains / Paddy Sprouts -->
+    <path d="M 0 -12 C -5 -22, -12 -24, -16 -28 C -10 -24, -4 -18, 0 -12" fill="#fbbf24"/>
+    <path d="M 0 -12 C 5 -22, 12 -24, 16 -28 C 10 -24, 4 -18, 0 -12" fill="#fbbf24"/>
+    <path d="M 0 -12 L 0 -30 L 2 -30 L 0 -12" fill="#fef08a"/>
+  </g>
+</svg>
