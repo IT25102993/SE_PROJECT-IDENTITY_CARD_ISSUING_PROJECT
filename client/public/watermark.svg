@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" opacity="0.18">
+  <circle cx="100" cy="100" r="90" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+  <circle cx="100" cy="100" r="75" stroke="#3b82f6" stroke-width="1.5"/>
+  <circle cx="100" cy="100" r="50" stroke="#f59e0b" stroke-width="1"/>
+  
+  <!-- Security Guilloche Pattern Rays -->
+  <g stroke="#3b82f6" stroke-width="0.8">
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(0 100 100)"/>
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(30 100 100)"/>
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(60 100 100)"/>
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(90 100 100)"/>
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(120 100 100)"/>
+    <ellipse cx="100" cy="100" rx="85" ry="30" transform="rotate(150 100 100)"/>
+  </g>
+
+  <!-- National Lion Emblem Silhouette -->
+  <path d="M 85 110 C 80 96, 85 82, 94 80 C 97 78, 98 81, 95 84 C 91 88, 89 100, 93 108 Z" fill="#f59e0b"/>
+  <path d="M 88 108 C 86 100, 94 92, 104 92 C 112 92, 120 88, 122 80 C 126 80, 128 84, 124 90 C 126 92, 128 98, 124 102 C 120 106, 114 106, 110 108 C 108 112, 100 116, 92 115 Z" fill="#f59e0b"/>
+  <!-- Sword line -->
+  <line x1="120" y1="92" x2="132" y2="76" stroke="#f59e0b" stroke-width="2"/>
+</svg>
