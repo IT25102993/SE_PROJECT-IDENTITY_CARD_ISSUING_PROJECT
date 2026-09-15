@@ -5,14 +5,22 @@ import {
   approveApplication,
   rejectApplication,
   updateStatus,
-  deleteApplication
+  deleteApplication,
+  triggerBotVerification
 } from '../controllers/applicationController.js';
+import {
+  getApplicationDocuments,
+  uploadDocument
+} from '../controllers/documentController.js';
 import { verifyToken, requireRole } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get('/', getApplications);
 router.post('/', createApplication);
+router.get('/:id/documents', getApplicationDocuments);
+router.post('/:id/documents', uploadDocument);
+router.post('/:id/bot-verify', triggerBotVerification);
 router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
 router.put('/:id/reject', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), rejectApplication);
 router.patch('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
