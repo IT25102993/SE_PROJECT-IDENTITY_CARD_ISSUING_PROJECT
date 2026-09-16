@@ -14,6 +14,8 @@ export const getApplications = async (req, res) => {
           app.application_id,
           CONCAT('NEX-2026-', app.application_id) AS tracking_id,
           app.application_type,
+          app.application_reason,
+          app.marital_status,
           app.status,
           app.assigned_officer,
           app.bot_verified,
@@ -106,12 +108,21 @@ export const createApplication = async (req, res) => {
       last_name,
       dob,
       gender,
+      civil_status,
+      marital_status,
+      application_reason = 'G.C.E O/L',
+      other_reason,
       address,
       phone_number,
       email,
       application_type = 'New',
       documents = []
     } = req.body;
+
+    const finalMaritalStatus = marital_status || civil_status || 'Single';
+    const finalReason = application_reason === 'Other' && other_reason
+      ? `Other: ${other_reason}`
+      : application_reason;
 
     if (!first_name || !last_name || !dob || !gender || !address || !phone_number) {
       return res.status(400).json({
@@ -134,9 +145,9 @@ export const createApplication = async (req, res) => {
 
       // Insert into applications
       const applicationRes = await queryDb(
-        `INSERT INTO applications (applicant_id, application_type, status, remarks)
-         VALUES (?, ?, 'Pending', 'New citizen online submission.')`,
-        [applicantId, application_type]
+        `INSERT INTO applications (applicant_id, application_type, status, remarks, application_reason, marital_status)
+         VALUES (?, ?, 'Pending', 'New citizen online submission.', ?, ?)`,
+        [applicantId, application_type, finalReason, finalMaritalStatus]
       );
 
       const newApplicationId = applicationRes.insertId;
@@ -247,6 +258,9 @@ export const createApplication = async (req, res) => {
         email,
         status: botResult.status,
         application_type,
+        application_reason: finalReason,
+        marital_status: finalMaritalStatus,
+        civilStatus: finalMaritalStatus,
         bot_verified: botResult.passed,
         bot_score: botResult.score,
         bot_notes: botResult.notes,
