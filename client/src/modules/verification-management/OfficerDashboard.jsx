@@ -587,6 +587,8 @@ export const OfficerDashboard = () => {
                           ['NIC Number', selectedApp.nicNumber || selectedApp.national_id_number || 'Pending Approval'],
                           ['Date of Birth', selectedApp.dob || selectedApp.date_of_birth || 'N/A'],
                           ['Gender', selectedApp.gender || 'N/A'],
+                          ['Civil Status', selectedApp.marital_status || selectedApp.civilStatus || 'N/A'],
+                          ['Reason', selectedApp.application_reason || 'N/A'],
                           ['Phone', selectedApp.phone || selectedApp.phone_number || 'N/A'],
                           ['Email', selectedApp.email || 'N/A'],
                           ['Address', selectedApp.address || 'N/A'],
@@ -598,6 +600,36 @@ export const OfficerDashboard = () => {
                             <span style={{ color: 'var(--text-primary)', fontWeight: label === 'NIC Number' ? 700 : 400 }}>{value}</span>
                           </div>
                         ))}
+
+                        {/* Delivery Method Banner */}
+                        {(() => {
+                          const sType = selectedApp.service_type || selectedApp.serviceType || 'Normal';
+                          const is1Day = sType === '1-Day';
+                          return (
+                            <div style={{
+                              marginTop: '0.75rem',
+                              padding: '0.75rem 1rem',
+                              borderRadius: '10px',
+                              background: is1Day ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.08)',
+                              border: `1px solid ${is1Day ? 'rgba(245,158,11,0.4)' : 'rgba(16,185,129,0.3)'}`,
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center'
+                            }}>
+                              <div>
+                                <div style={{ fontWeight: 700, fontSize: '0.82rem', color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                                  {is1Day ? '🚚 1-Day Priority — Courier Dispatch Required' : '📨 Normal Service — Postal Dispatch'}
+                                </div>
+                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                                  Operational Delivery: <strong>{is1Day ? 'Courier Service' : 'Sri Lanka Postal Service'}</strong>
+                                </div>
+                              </div>
+                              <div style={{ fontWeight: 800, fontSize: '1rem', color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                                Rs. {is1Day ? '1,500' : '500'}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Documents + Bot Verification */}
