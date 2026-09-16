@@ -284,7 +284,7 @@ export const RegisterPage = () => {
               <label className="form-label" htmlFor="reg-email">Email Address</label>
               <div style={{ position: 'relative' }}>
                 <input id="reg-email" type="email" name="email" className="form-control"
-                  placeholder="e.g. thilina@gmail.com"
+                  placeholder="e.g. thilinasakalasooriya@gmail.com"
                   value={formData.email} onChange={handleChange}
                   style={inputStyle} required />
                 <Mail size={18} style={iconStyle} />
