@@ -151,10 +151,10 @@ export const approveApplication = async (req, res) => {
     if (getDbStatus()) {
       await queryDb(
         'UPDATE applications SET status = "Approved", remarks = ?, processed_by = ? WHERE application_id = ?',
-        [remarks, userId, id]
+        [remarks, userId, cleanId]
       );
 
-      const rows = await queryDb('SELECT applicant_id FROM applications WHERE application_id = ?', [id]);
+      const rows = await queryDb('SELECT applicant_id FROM applications WHERE application_id = ?', [cleanId]);
       if (rows && rows.length > 0) {
         const applicantId = rows[0].applicant_id;
         await queryDb('UPDATE applicants SET national_id_number = ? WHERE applicant_id = ?', [generatedNic, applicantId]);
@@ -163,16 +163,16 @@ export const approveApplication = async (req, res) => {
           `INSERT INTO identity_cards (application_id, applicant_id, card_number, issue_date, expiry_date, status, issued_by)
            VALUES (?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 10 YEAR), 'Active', ?)
            ON DUPLICATE KEY UPDATE card_number = VALUES(card_number)`,
-          [id, applicantId, generatedNic, userId]
+          [cleanId, applicantId, generatedNic, userId]
         );
       }
 
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [userId, 'APPLICATION_APPROVED', `Application #${id} approved. Official 12-digit NIC ${generatedNic} generated.`]
+        [userId, 'APPLICATION_APPROVED', `Application #${cleanId} approved. Official 12-digit NIC ${generatedNic} generated.`]
       );
     } else {
-      const app = (inMemoryDb.applications || []).find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (app) {
         app.status = 'Approved';
         app.nicNumber = generatedNic;
@@ -183,7 +183,7 @@ export const approveApplication = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Application #${id} approved! Issued Official 12-Digit NIC Number: ${generatedNic}`,
+      message: `Application #${cleanId} approved! Issued Official 12-Digit NIC Number: ${generatedNic}`,
       nicNumber: generatedNic
     });
   } catch (error) {
@@ -195,24 +195,25 @@ export const approveApplication = async (req, res) => {
 export const rejectApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const { remarks = 'Application rejected.' } = req.body;
     const userId = req.user ? req.user.user_id : 1;
 
     if (getDbStatus()) {
-      await queryDb('UPDATE applications SET status = "Rejected", remarks = ?, processed_by = ? WHERE application_id = ?', [remarks, userId, id]);
+      await queryDb('UPDATE applications SET status = "Rejected", remarks = ?, processed_by = ? WHERE application_id = ?', [remarks, userId, cleanId]);
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [userId, 'APPLICATION_REJECTED', `Application #${id} rejected. Reason: ${remarks}`]
+        [userId, 'APPLICATION_REJECTED', `Application #${cleanId} rejected. Reason: ${remarks}`]
       );
     } else {
-      const app = (inMemoryDb.applications || []).find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (app) {
         app.status = 'Rejected';
         app.remarks = remarks;
       }
     }
 
-    return res.status(200).json({ success: true, message: `Application #${id} rejected.` });
+    return res.status(200).json({ success: true, message: `Application #${cleanId} rejected.` });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
