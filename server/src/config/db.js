@@ -133,13 +133,25 @@ export const initDb = async () => {
     await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
     await tempConn.end();
 
-    // Pool connection to database
+    // Pool connection to database with resilient pooling & keep-alive
     pool = mysql.createPool({
       ...connectionConfig,
       database: dbName,
       waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
+      connectionLimit: 15,
+      queueLimit: 0,
+      connectTimeout: 10000,
+      acquireTimeout: 10000,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
+      idleTimeout: 300000
+    });
+
+    pool.on('error', (err) => {
+      console.warn('MySQL Pool Connection Error:', err.message);
+      if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+        isConnected = false;
+      }
     });
 
     // Create Tables if not existing
@@ -290,10 +302,31 @@ export const initDb = async () => {
   }
 };
 
-export const queryDb = async (sql, params = []) => {
+export const queryDb = async (sql, params = [], retryCount = 1) => {
   if (isConnected && pool) {
-    const [results] = await pool.query(sql, params);
-    return results;
+    try {
+      const [results] = await pool.query(sql, params);
+      return results;
+    } catch (err) {
+      const isTransient = [
+        'PROTOCOL_CONNECTION_LOST',
+        'ECONNRESET',
+        'ETIMEDOUT',
+        'EPIPE',
+        'ER_LOCK_DEADLOCK',
+        'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR'
+      ].includes(err.code);
+
+      if (isTransient && retryCount > 0) {
+        console.warn(`Transient database error (${err.code}). Reconnecting & retrying query...`);
+        try {
+          await pool.query('SELECT 1');
+        } catch (_) { /* ignore ping */ }
+        return queryDb(sql, params, retryCount - 1);
+      }
+      console.error('MySQL query error:', err.message);
+      throw err;
+    }
   }
   return null;
 };
