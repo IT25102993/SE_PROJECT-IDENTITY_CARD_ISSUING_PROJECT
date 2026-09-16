@@ -61,20 +61,20 @@ export const inMemoryDb = {
       tracking_id: 'NEX-2026-90412',
       first_name: 'Thilina',
       last_name: 'Sakalasooriya',
-      fullNameEn: 'Thilina Srimal Sakalasooriya',
-      national_id_number: '200515112345',
-      dob: '2005-05-31',
+      fullNameEn: 'Thilina Sakalasooriya',
+      national_id_number: '200512345678',
+      dob: '2005-01-01',
       gender: 'Male',
-      address: 'No. 45, Station Road, Ragama, Gampaha District',
+      address: 'No. 12, Main Street, Malabe, Colombo',
       phone_number: '+94 77 123 4567',
       phone: '+94 77 123 4567',
-      email: 'spokenengadamin@gmail.com',
+      email: 'thilina.s@gmail.com',
       status: 'Verification-Passed',
       application_type: 'New',
       remarks: 'All biometrics approved.',
       bot_verified: true,
-      bot_score: 98,
-      bot_notes: 'Automated Bot Check: PASSED (Match Score: 98%). Official Birth Certificate confirmed for Thilina Srimal Sakalasooriya. Specimen: birthcerificate.pdf (Sri Lanka Register of Births, District: Gampaha, Division: Ragama, DOB: 2005 May 31, Sex: Male).',
+      bot_score: 92,
+      bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
       bot_verified_at: '2026-08-01 09:35:00',
       submitted_at: '2026-08-01'
     }
@@ -84,9 +84,9 @@ export const inMemoryDb = {
       document_id: 1,
       application_id: 1,
       document_type: 'Birth Certificate (Original Scan)',
-      file_name: 'birthcerificate.pdf',
-      file_path: '/uploads/documents/birthcerificate.pdf',
-      file_size: '174 KB',
+      file_name: 'birth_certificate.pdf',
+      file_path: '/uploads/documents/birth_certificate.pdf',
+      file_size: '1.42 MB',
       uploaded_at: '2026-08-01 09:32:00'
     },
     {
@@ -126,7 +126,7 @@ export const initDb = async () => {
 
     // First attempt server connection
     const tempConn = await mysql.createConnection(connectionConfig);
-    
+
     // Ensure database exists
     const dbName = process.env.DB_NAME || 'identity_card_system';
     await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
@@ -277,10 +277,10 @@ export const initDb = async () => {
     `);
 
     isConnected = true;
-    console.log('✅ Connected to MySQL Database successfully and schema migrations verified!');
+    console.log('Connected to MySQL Database successfully and schema migrations verified!');
   } catch (error) {
-    console.warn('⚠️  MySQL Connection Note:', error.message);
-    console.log('⚡ Operating in Full-Stack Hybrid SQL mode (In-Memory Database Ready).');
+    console.warn('MySQL Connection Note:', error.message);
+    console.log('Operating in Full-Stack Hybrid SQL mode (In-Memory Database Ready).');
     isConnected = false;
   }
 };
