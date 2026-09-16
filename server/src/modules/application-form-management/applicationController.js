@@ -112,6 +112,7 @@ export const createApplication = async (req, res) => {
       marital_status,
       application_reason = 'G.C.E O/L',
       other_reason,
+      service_type = 'Normal',
       address,
       phone_number,
       email,
@@ -145,9 +146,9 @@ export const createApplication = async (req, res) => {
 
       // Insert into applications
       const applicationRes = await queryDb(
-        `INSERT INTO applications (applicant_id, application_type, status, remarks, application_reason, marital_status)
-         VALUES (?, ?, 'Pending', 'New citizen online submission.', ?, ?)`,
-        [applicantId, application_type, finalReason, finalMaritalStatus]
+        `INSERT INTO applications (applicant_id, application_type, status, remarks, application_reason, marital_status, service_type)
+         VALUES (?, ?, 'Pending', 'New citizen online submission.', ?, ?, ?)`,
+        [applicantId, application_type, finalReason, finalMaritalStatus, service_type]
       );
 
       const newApplicationId = applicationRes.insertId;
@@ -261,6 +262,8 @@ export const createApplication = async (req, res) => {
         application_reason: finalReason,
         marital_status: finalMaritalStatus,
         civilStatus: finalMaritalStatus,
+        service_type,
+        delivery_method: service_type === '1-Day' ? 'Courier Service' : 'Sri Lanka Postal Service',
         bot_verified: botResult.passed,
         bot_score: botResult.score,
         bot_notes: botResult.notes,
