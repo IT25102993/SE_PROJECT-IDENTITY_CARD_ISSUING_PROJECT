@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 
 const AppContext = createContext();
 
@@ -79,10 +79,30 @@ export const AppProvider = ({ children }) => {
     icon: null
   });
 
-  // Fetch applications directly from Backend API (Database)
+  const isFetchingRef = useRef(false);
+  const debounceTimerRef = useRef(null);
+
+  // Debounced background refresh helper to eliminate request cascades and proxy stalls
+  const scheduleRefresh = useCallback((delay = 350) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      fetchApplications();
+    }, delay);
+  }, []);
+
+  // Fetch applications directly from Backend API with connection timeout and concurrency guard
   const fetchApplications = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
-      const res = await fetch('/api/applications');
+      const res = await fetch('/api/applications', { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (res.ok) {
         const data = await res.json();
         if (data.applications && Array.isArray(data.applications)) {
@@ -102,6 +122,9 @@ export const AppProvider = ({ children }) => {
             email: app.email || '',
             status: app.status || 'Pending',
             application_type: app.application_type || 'New',
+            application_reason: app.application_reason || 'G.C.E O/L',
+            marital_status: app.marital_status || app.civilStatus || 'Single',
+            civilStatus: app.marital_status || app.civilStatus || 'Single',
             assignedOfficer: app.assigned_officer || app.assignedOfficer || app.processed_by_name || null,
             // ── Bot Verification Fields ──
             bot_verified: app.bot_verified === 1 || app.bot_verified === true,
@@ -122,12 +145,22 @@ export const AppProvider = ({ children }) => {
         }
       }
     } catch (err) {
-      console.warn('Backend DB connection note, using current active state:', err.message);
+      if (err.name !== 'AbortError') {
+        console.warn('Backend DB connection note, using current active state:', err.message);
+      }
+    } finally {
+      clearTimeout(timeoutId);
+      isFetchingRef.current = false;
     }
   };
 
   useEffect(() => {
     fetchApplications();
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, []);
 
   const triggerLoading = (config = {}) => {
@@ -199,15 +232,25 @@ export const AppProvider = ({ children }) => {
       file_size: doc.file_size || doc.size || 'Unknown'
     }));
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
     try {
       const res = await fetch('/api/applications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           first_name,
           last_name,
           dob: formData.dob || '2005-01-01',
           gender: formData.gender || 'Male',
+          civil_status: formData.civilStatus || 'Single',
+          marital_status: formData.civilStatus || 'Single',
+          application_reason: formData.applicationReason === 'Other' && formData.otherReason
+            ? `Other: ${formData.otherReason}`
+            : (formData.applicationReason || 'G.C.E O/L'),
+          other_reason: formData.otherReason || '',
           address: formData.address || 'Colombo, Sri Lanka',
           phone_number: formData.phone || '+94 77 000 0000',
           email: formData.email || '',
@@ -215,25 +258,39 @@ export const AppProvider = ({ children }) => {
           documents: documentsPayload
         })
       });
+      clearTimeout(timeoutId);
 
       const data = await res.json();
       const trackingId = data.trackingId || `NEX-2026-${Math.floor(10000 + Math.random() * 90000)}`;
 
-      fetchApplications();
+      scheduleRefresh(200);
       addToast(`Application submitted to database! Tracking ID: ${trackingId}`, 'success');
       return trackingId;
     } catch (err) {
+      clearTimeout(timeoutId);
       const randomDigits = Math.floor(10000 + Math.random() * 90000);
       const trackingId = `NEX-2026-${randomDigits}`;
+      scheduleRefresh(500);
       addToast(`Application submitted! Tracking ID: ${trackingId}`, 'success');
       return trackingId;
     }
   };
 
   const approveApplication = async (appId, notes = '') => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
+    // Instant optimistic update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+        return { ...app, status: 'Approved', officerNotes: notes, remarks: notes };
+      }
+      return app;
+    }));
+    addToast(`Application ${appId} approved in database!`, 'success');
+
     try {
       const token = localStorage.getItem('nexusgov-token');
-      await fetch(`/api/applications/${appId}/approve`, {
+      await fetch(`/api/applications/${numericId}/approve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -241,17 +298,27 @@ export const AppProvider = ({ children }) => {
         },
         body: JSON.stringify({ remarks: notes })
       });
-      fetchApplications();
+      scheduleRefresh(400);
     } catch (err) {
-      setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'Approved' } : app));
+      console.warn('Backend approve sync note:', err.message);
     }
-    addToast(`Application ${appId} approved in database!`, 'success');
   };
 
   const rejectApplication = async (appId, reason) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
+    // Instant optimistic update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+        return { ...app, status: 'Rejected', officerNotes: reason, remarks: reason };
+      }
+      return app;
+    }));
+    addToast(`Application ${appId} rejected.`, 'error');
+
     try {
       const token = localStorage.getItem('nexusgov-token');
-      await fetch(`/api/applications/${appId}/reject`, {
+      await fetch(`/api/applications/${numericId}/reject`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -259,17 +326,27 @@ export const AppProvider = ({ children }) => {
         },
         body: JSON.stringify({ remarks: reason })
       });
-      fetchApplications();
+      scheduleRefresh(400);
     } catch (err) {
-      setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'Rejected' } : app));
+      console.warn('Backend reject sync note:', err.message);
     }
-    addToast(`Application ${appId} rejected.`, 'error');
   };
 
   const markAsPrinted = async (appId) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
+    // Instant optimistic update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+        return { ...app, status: 'Printed' };
+      }
+      return app;
+    }));
+    addToast(`Card for ${appId} marked as Printed in DB!`, 'info');
+
     try {
       const token = localStorage.getItem('nexusgov-token');
-      await fetch(`/api/applications/${appId}/status`, {
+      await fetch(`/api/applications/${numericId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -277,17 +354,27 @@ export const AppProvider = ({ children }) => {
         },
         body: JSON.stringify({ status: 'Printed' })
       });
-      fetchApplications();
+      scheduleRefresh(400);
     } catch (err) {
-      setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'Printed' } : app));
+      console.warn('Backend print status sync note:', err.message);
     }
-    addToast(`Card for ${appId} marked as Printed in DB!`, 'info');
   };
 
   const markAsDispatched = async (appId) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
+    // Instant optimistic update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+        return { ...app, status: 'Issued' };
+      }
+      return app;
+    }));
+    addToast(`Application ${appId} marked as Dispatched!`, 'success');
+
     try {
       const token = localStorage.getItem('nexusgov-token');
-      await fetch(`/api/applications/${appId}/status`, {
+      await fetch(`/api/applications/${numericId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -295,16 +382,17 @@ export const AppProvider = ({ children }) => {
         },
         body: JSON.stringify({ status: 'Issued' })
       });
-      fetchApplications();
+      scheduleRefresh(400);
     } catch (err) {
-      setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'Dispatched' } : app));
+      console.warn('Backend dispatch status sync note:', err.message);
     }
-    addToast(`Application ${appId} marked as Dispatched!`, 'success');
   };
 
   const claimJob = async (appId, officerName = 'Officer Wickramasinghe') => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
     setApplications(prev => prev.map(app => {
-      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(appId)) {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
         return {
           ...app,
           assignedOfficer: officerName
@@ -315,7 +403,6 @@ export const AppProvider = ({ children }) => {
 
     try {
       const token = localStorage.getItem('nexusgov-token');
-      const numericId = String(appId).replace(/^NEX-2026-/, '');
       await fetch(`/api/applications/${numericId}/claim`, {
         method: 'POST',
         headers: {
@@ -324,6 +411,7 @@ export const AppProvider = ({ children }) => {
         },
         body: JSON.stringify({ officerName })
       });
+      scheduleRefresh(500);
     } catch (err) {
       console.warn('Backend claim sync note:', err.message);
     }
@@ -331,8 +419,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const unclaimJob = async (appId) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+
     setApplications(prev => prev.map(app => {
-      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(appId)) {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
         return {
           ...app,
           assignedOfficer: null
@@ -343,7 +433,6 @@ export const AppProvider = ({ children }) => {
 
     try {
       const token = localStorage.getItem('nexusgov-token');
-      const numericId = String(appId).replace(/^NEX-2026-/, '');
       await fetch(`/api/applications/${numericId}/unclaim`, {
         method: 'POST',
         headers: {
@@ -351,6 +440,7 @@ export const AppProvider = ({ children }) => {
           ...(token ? { Authorization: `Bearer ${token}` } : {})
         }
       });
+      scheduleRefresh(500);
     } catch (err) {
       console.warn('Backend unclaim sync note:', err.message);
     }
@@ -376,7 +466,7 @@ export const AppProvider = ({ children }) => {
 
     // Optimistic local state update
     setApplications(prev => prev.map(app => {
-      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(numericId)) {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
         const newFirstName = updatedFields.first_name !== undefined ? updatedFields.first_name : app.first_name;
         const newLastName = updatedFields.last_name !== undefined ? updatedFields.last_name : app.last_name;
         return {
@@ -403,7 +493,7 @@ export const AppProvider = ({ children }) => {
       if (!res.ok) {
         throw new Error(data.message || 'Failed to update application');
       }
-      fetchApplications();
+      scheduleRefresh(300);
       addToast(`Application #${appId} updated successfully.`, 'success');
       return { success: true, message: data.message };
     } catch (err) {
