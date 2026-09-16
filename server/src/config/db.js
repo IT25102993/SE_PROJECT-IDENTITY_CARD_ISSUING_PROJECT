@@ -75,6 +75,7 @@ export const inMemoryDb = {
       assigned_officer: null,
       application_reason: 'G.C.E O/L',
       marital_status: 'Single',
+      service_type: 'Normal',
       bot_verified: true,
       bot_score: 92,
       bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
@@ -287,6 +288,9 @@ export const initDb = async () => {
     }
     if (!colNames.includes('marital_status')) {
       await pool.query(`ALTER TABLE applications ADD COLUMN marital_status VARCHAR(50) NULL;`);
+    }
+    if (!colNames.includes('service_type')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN service_type ENUM('Normal', '1-Day') NOT NULL DEFAULT 'Normal';`);
     }
 
     // Seed Admin User thilinasakalasooriya@gmail.com if not exists
