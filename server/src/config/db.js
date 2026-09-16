@@ -72,6 +72,7 @@ export const inMemoryDb = {
       status: 'Verification-Passed',
       application_type: 'New',
       remarks: 'All biometrics approved.',
+      assigned_officer: null,
       bot_verified: true,
       bot_score: 92,
       bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
@@ -179,6 +180,7 @@ export const initDb = async () => {
         \`bot_notes\` TEXT NULL,
         \`bot_verified_at\` DATETIME NULL,
         \`processed_by\` INT NULL,
+        \`assigned_officer\` VARCHAR(100) NULL,
         \`remarks\` TEXT NULL,
         \`submitted_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         \`updated_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -262,6 +264,9 @@ export const initDb = async () => {
     }
     if (!colNames.includes('bot_verified_at')) {
       await pool.query(`ALTER TABLE applications ADD COLUMN bot_verified_at DATETIME NULL;`);
+    }
+    if (!colNames.includes('assigned_officer')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN assigned_officer VARCHAR(100) NULL;`);
     }
 
     // Seed Admin User thilinasakalasooriya@gmail.com if not exists
