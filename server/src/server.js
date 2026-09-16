@@ -77,9 +77,10 @@ app.use((req, res) => {
 const start = async () => {
   await initDb();
   initSampleDocuments();
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log('====================================================');
-    console.log(`NexusGov Server running on http://localhost:${PORT}`);
+    console.log(`NexusGov Server running locally on:  http://localhost:${PORT}`);
+    console.log(`NexusGov Server running on network:  http://0.0.0.0:${PORT}`);
     console.log(`Health Check: http://localhost:${PORT}/api/health`);
     console.log('Modules Active: user, application, verification, document, admin, operation');
     console.log('====================================================');
