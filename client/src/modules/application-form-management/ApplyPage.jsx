@@ -352,6 +352,9 @@ export const ApplyPage = () => {
     dob: '',
     gender: 'Male',
     civilStatus: 'Single',
+    applicationReason: 'G.C.E O/L',
+    otherReason: '',
+    serviceType: 'Normal',
     address: '',
     district: 'Colombo',
     divisionalSecretariat: 'Kaduwela',
@@ -424,9 +427,27 @@ export const ApplyPage = () => {
       alert('Please fill in required personal details (Full Name & DOB).');
       return;
     }
+    if (step === 1 && formData.applicationReason === 'Other' && !formData.otherReason.trim()) {
+      alert('Please describe your reason for application.');
+      return;
+    }
     if (step === 2 && (!formData.address || !formData.phone)) {
       alert('Please fill in address and phone number.');
       return;
+    }
+    if (step === 4) {
+      const needsPoliceReport = formData.applicationReason === 'Wallet Got Stolen';
+      const needsMarriageCert = formData.civilStatus === 'Married';
+      const POLICE_DOC = 'Police Report (Wallet Stolen)';
+      const MARRIAGE_DOC = 'Marriage Certificate';
+      if (needsPoliceReport && !formData.documents.find(d => d.document_type === POLICE_DOC)) {
+        alert('A Police Report is required when the reason is "Wallet Got Stolen".');
+        return;
+      }
+      if (needsMarriageCert && !formData.documents.find(d => d.document_type === MARRIAGE_DOC)) {
+        alert('A Marriage Certificate is required for married applicants.');
+        return;
+      }
     }
     setStep(prev => prev + 1);
   };
@@ -628,13 +649,99 @@ export const ApplyPage = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">Civil Status</label>
+                      <label className="form-label">Civil Status (Marital Status)</label>
                       <select name="civilStatus" className="form-select" value={formData.civilStatus} onChange={handleChange}>
                         <option value="Single">Single</option>
                         <option value="Married">Married</option>
                         <option value="Widowed">Widowed</option>
                         <option value="Divorced">Divorced</option>
                       </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Reason for Application *</label>
+                      <select name="applicationReason" className="form-select" value={formData.applicationReason} onChange={handleChange}>
+                        <option value="G.C.E O/L">G.C.E O/L (First-time issuance)</option>
+                        <option value="Wallet Got Stolen">Wallet Got Stolen (Lost/Stolen NIC)</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      {formData.applicationReason === 'Wallet Got Stolen' && (
+                        <div style={{ marginTop: '0.5rem', padding: '0.6rem 0.85rem', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '8px', fontSize: '0.82rem', color: 'var(--accent-amber)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          ⚠️ A Police Report will be required in Step 4 — Documents.
+                        </div>
+                      )}
+                      {formData.applicationReason === 'Other' && (
+                        <input
+                          type="text"
+                          name="otherReason"
+                          className="form-control"
+                          placeholder="Please describe your reason…"
+                          value={formData.otherReason}
+                          onChange={handleChange}
+                          style={{ marginTop: '0.5rem' }}
+                          required
+                        />
+                      )}
+                      {formData.civilStatus === 'Married' && (
+                        <div style={{ marginTop: '0.5rem', padding: '0.6rem 0.85rem', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: '8px', fontSize: '0.82rem', color: 'var(--accent-violet, #818cf8)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          💍 A Marriage Certificate will be required in Step 4 — Documents.
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Service Type Selection */}
+                    <div className="form-group">
+                      <label className="form-label" style={{ fontWeight: 700 }}>Service Type *</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem', marginTop: '0.35rem' }}>
+                        {/* Normal Service */}
+                        <div
+                          onClick={() => setFormData(prev => ({ ...prev, serviceType: 'Normal' }))}
+                          style={{
+                            cursor: 'pointer',
+                            padding: '1rem',
+                            borderRadius: '12px',
+                            border: `2px solid ${formData.serviceType === 'Normal' ? 'var(--accent-emerald)' : 'var(--border-color)'}`,
+                            background: formData.serviceType === 'Normal' ? 'rgba(16,185,129,0.08)' : 'rgba(0,0,0,0.18)',
+                            transition: 'all 0.2s ease',
+                            textAlign: 'center'
+                          }}
+                        >
+                          <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>📨</div>
+                          <div style={{ fontWeight: 700, fontSize: '0.9rem', color: formData.serviceType === 'Normal' ? 'var(--accent-emerald)' : 'var(--text-primary)' }}>Normal Service</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Postal Delivery</div>
+                          <div style={{ fontWeight: 800, fontSize: '1.05rem', color: formData.serviceType === 'Normal' ? 'var(--accent-emerald)' : 'var(--text-secondary)', marginTop: '0.4rem' }}>Rs. 500</div>
+                          {formData.serviceType === 'Normal' && (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--accent-emerald)', marginTop: '0.35rem' }}>✓ Selected</div>
+                          )}
+                        </div>
+
+                        {/* 1-Day Service */}
+                        <div
+                          onClick={() => setFormData(prev => ({ ...prev, serviceType: '1-Day' }))}
+                          style={{
+                            cursor: 'pointer',
+                            padding: '1rem',
+                            borderRadius: '12px',
+                            border: `2px solid ${formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--border-color)'}`,
+                            background: formData.serviceType === '1-Day' ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.18)',
+                            transition: 'all 0.2s ease',
+                            textAlign: 'center',
+                            position: 'relative'
+                          }}
+                        >
+                          <div style={{ position: 'absolute', top: '-10px', right: '8px', background: 'var(--accent-amber)', color: '#000', fontSize: '0.62rem', fontWeight: 800, padding: '0.15rem 0.5rem', borderRadius: '999px' }}>PRIORITY</div>
+                          <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>🚚</div>
+                          <div style={{ fontWeight: 700, fontSize: '0.9rem', color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--text-primary)' }}>1-Day Service</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Courier Delivery</div>
+                          <div style={{ fontWeight: 800, fontSize: '1.05rem', color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--text-secondary)', marginTop: '0.4rem' }}>Rs. 1,500</div>
+                          {formData.serviceType === '1-Day' && (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--accent-amber)', marginTop: '0.35rem' }}>✓ Selected</div>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        📍 Payment of <strong style={{ color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>Rs. {formData.serviceType === '1-Day' ? '1,500' : '500'}</strong> to be deposited to A/C No. <strong>1234 5678 9012 1234</strong> — Dept. of Identity Issuance. Upload receipt in Step 4.
+                      </div>
                     </div>
                   </div>
                 )}
@@ -756,7 +863,20 @@ export const ApplyPage = () => {
                   </div>
                 )}
 
-                {step === 4 && (
+                {step === 4 && (() => {
+                  const POLICE_DOC = 'Police Report (Wallet Stolen)';
+                  const MARRIAGE_DOC = 'Marriage Certificate';
+                  const needsPoliceReport = formData.applicationReason === 'Wallet Got Stolen';
+                  const needsMarriageCert = formData.civilStatus === 'Married';
+
+                  const baseDocs = [
+                    { name: 'Birth Certificate (Original Scan)', required: true },
+                    { name: 'Grama Niladhari Certificate (Form DRP-1)', required: true },
+                  ];
+                  if (needsPoliceReport) baseDocs.push({ name: POLICE_DOC, required: true, badge: 'Required — Wallet Stolen' });
+                  if (needsMarriageCert) baseDocs.push({ name: MARRIAGE_DOC, required: true, badge: 'Required — Married' });
+
+                  return (
                   <div className="animate-fade-in">
                     <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <FileText size={20} color="var(--accent-primary)" /> Supporting Documents
@@ -766,19 +886,21 @@ export const ApplyPage = () => {
                       Upload scans of required verification documents. Supported: PDF, JPG, PNG (max 10MB each).
                     </p>
 
-                    {[
-                      'Birth Certificate (Original Scan)',
-                      'Grama Niladhari Certificate (Form DRP-1)',
-                      'Police Clearance Report (For Lost NIC)',
-                      'Marriage Certificate (If Name Changed)'
-                    ].map((docName, idx) => {
+                    {baseDocs.map((doc, idx) => {
+                      const docName = doc.name;
                       const attached = formData.documents.find(d => (d.document_type || d) === docName);
+                      const isRequired = doc.required;
                       return (
-                        <div key={idx} style={{ padding: '0.85rem 1rem', background: attached ? 'rgba(16,185,129,0.07)' : 'rgba(0,0,0,0.2)', border: `1px solid ${attached ? 'rgba(16,185,129,0.3)' : 'var(--border-color)'}`, borderRadius: 'var(--radius-md)', marginBottom: '0.75rem', transition: 'all 0.2s ease' }}>
+                        <div key={idx} style={{ padding: '0.85rem 1rem', background: attached ? 'rgba(16,185,129,0.07)' : 'rgba(0,0,0,0.2)', border: `1px solid ${attached ? 'rgba(16,185,129,0.3)' : isRequired && !attached ? 'rgba(245,158,11,0.4)' : 'var(--border-color)'}`, borderRadius: 'var(--radius-md)', marginBottom: '0.75rem', transition: 'all 0.2s ease' }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <FileText size={16} color={attached ? 'var(--accent-emerald)' : 'var(--text-muted)'} />
-                              <span style={{ fontSize: '0.88rem', color: attached ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: attached ? 600 : 400 }}>{docName}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: 0 }}>
+                              <FileText size={16} color={attached ? 'var(--accent-emerald)' : isRequired ? 'var(--accent-amber)' : 'var(--text-muted)'} style={{ flexShrink: 0 }} />
+                              <div style={{ minWidth: 0 }}>
+                                <span style={{ fontSize: '0.88rem', color: attached ? 'var(--text-primary)' : 'var(--text-secondary)', fontWeight: attached ? 600 : 400, display: 'block' }}>{docName}</span>
+                                {doc.badge && !attached && (
+                                  <span style={{ fontSize: '0.72rem', color: 'var(--accent-amber)', background: 'rgba(245,158,11,0.12)', padding: '0.1rem 0.45rem', borderRadius: '999px', display: 'inline-block', marginTop: '0.2rem' }}>{doc.badge}</span>
+                                )}
+                              </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                               {attached && (
@@ -846,7 +968,8 @@ export const ApplyPage = () => {
                       </div>
                     )}
                   </div>
-                )}
+                  );
+                })()}
 
                 {step === 5 && (
                   <div className="animate-fade-in">
@@ -872,6 +995,16 @@ export const ApplyPage = () => {
                         <span style={{ fontWeight: 600 }}>{formData.dob} ({formData.gender})</span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Civil Status:</span>
+                        <span style={{ fontWeight: 600 }}>{formData.civilStatus}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Reason for Application:</span>
+                        <span style={{ fontWeight: 600 }}>
+                          {formData.applicationReason === 'Other' ? `Other — ${formData.otherReason}` : formData.applicationReason}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.4rem' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Address:</span>
                         <span style={{ fontWeight: 600 }}>{formData.address || 'N/A'}</span>
                       </div>
@@ -880,6 +1013,31 @@ export const ApplyPage = () => {
                         <span style={{ fontWeight: 700, color: formData.documents.length > 0 ? 'var(--accent-emerald)' : 'var(--accent-amber)' }}>
                           {formData.documents.length > 0 ? `✓ ${formData.documents.length} document${formData.documents.length > 1 ? 's' : ''}` : 'None attached'}
                         </span>
+                      </div>
+                      {/* Service type confirmation banner */}
+                      <div style={{
+                        marginTop: '0.5rem',
+                        padding: '0.85rem 1rem',
+                        borderRadius: '10px',
+                        background: formData.serviceType === '1-Day' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.08)',
+                        border: `1px solid ${formData.serviceType === '1-Day' ? 'rgba(245,158,11,0.4)' : 'rgba(16,185,129,0.3)'}`,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '0.5rem'
+                      }}>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.88rem', color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                            {formData.serviceType === '1-Day' ? '🚚 1-Day Priority Service' : '📨 Normal Service'}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                            Delivery via: <strong>{formData.serviceType === '1-Day' ? 'Courier Service' : 'Sri Lanka Postal Service'}</strong>
+                          </div>
+                        </div>
+                        <div style={{ fontWeight: 800, fontSize: '1.1rem', color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                          Rs. {formData.serviceType === '1-Day' ? '1,500' : '500'}
+                        </div>
                       </div>
                     </div>
                   </div>
