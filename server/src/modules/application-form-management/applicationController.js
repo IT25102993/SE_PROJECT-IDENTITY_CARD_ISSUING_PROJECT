@@ -16,6 +16,7 @@ export const getApplications = async (req, res) => {
           app.application_type,
           app.application_reason,
           app.marital_status,
+          app.service_type,
           app.status,
           app.assigned_officer,
           app.bot_verified,
