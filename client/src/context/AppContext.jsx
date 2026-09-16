@@ -102,6 +102,7 @@ export const AppProvider = ({ children }) => {
             email: app.email || '',
             status: app.status || 'Pending',
             application_type: app.application_type || 'New',
+            assignedOfficer: app.assigned_officer || app.assignedOfficer || app.processed_by_name || null,
             // ── Bot Verification Fields ──
             bot_verified: app.bot_verified === 1 || app.bot_verified === true,
             bot_score: app.bot_score || 0,
@@ -301,9 +302,9 @@ export const AppProvider = ({ children }) => {
     addToast(`Application ${appId} marked as Dispatched!`, 'success');
   };
 
-  const claimJob = (appId, officerName = 'Officer Wickramasinghe') => {
+  const claimJob = async (appId, officerName = 'Officer Wickramasinghe') => {
     setApplications(prev => prev.map(app => {
-      if (app.id === appId || app.application_id === appId) {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(appId)) {
         return {
           ...app,
           assignedOfficer: officerName
@@ -311,12 +312,27 @@ export const AppProvider = ({ children }) => {
       }
       return app;
     }));
+
+    try {
+      const token = localStorage.getItem('nexusgov-token');
+      const numericId = String(appId).replace(/^NEX-2026-/, '');
+      await fetch(`/api/applications/${numericId}/claim`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ officerName })
+      });
+    } catch (err) {
+      console.warn('Backend claim sync note:', err.message);
+    }
     addToast(`Job ${appId} claimed into your active workbench!`, 'info');
   };
 
-  const unclaimJob = (appId) => {
+  const unclaimJob = async (appId) => {
     setApplications(prev => prev.map(app => {
-      if (app.id === appId || app.application_id === appId) {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(appId)) {
         return {
           ...app,
           assignedOfficer: null
@@ -324,12 +340,26 @@ export const AppProvider = ({ children }) => {
       }
       return app;
     }));
-    addToast(`Job ${appId} returned to unassigned pool.`, 'info');
+
+    try {
+      const token = localStorage.getItem('nexusgov-token');
+      const numericId = String(appId).replace(/^NEX-2026-/, '');
+      await fetch(`/api/applications/${numericId}/unclaim`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
+    } catch (err) {
+      console.warn('Backend unclaim sync note:', err.message);
+    }
+    addToast(`Application ${appId} removed from your job pool and returned to general queue.`, 'info');
   };
 
   const claimNextJob = (officerName = 'Officer Wickramasinghe') => {
     const unassigned = applications.find(
-      a => (a.status === 'PENDING_VERIFICATION' || a.status === 'Pending') && !a.assignedOfficer
+      a => (a.status === 'PENDING_VERIFICATION' || a.status === 'Pending' || a.status === 'Verification-Passed') && !a.assignedOfficer
     );
     if (!unassigned) {
       addToast('No unassigned pending jobs available in the pool right now.', 'info');
@@ -338,6 +368,48 @@ export const AppProvider = ({ children }) => {
     const appId = unassigned.id || unassigned.application_id;
     claimJob(appId, officerName);
     return unassigned;
+  };
+
+  const updateApplication = async (appId, updatedFields) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+    const token = localStorage.getItem('nexusgov-token');
+
+    // Optimistic local state update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === String(numericId)) {
+        const newFirstName = updatedFields.first_name !== undefined ? updatedFields.first_name : app.first_name;
+        const newLastName = updatedFields.last_name !== undefined ? updatedFields.last_name : app.last_name;
+        return {
+          ...app,
+          ...updatedFields,
+          fullNameEn: `${newFirstName || ''} ${newLastName || ''}`.trim(),
+          remarks: updatedFields.officerNotes !== undefined ? updatedFields.officerNotes : (updatedFields.remarks !== undefined ? updatedFields.remarks : app.remarks),
+          officerNotes: updatedFields.officerNotes !== undefined ? updatedFields.officerNotes : (updatedFields.remarks !== undefined ? updatedFields.remarks : app.officerNotes)
+        };
+      }
+      return app;
+    }));
+
+    try {
+      const res = await fetch(`/api/applications/${numericId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(updatedFields)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update application');
+      }
+      fetchApplications();
+      addToast(`Application #${appId} updated successfully.`, 'success');
+      return { success: true, message: data.message };
+    } catch (err) {
+      addToast(err.message || 'Error updating application', 'error');
+      return { success: false, message: err.message };
+    }
   };
 
   return (
@@ -350,6 +422,7 @@ export const AppProvider = ({ children }) => {
         applications,
         fetchApplications,
         submitNewApplication,
+        updateApplication,
         approveApplication,
         rejectApplication,
         markAsPrinted,
