@@ -13,7 +13,8 @@ import {
   ArrowLeft,
   Upload,
   ShieldCheck,
-  Languages
+  Languages,
+  Sparkles
 } from 'lucide-react';
 
 // Dictionaries & Transliteration Helpers for English, Sinhala & Tamil
