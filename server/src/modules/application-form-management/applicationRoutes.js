@@ -2,6 +2,9 @@ import express from 'express';
 import {
   getApplications,
   createApplication,
+  updateApplication,
+  claimApplication,
+  unclaimApplication,
   deleteApplication
 } from './applicationController.js';
 import {
@@ -27,11 +30,16 @@ router.post('/:id/documents', uploadDocument);
 // Bot verification route
 router.post('/:id/bot-verify', triggerBotVerification);
 
+// Officer & Staff Application Management: View, Update, Pool Management
+router.put('/:id', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateApplication);
+router.post('/:id/claim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), claimApplication);
+router.post('/:id/unclaim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), unclaimApplication);
+
 // Approver / Officer decisions
 router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
 router.put('/:id/reject', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), rejectApplication);
 
-// Delete
+// Delete - Restricted strictly to Administrator (Officers cannot delete from system)
 router.delete('/:id', verifyToken, requireRole('Admin'), deleteApplication);
 
 export default router;
