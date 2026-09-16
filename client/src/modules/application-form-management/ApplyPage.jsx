@@ -419,6 +419,35 @@ export const ApplyPage = () => {
     }
   };
 
+  const handlePrefillFromBirthCertificate = () => {
+    setFormData(prev => ({
+      ...prev,
+      fullNameEn: 'Thilina Srimal Sakalasooriya',
+      fullNameSi: 'තිලිණ ශ්‍රීමාල් සකළසූරිය',
+      fullNameTa: 'திலீன ஸ்ரீமால் சகலசூரிய',
+      dob: '2005-05-31',
+      gender: 'Male',
+      civilStatus: 'Single',
+      address: 'No. 45, Station Road, Ragama, Gampaha District',
+      district: 'Gampaha',
+      divisionalSecretariat: 'Ragama',
+      gnDivision: 'Ragama Town (412A)',
+      phone: '+94 77 123 4567',
+      email: 'spokenengadamin@gmail.com',
+      signature: 'T. S. Sakalasooriya',
+      documents: [
+        {
+          document_type: 'Birth Certificate (Original Scan)',
+          file_name: 'birthcerificate.pdf',
+          file_size: '174 KB',
+          file_path: '/uploads/documents/birthcerificate.pdf'
+        }
+      ]
+    }));
+    setIsSiManuallyEdited(true);
+    setIsTaManuallyEdited(true);
+  };
+
   const handleNext = () => {
     if (step === 1 && (!formData.fullNameEn || !formData.dob)) {
       alert('Please fill in required personal details (Full Name & DOB).');
@@ -552,6 +581,38 @@ export const ApplyPage = () => {
                     <h3 style={{ fontSize: '1.2rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <User size={20} color="var(--accent-primary)" /> Personal Information
                     </h3>
+
+                    {/* Official birthcerificate.pdf Specimen Helper */}
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        borderRadius: '10px',
+                        padding: '0.85rem 1rem',
+                        marginBottom: '1.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: '0.6rem'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <FileText size={16} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                          Specimen Available: <strong style={{ color: 'var(--text-primary)' }}>birthcerificate.pdf</strong> (Thilina Srimal Sakalasooriya, 2005-05-31, Male, Gampaha)
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handlePrefillFromBirthCertificate}
+                        className="btn btn-primary btn-sm"
+                        style={{ fontSize: '0.78rem', padding: '0.35rem 0.75rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                        title="Fill application form with exact details matching birthcerificate.pdf"
+                      >
+                        <Sparkles size={13} /> Prefill from birthcerificate.pdf
+                      </button>
+                    </div>
 
                     <div className="form-group">
                       <label className="form-label">Full Name in English *</label>

@@ -6,8 +6,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOAD_DIR = path.resolve(__dirname, '../../../uploads/documents');
 
-// Path to the real birth_certificate.pdf example bundled in the project root
-const PROJECT_ROOT_BIRTH_CERT = path.resolve(__dirname, '../../../../../birth_certificate.pdf');
+// Paths to the real birthcerificate.pdf example bundled in the project root
+const PROJECT_ROOT_BIRTH_CERTS = [
+  path.resolve(__dirname, '../../../../birthcerificate.pdf'),
+  path.resolve(__dirname, '../../../../birth_certificate.pdf'),
+  path.resolve(process.cwd(), '../birthcerificate.pdf'),
+  path.resolve(process.cwd(), '../birth_certificate.pdf')
+];
 
 // Ensure directory exists
 export const ensureUploadDir = () => {
@@ -63,10 +68,17 @@ export const initSampleDocuments = () => {
     const sampleBirthCert = path.join(UPLOAD_DIR, 'birth_certificate.pdf');
     const sampleGrama = path.join(UPLOAD_DIR, 'sample_grama_cert.jpg');
 
-    if (!fs.existsSync(sampleBirthCert)) {
-      if (fs.existsSync(PROJECT_ROOT_BIRTH_CERT)) {
-        fs.copyFileSync(PROJECT_ROOT_BIRTH_CERT, sampleBirthCert);
-      } else {
+    let copied = false;
+    for (const src of PROJECT_ROOT_BIRTH_CERTS) {
+      if (fs.existsSync(src) && fs.statSync(src).size > 1000) {
+        fs.copyFileSync(src, sampleBirthCert);
+        fs.copyFileSync(src, path.join(UPLOAD_DIR, 'birthcerificate.pdf'));
+        copied = true;
+        break;
+      }
+    }
+
+    if (!copied && !fs.existsSync(sampleBirthCert)) {
         const minimalPdf = `%PDF-1.4
 1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
 2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
