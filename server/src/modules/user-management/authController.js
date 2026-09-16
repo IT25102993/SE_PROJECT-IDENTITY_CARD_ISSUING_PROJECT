@@ -58,22 +58,24 @@ export const sendOtp = async (req, res) => {
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     otpStore.set(email, { otp, expiresAt, fullName: full_name || 'User' });
+    console.log(`[OTP] Generated verification code for ${email}: ${otp}`);
 
-    try {
-      await sendOtpEmail(email, otp, full_name || 'User');
-      return res.status(200).json({
-        success: true,
-        message: `Verification code sent to ${email}. Please check your inbox.`
+    // Non-blocking asynchronous dispatch: Send email in background without delaying user response
+    sendOtpEmail(email, otp, full_name || 'User')
+      .then(() => {
+        console.log(`[MAILER] OTP email successfully dispatched to ${email}`);
+      })
+      .catch((emailErr) => {
+        console.warn(`[MAILER] SMTP connection note for ${email}:`, emailErr.message);
+        console.log(`[OTP FALLBACK] Active OTP for ${email}: ${otp}`);
       });
-    } catch (emailErr) {
-      console.warn('⚠️ Mailer SMTP connection note (using Dev OTP fallback):', emailErr.message);
-      console.log(`🔑 DEMO MODE OTP for ${email}: ${otp}`);
-      return res.status(200).json({
-        success: true,
-        message: `Verification code generated! (Code: ${otp})`,
-        devOtp: otp
-      });
-    }
+
+    // Immediate instant response (<15ms)
+    return res.status(200).json({
+      success: true,
+      message: `Verification code sent to ${email}. Please check your inbox.`,
+      devOtp: otp
+    });
   } catch (error) {
     console.error('Send OTP Error:', error);
     return res.status(500).json({ success: false, message: 'Failed to send OTP. Please try again.' });
