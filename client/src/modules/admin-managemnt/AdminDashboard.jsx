@@ -22,17 +22,21 @@ import {
   UserCheck,
   CheckCircle2,
   Clock,
-  AlertCircle
+  AlertCircle,
+  UserX,
+  FileCheck
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
   const { user, token, logoutUser } = useAuth();
   const { addToast, theme, toggleTheme } = useApp();
 
-  const [activeTab, setActiveTab] = useState('applications'); // 'applications', 'users', 'register-staff'
+  const [activeTab, setActiveTab] = useState('applications'); // 'applications', 'users', 'register-staff', 'deletion-requests'
 
   const [dbApplications, setDbApplications] = useState([]);
   const [dbUsers, setDbUsers] = useState([]);
+  const [deletionRequests, setDeletionRequests] = useState([]);
+  const [deletionFilter, setDeletionFilter] = useState('all');
   const [loadingData, setLoadingData] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -47,6 +51,7 @@ export const AdminDashboard = () => {
 
   // Edit Role Modal State
   const [editingUser, setEditingUser] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [newRole, setNewRole] = useState('');
 
   const fetchAdminData = async () => {
@@ -64,6 +69,14 @@ export const AdminDashboard = () => {
       if (appRes.ok) {
         const aData = await appRes.json();
         if (aData.applications) setDbApplications(aData.applications);
+      }
+
+      const delRes = await fetch('/api/admin/deletion-requests', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (delRes.ok) {
+        const dData = await delRes.json();
+        if (dData.requests) setDeletionRequests(dData.requests);
       }
     } catch (err) {
       console.error('Failed to load DB admin data:', err);
@@ -181,9 +194,56 @@ export const AdminDashboard = () => {
         fetchAdminData();
       }
     } catch (err) {
-      addToast('Failed to update status', 'error');
+      addToast('Failed to update application status', 'error');
     }
   };
+
+  const handleApproveDeletion = async (requestId, username) => {
+    if (!window.confirm(`Are you sure you want to approve account deletion for user "${username}"? This will permanently delete the user account.`)) return;
+
+    try {
+      const res = await fetch(`/api/admin/deletion-requests/${requestId}/approve`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        addToast(data.message || 'Account deletion approved.', 'success');
+        fetchAdminData();
+      } else {
+        throw new Error(data.message || 'Failed to approve deletion');
+      }
+    } catch (err) {
+      addToast(err.message, 'error');
+    }
+  };
+
+  const handleRejectDeletion = async (requestId, username) => {
+    const reason = window.prompt(`Provide administrative reason/notes for rejecting deletion for "${username}":`, 'Cannot delete account while application submission is active/in processing.');
+    if (reason === null) return;
+
+    try {
+      const res = await fetch(`/api/admin/deletion-requests/${requestId}/reject`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ admin_notes: reason })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        addToast(data.message || 'Account deletion request rejected.', 'info');
+        fetchAdminData();
+      } else {
+        throw new Error(data.message || 'Failed to reject deletion request');
+      }
+    } catch (err) {
+      addToast(err.message, 'error');
+    }
+  };
+
+  const pendingDeletionCount = deletionRequests.filter(r => r.status === 'Pending').length;
 
   const filteredApps = dbApplications.filter(app => {
     if (!searchTerm) return true;
@@ -793,6 +853,213 @@ export const AdminDashboard = () => {
           )}
 
           {/* Register Staff View */}
+          {/* Account Deletion Requests View */}
+          {activeTab === 'deletion-requests' && (
+            <div
+              className="glass-card"
+              style={{
+                borderRadius: '16px',
+                padding: '1.75rem',
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-card)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(244, 63, 94, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-rose)' }}>
+                      <UserX size={20} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                        Account Deletion Governance <span style={{ color: 'var(--accent-rose)', fontSize: '1rem', fontWeight: 600 }}>({deletionRequests.length})</span>
+                      </h3>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                        Review citizen deletion requests, inspect submitted application history, and grant or deny approval
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filter Pills */}
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  {['all', 'Pending', 'Approved', 'Rejected'].map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => setDeletionFilter(status)}
+                      style={{
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: deletionFilter === status ? 'var(--accent-primary)' : 'var(--border-color)',
+                        background: deletionFilter === status ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-secondary)',
+                        color: deletionFilter === status ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {status === 'all' ? 'All Requests' : status}
+                      {status === 'Pending' && pendingDeletionCount > 0 && (
+                        <span style={{ marginLeft: '6px', background: 'var(--accent-rose)', color: '#fff', fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '10px' }}>
+                          {pendingDeletionCount}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={fetchAdminData}
+                    className="btn btn-primary btn-sm"
+                    style={{ borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                  >
+                    <RefreshCw size={14} className={loadingData ? 'animate-spin' : ''} /> Refresh
+                  </button>
+                </div>
+              </div>
+
+              {/* Requests Table */}
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: 'var(--bg-table-header)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Req ID</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Citizen Details</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Submitted Applications</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Citizen Reason</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Status</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>Requested Date</th>
+                      <th style={{ padding: '0.9rem 1rem', fontWeight: 700, textAlign: 'right' }}>Governance Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {deletionRequests
+                      .filter(r => deletionFilter === 'all' || r.status === deletionFilter)
+                      .map((r) => {
+                        const appCount = r.application_count || (r.submitted_applications ? r.submitted_applications.length : 0);
+                        return (
+                          <tr key={r.request_id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background-color 0.2s ease' }}>
+                            <td style={{ padding: '0.9rem 1rem', fontWeight: 700, color: 'var(--accent-rose)' }}>
+                              #DEL-{r.request_id}
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem' }}>
+                              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                                {r.current_user_fullname || r.username}
+                              </div>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                {r.email} • @{r.username}
+                              </div>
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem' }}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  padding: '0.25rem 0.65rem',
+                                  borderRadius: '12px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: appCount > 0 ? 'rgba(59, 130, 246, 0.12)' : 'rgba(156, 163, 175, 0.15)',
+                                  color: appCount > 0 ? 'var(--accent-primary)' : 'var(--text-muted)'
+                                }}
+                              >
+                                <FileText size={13} /> {appCount} {appCount === 1 ? 'Application' : 'Applications'} on File
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem', maxWidth: '240px' }}>
+                              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={r.reason}>
+                                "{r.reason || 'Citizen requested account removal.'}"
+                              </div>
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem' }}>
+                              <span
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.3rem',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  padding: '0.25rem 0.6rem',
+                                  borderRadius: '12px',
+                                  background:
+                                    r.status === 'Approved'
+                                      ? 'rgba(16, 185, 129, 0.15)'
+                                      : r.status === 'Rejected'
+                                      ? 'rgba(244, 63, 94, 0.15)'
+                                      : 'rgba(245, 158, 11, 0.15)',
+                                  color:
+                                    r.status === 'Approved'
+                                      ? 'var(--accent-emerald)'
+                                      : r.status === 'Rejected'
+                                      ? 'var(--accent-rose)'
+                                      : 'var(--accent-amber)'
+                                }}
+                              >
+                                {r.status === 'Approved' && <CheckCircle2 size={12} />}
+                                {r.status === 'Rejected' && <XCircle size={12} />}
+                                {r.status === 'Pending' && <Clock size={12} />}
+                                {r.status}
+                              </span>
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                              {r.requested_at ? new Date(r.requested_at).toLocaleDateString() : 'Recent'}
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem', textAlign: 'right' }}>
+                              <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedRequest(r)}
+                                  className="btn btn-outline btn-sm"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', borderRadius: '8px' }}
+                                  title="Inspect citizen submitted applications, data, and status"
+                                >
+                                  <Eye size={14} /> Review Data & Status
+                                </button>
+                                {r.status === 'Pending' && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleApproveDeletion(r.request_id, r.username)}
+                                      className="btn btn-emerald btn-sm"
+                                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', borderRadius: '8px' }}
+                                      title="Approve Deletion & Delete User Account"
+                                    >
+                                      <CheckCircle size={13} /> Approve
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRejectDeletion(r.request_id, r.username)}
+                                      className="btn btn-danger btn-sm"
+                                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', borderRadius: '8px' }}
+                                      title="Reject Deletion Request"
+                                    >
+                                      <XCircle size={13} /> Reject
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    {deletionRequests.filter(r => deletionFilter === 'all' || r.status === deletionFilter).length === 0 && (
+                      <tr>
+                        <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                          <UserCheck size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
+                          <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>No deletion requests in this category.</div>
+                          <div style={{ fontSize: '0.82rem' }}>All citizen identity account lifecycles are in good standing.</div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'register-staff' && (
             <div
               className="glass-card"
@@ -955,6 +1222,374 @@ export const AdminDashboard = () => {
           )}
         </main>
       </div>
+
+
+      {/* Citizen Deletion Request: Submitted Data & Status Inspection Modal */}
+      {selectedRequest && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.78)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 110,
+            padding: '1.25rem'
+          }}
+          onClick={() => setSelectedRequest(null)}
+        >
+          <div
+            className="glass-card"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+              borderRadius: '16px',
+              width: '100%',
+              maxWidth: '720px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-lg)',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: '1.25rem 1.5rem',
+                borderBottom: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'var(--bg-glass)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(244, 63, 94, 0.15)', color: 'var(--accent-rose)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShieldAlert size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    Citizen Deletion Audit & Application Verification
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                    Request #DEL-{selectedRequest.request_id} • Account: @{selectedRequest.username} ({selectedRequest.email})
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRequest(null)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.4rem', borderRadius: '8px' }}
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Citizen Details Card */}
+              <div
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '1.25rem'
+                }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Citizen Name</span>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      {selectedRequest.current_user_fullname || selectedRequest.username}
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Email Address</span>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                      {selectedRequest.email}
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Requested On</span>
+                    <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      {selectedRequest.requested_at ? new Date(selectedRequest.requested_at).toLocaleString() : 'N/A'}
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Request Status</span>
+                    <div style={{ marginTop: '0.2rem' }}>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '12px',
+                          background:
+                            selectedRequest.status === 'Approved'
+                              ? 'rgba(16, 185, 129, 0.15)'
+                              : selectedRequest.status === 'Rejected'
+                              ? 'rgba(244, 63, 94, 0.15)'
+                              : 'rgba(245, 158, 11, 0.15)',
+                          color:
+                            selectedRequest.status === 'Approved'
+                              ? 'var(--accent-emerald)'
+                              : selectedRequest.status === 'Rejected'
+                              ? 'var(--accent-rose)'
+                              : 'var(--accent-amber)'
+                        }}
+                      >
+                        {selectedRequest.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Citizen Stated Reason */}
+                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                    Reason for Deletion Request
+                  </span>
+                  <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginTop: '0.3rem', fontStyle: 'italic', background: 'var(--bg-nested)', padding: '0.65rem 0.85rem', borderRadius: '8px' }}>
+                    "{selectedRequest.reason || 'Citizen requested account removal.'}"
+                  </div>
+                </div>
+              </div>
+
+              {/* Submitted Applications & Data Section */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <FileText size={16} color="var(--accent-primary)" />
+                    <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      Citizen Submitted Applications ({selectedRequest.submitted_applications?.length || 0})
+                    </h4>
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Cross-referenced by registered email: {selectedRequest.email}
+                  </span>
+                </div>
+
+                {selectedRequest.submitted_applications && selectedRequest.submitted_applications.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {selectedRequest.submitted_applications.map((app, idx) => {
+                      const appStatus = app.application_status || app.status || 'Pending';
+                      return (
+                        <div
+                          key={app.application_id || idx}
+                          style={{
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '12px',
+                            padding: '1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.85rem'
+                          }}
+                        >
+                          {/* Application Header Bar */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
+                            <div>
+                              <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--accent-primary)' }}>
+                                {app.tracking_id || `NEX-2026-${app.application_id}`}
+                              </span>
+                              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginLeft: '0.6rem' }}>
+                                Type: <strong>{app.application_type || 'New'}</strong> • Submitted: {app.submitted_at ? new Date(app.submitted_at).toLocaleDateString() : 'Recent'}
+                              </span>
+                            </div>
+
+                            {/* Application Status Badge */}
+                            <div>
+                              <span
+                                style={{
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '14px',
+                                  background:
+                                    appStatus === 'Approved' || appStatus === 'Verification-Passed'
+                                      ? 'rgba(16, 185, 129, 0.15)'
+                                      : appStatus === 'Pending'
+                                      ? 'rgba(245, 158, 11, 0.15)'
+                                      : appStatus === 'Rejected'
+                                      ? 'rgba(244, 63, 94, 0.15)'
+                                      : 'rgba(59, 130, 246, 0.15)',
+                                  color:
+                                    appStatus === 'Approved' || appStatus === 'Verification-Passed'
+                                      ? 'var(--accent-emerald)'
+                                      : appStatus === 'Pending'
+                                      ? 'var(--accent-amber)'
+                                      : appStatus === 'Rejected'
+                                      ? 'var(--accent-rose)'
+                                      : 'var(--accent-primary)'
+                                }}
+                              >
+                                Application Status: {appStatus}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Bot Verification Score if available */}
+                          {(app.bot_score !== undefined && app.bot_score !== null) && (
+                            <div
+                              style={{
+                                background: app.bot_verified ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)',
+                                border: `1px solid ${app.bot_verified ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
+                                borderRadius: '8px',
+                                padding: '0.65rem 0.85rem',
+                                fontSize: '0.8rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '0.4rem'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                {app.bot_verified ? <CheckCircle2 size={15} color="var(--accent-emerald)" /> : <AlertCircle size={15} color="var(--accent-amber)" />}
+                                <span style={{ fontWeight: 700, color: app.bot_verified ? 'var(--accent-emerald)' : 'var(--accent-amber)' }}>
+                                  Automated Bot Verification: {app.bot_verified ? 'PASSED' : 'FLAGGED'}
+                                </span>
+                              </div>
+                              <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                                Match Score: <span style={{ color: 'var(--accent-primary)' }}>{app.bot_score}%</span>
+                              </div>
+                              {app.bot_notes && (
+                                <div style={{ width: '100%', fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                                  {app.bot_notes}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Citizen Submitted Form Details Grid */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem', fontSize: '0.85rem' }}>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Submitted Full Name</span>
+                              <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.15rem' }}>
+                                {app.full_name || `${app.first_name || ''} ${app.last_name || ''}`.trim() || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>National ID (NIC)</span>
+                              <div style={{ fontWeight: 600, color: 'var(--accent-primary)', marginTop: '0.15rem' }}>
+                                {app.national_id_number || 'Pending Generation'}
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Date of Birth</span>
+                              <div style={{ color: 'var(--text-primary)', marginTop: '0.15rem' }}>
+                                {app.date_of_birth || app.dob || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Gender</span>
+                              <div style={{ color: 'var(--text-primary)', marginTop: '0.15rem' }}>
+                                {app.gender || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Phone Contact</span>
+                              <div style={{ color: 'var(--text-primary)', marginTop: '0.15rem' }}>
+                                {app.phone_number || app.phone || 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Address</span>
+                              <div style={{ color: 'var(--text-primary)', marginTop: '0.15rem' }}>
+                                {app.address || 'N/A'}
+                              </div>
+                            </div>
+                          </div>
+
+                          {app.remarks && (
+                            <div style={{ background: 'var(--bg-nested)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                              <strong>Officer Remarks:</strong> {app.remarks}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <Info size={24} style={{ margin: '0 auto 0.4rem', opacity: 0.6 }} />
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>No submitted identity applications found for this citizen.</div>
+                    <div style={{ fontSize: '0.8rem' }}>This account is free of active application records.</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer / Governance Actions */}
+            <div
+              style={{
+                padding: '1.25rem 1.5rem',
+                borderTop: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'var(--bg-glass)',
+                flexWrap: 'wrap',
+                gap: '0.75rem'
+              }}
+            >
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                {selectedRequest.status === 'Pending' ? (
+                  <span>Carefully verify active applications before approving account removal.</span>
+                ) : (
+                  <span>
+                    Processed on: {selectedRequest.processed_at ? new Date(selectedRequest.processed_at).toLocaleString() : 'N/A'}
+                    {selectedRequest.processed_by_name ? ` by ${selectedRequest.processed_by_name}` : ''}
+                  </span>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRequest(null)}
+                  className="btn btn-outline btn-sm"
+                  style={{ borderRadius: '8px' }}
+                >
+                  Close
+                </button>
+                {selectedRequest.status === 'Pending' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleRejectDeletion(selectedRequest.request_id, selectedRequest.username);
+                        setSelectedRequest(null);
+                      }}
+                      className="btn btn-danger btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', borderRadius: '8px' }}
+                    >
+                      <XCircle size={15} /> Reject Request
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleApproveDeletion(selectedRequest.request_id, selectedRequest.username);
+                        setSelectedRequest(null);
+                      }}
+                      className="btn btn-emerald btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', borderRadius: '8px' }}
+                    >
+                      <CheckCircle size={15} /> Approve Account Deletion
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Role Modal Overlay */}
       {editingUser && (
