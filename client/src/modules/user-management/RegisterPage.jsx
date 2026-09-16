@@ -89,12 +89,17 @@ export const RegisterPage = () => {
 
     setSendingOtp(true);
     setErrorMessage('');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({ email, full_name })
       });
+      clearTimeout(timeoutId);
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || 'Failed to send OTP.');
 
@@ -105,7 +110,8 @@ export const RegisterPage = () => {
       setStep(STEP_OTP);
       startResendCooldown();
     } catch (err) {
-      setErrorMessage(err.message);
+      clearTimeout(timeoutId);
+      setErrorMessage(err.name === 'AbortError' ? 'OTP request timed out. Please try again.' : err.message);
     } finally {
       setSendingOtp(false);
     }
@@ -115,12 +121,17 @@ export const RegisterPage = () => {
     if (resendCooldown > 0) return;
     setSendingOtp(true);
     setErrorMessage('');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({ email: formData.email, full_name: formData.full_name })
       });
+      clearTimeout(timeoutId);
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || 'Failed to resend OTP.');
       addToast(data.message || 'New OTP sent to your email!', 'info');
@@ -129,7 +140,8 @@ export const RegisterPage = () => {
       }
       startResendCooldown();
     } catch (err) {
-      setErrorMessage(err.message);
+      clearTimeout(timeoutId);
+      setErrorMessage(err.name === 'AbortError' ? 'OTP resend timed out. Please try again.' : err.message);
     } finally {
       setSendingOtp(false);
     }
