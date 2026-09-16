@@ -4,27 +4,28 @@ import { queryDb, getDbStatus, inMemoryDb } from '../../config/db.js';
 export const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const { status, remarks } = req.body;
 
     if (getDbStatus()) {
       await queryDb(
         'UPDATE applications SET status = COALESCE(?, status), remarks = COALESCE(?, remarks) WHERE application_id = ?',
-        [status, remarks, id]
+        [status, remarks, cleanId]
       );
 
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'STATUS_UPDATE', `Application #${id} status updated to ${status || 'unchanged'}`]
+        [req.user ? req.user.user_id : null, 'STATUS_UPDATE', `Application #${cleanId} status updated to ${status || 'unchanged'}`]
       );
     } else {
-      const app = (inMemoryDb.applications || []).find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (app) {
         if (status) app.status = status;
         if (remarks) app.remarks = remarks;
       }
     }
 
-    return res.status(200).json({ success: true, message: `Application #${id} status updated to ${status}.` });
+    return res.status(200).json({ success: true, message: `Application #${cleanId} status updated to ${status}.` });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
