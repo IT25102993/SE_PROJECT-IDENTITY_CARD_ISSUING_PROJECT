@@ -61,19 +61,58 @@ export const inMemoryDb = {
       tracking_id: 'NEX-2026-90412',
       first_name: 'Thilina',
       last_name: 'Sakalasooriya',
+      fullNameEn: 'Thilina Sakalasooriya',
       national_id_number: '200512345678',
       dob: '2005-01-01',
       gender: 'Male',
       address: 'No. 12, Main Street, Malabe, Colombo',
       phone_number: '+94 77 123 4567',
+      phone: '+94 77 123 4567',
       email: 'thilina.s@gmail.com',
-      status: 'Issued',
+      status: 'Verification-Passed',
       application_type: 'New',
       remarks: 'All biometrics approved.',
+      bot_verified: true,
+      bot_score: 92,
+      bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
+      bot_verified_at: '2026-08-01 09:35:00',
       submitted_at: '2026-08-01'
     }
   ],
-  audit_logs: []
+  documents: [
+    {
+      document_id: 1,
+      application_id: 1,
+      document_type: 'Birth Certificate (Original Scan)',
+      file_name: 'birth_certificate.pdf',
+      file_path: '/uploads/documents/birth_certificate.pdf',
+      file_size: '1.42 MB',
+      uploaded_at: '2026-08-01 09:32:00'
+    },
+    {
+      document_id: 2,
+      application_id: 1,
+      document_type: 'Grama Niladhari Certificate (Form DRP-1)',
+      file_name: 'sample_grama_cert.jpg',
+      file_path: '/uploads/documents/sample_grama_cert.jpg',
+      file_size: '890 KB',
+      uploaded_at: '2026-08-01 09:33:00'
+    }
+  ],
+  identity_cards: [
+    {
+      card_id: 1,
+      card_number: '200512345678',
+      application_id: 1,
+      applicant_id: 1,
+      issue_date: '2026-08-01',
+      expiry_date: '2036-08-01',
+      status: 'Active',
+      issued_by: 1
+    }
+  ],
+  audit_logs: [],
+  account_deletion_requests: []
 };
 
 export const initDb = async () => {
@@ -89,13 +128,14 @@ export const initDb = async () => {
     const tempConn = await mysql.createConnection(connectionConfig);
     
     // Ensure database exists
-    await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'identity_card_system'}\`;`);
+    const dbName = process.env.DB_NAME || 'identity_card_system';
+    await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
     await tempConn.end();
 
     // Pool connection to database
     pool = mysql.createPool({
       ...connectionConfig,
-      database: process.env.DB_NAME || 'identity_card_system',
+      database: dbName,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0
@@ -133,12 +173,41 @@ export const initDb = async () => {
         \`application_id\` INT NOT NULL AUTO_INCREMENT,
         \`applicant_id\` INT NOT NULL,
         \`application_type\` ENUM('New', 'Renewal', 'Replacement') NOT NULL DEFAULT 'New',
-        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued') NOT NULL DEFAULT 'Pending',
+        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending',
+        \`bot_verified\` TINYINT(1) NOT NULL DEFAULT 0,
+        \`bot_score\` INT NOT NULL DEFAULT 0,
+        \`bot_notes\` TEXT NULL,
+        \`bot_verified_at\` DATETIME NULL,
         \`processed_by\` INT NULL,
         \`remarks\` TEXT NULL,
         \`submitted_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         \`updated_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (\`application_id\`)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+      CREATE TABLE IF NOT EXISTS \`documents\` (
+        \`document_id\` INT NOT NULL AUTO_INCREMENT,
+        \`application_id\` INT NOT NULL,
+        \`document_type\` VARCHAR(100) NOT NULL,
+        \`file_name\` VARCHAR(255) NOT NULL,
+        \`file_path\` LONGTEXT NOT NULL,
+        \`file_size\` VARCHAR(50) NULL,
+        \`uploaded_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (\`document_id\`),
+        INDEX \`idx_doc_application_id\` (\`application_id\`)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+      CREATE TABLE IF NOT EXISTS \`identity_cards\` (
+        \`card_id\` INT NOT NULL AUTO_INCREMENT,
+        \`card_number\` VARCHAR(50) NOT NULL UNIQUE,
+        \`application_id\` INT NOT NULL UNIQUE,
+        \`applicant_id\` INT NOT NULL,
+        \`issue_date\` DATE NOT NULL,
+        \`expiry_date\` DATE NOT NULL,
+        \`status\` ENUM('Active', 'Expired', 'Lost', 'Revoked') NOT NULL DEFAULT 'Active',
+        \`issued_by\` INT NULL,
+        \`created_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (\`card_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
 
       CREATE TABLE IF NOT EXISTS \`audit_logs\` (
@@ -149,15 +218,50 @@ export const initDb = async () => {
         \`timestamp\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`log_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+      CREATE TABLE IF NOT EXISTS \`account_deletion_requests\` (
+        \`request_id\` INT NOT NULL AUTO_INCREMENT,
+        \`user_id\` INT NOT NULL,
+        \`username\` VARCHAR(50) NOT NULL,
+        \`email\` VARCHAR(100) NOT NULL,
+        \`reason\` TEXT NULL,
+        \`status\` ENUM('Pending', 'Approved', 'Rejected') NOT NULL DEFAULT 'Pending',
+        \`admin_notes\` TEXT NULL,
+        \`requested_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        \`processed_at\` DATETIME NULL,
+        \`processed_by\` INT NULL,
+        PRIMARY KEY (\`request_id\`),
+        INDEX \`idx_del_user_id\` (\`user_id\`),
+        INDEX \`idx_del_status\` (\`status\`)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
     `;
 
     await pool.query(createTablesSQL);
 
-    // Safely update existing table column ENUM to include Citizen
+    // Apply incremental schema migrations for pre-existing databases
     try {
       await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
-    } catch (alterErr) {
-      // Column might already be up to date
+    } catch (e) { /* ignore if already updated */ }
+
+    try {
+      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending';`);
+    } catch (e) { /* ignore */ }
+
+    // Add bot columns if missing in applications table
+    const [cols] = await pool.query(`SHOW COLUMNS FROM applications;`);
+    const colNames = cols.map(c => c.Field);
+
+    if (!colNames.includes('bot_verified')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN bot_verified TINYINT(1) NOT NULL DEFAULT 0;`);
+    }
+    if (!colNames.includes('bot_score')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN bot_score INT NOT NULL DEFAULT 0;`);
+    }
+    if (!colNames.includes('bot_notes')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN bot_notes TEXT NULL;`);
+    }
+    if (!colNames.includes('bot_verified_at')) {
+      await pool.query(`ALTER TABLE applications ADD COLUMN bot_verified_at DATETIME NULL;`);
     }
 
     // Seed Admin User thilinasakalasooriya@gmail.com if not exists
@@ -166,8 +270,14 @@ export const initDb = async () => {
       VALUES ('thilina_admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Thilina Sakalasooriya', 'thilinasakalasooriya@gmail.com', 'Admin');
     `);
 
+    // Seed default admin
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'System Administrator', 'admin@nexusgov.lk', 'Admin');
+    `);
+
     isConnected = true;
-    console.log('✅ Connected to MySQL Database successfully!');
+    console.log('✅ Connected to MySQL Database successfully and schema migrations verified!');
   } catch (error) {
     console.warn('⚠️  MySQL Connection Note:', error.message);
     console.log('⚡ Operating in Full-Stack Hybrid SQL mode (In-Memory Database Ready).');
