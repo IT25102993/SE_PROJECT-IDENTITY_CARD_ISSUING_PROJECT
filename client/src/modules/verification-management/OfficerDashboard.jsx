@@ -18,7 +18,14 @@ import {
   ShieldCheck,
   Check,
   Layers,
-  ArrowRight
+  ArrowRight,
+  Edit3,
+  Save,
+  X,
+  ExternalLink,
+  Info,
+  ShieldAlert,
+  User
 } from 'lucide-react';
 
 export const OfficerDashboard = () => {
@@ -26,6 +33,7 @@ export const OfficerDashboard = () => {
     role,
     setRole,
     applications,
+    updateApplication,
     approveApplication,
     rejectApplication,
     claimJob,
@@ -53,20 +61,24 @@ export const OfficerDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedApp, setSelectedApp] = useState(null);
   const [officerComment, setOfficerComment] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({});
 
   const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
   const currentOfficer = currentStaffName;
 
+  const isPending = (s) => ['PENDING_VERIFICATION','Pending','Verification-Passed'].includes(s);
+
   const unassignedPoolApps = applications.filter(
-    a => a.status === 'PENDING_VERIFICATION' && (!a.assignedOfficer || a.assignedOfficer === '')
+    a => isPending(a.status) && (!a.assignedOfficer || a.assignedOfficer === '')
   );
 
   const myWorkbenchApps = applications.filter(
-    a => a.assignedOfficer === currentOfficer && a.status === 'PENDING_VERIFICATION'
+    a => a.assignedOfficer === currentOfficer && isPending(a.status)
   );
 
   const completedApps = applications.filter(
-    a => a.assignedOfficer === currentOfficer && a.status !== 'PENDING_VERIFICATION'
+    a => a.assignedOfficer === currentOfficer && !isPending(a.status)
   );
 
   const getDisplayedApplications = () => {
@@ -118,13 +130,14 @@ export const OfficerDashboard = () => {
 
   const handleUnclaim = (appId) => {
     triggerLoading({
-      message: `Releasing ${appId} to Pool...`,
-      subtext: 'Returning application to general verification queue',
+      message: `Removing ${appId} from your Job Pool...`,
+      subtext: 'Application stays in registry — only removed from your personal workbench',
       duration: 1000,
       onComplete: () => {
         unclaimJob(appId);
-        if (selectedApp && selectedApp.id === appId) {
+        if (selectedApp && (selectedApp.id === appId || selectedApp.application_id === appId)) {
           setSelectedApp(null);
+          setIsEditing(false);
         }
       }
     });
@@ -132,11 +145,47 @@ export const OfficerDashboard = () => {
 
   const handleOpenReview = (app) => {
     const appId = app.id || app.application_id;
-    if (!app.assignedOfficer && app.status === 'PENDING_VERIFICATION') {
+    if (!app.assignedOfficer && isPending(app.status)) {
       claimJob(appId, currentOfficer);
     }
     setSelectedApp(app);
-    setOfficerComment(app.officerNotes || '');
+    setIsEditing(false);
+    setOfficerComment(app.officerNotes || app.remarks || '');
+    setEditForm({
+      first_name: app.first_name || '',
+      last_name: app.last_name || '',
+      dob: app.dob || app.date_of_birth || '',
+      gender: app.gender || 'Male',
+      address: app.address || '',
+      phone_number: app.phone_number || app.phone || '',
+      email: app.email || '',
+      application_type: app.application_type || 'New',
+      officerNotes: app.officerNotes || app.remarks || ''
+    });
+  };
+
+  const handleSaveUpdate = () => {
+    if (!selectedApp) return;
+    const appId = selectedApp.id || selectedApp.application_id;
+    triggerLoading({
+      message: `Saving Application #${appId} Updates...`,
+      subtext: 'Persisting corrected registry records to database',
+      duration: 1200,
+      onComplete: async () => {
+        const res = await updateApplication(appId, { ...editForm, remarks: editForm.officerNotes });
+        if (res && res.success) {
+          setIsEditing(false);
+          setSelectedApp(prev => ({
+            ...prev,
+            ...editForm,
+            fullNameEn: `${editForm.first_name} ${editForm.last_name}`.trim(),
+            remarks: editForm.officerNotes,
+            officerNotes: editForm.officerNotes
+          }));
+          setOfficerComment(editForm.officerNotes);
+        }
+      }
+    });
   };
 
   const handleApprove = () => {
@@ -366,23 +415,14 @@ export const OfficerDashboard = () => {
         {/* List Table View */}
         <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button
-                className={`btn btn-sm ${activeTab === 'POOL' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setActiveTab('POOL')}
-              >
-                Unassigned Job Pool ({unassignedPoolApps.length})
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button className={`btn btn-sm ${activeTab === 'POOL' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('POOL')}>
+                Unassigned Pool ({unassignedPoolApps.length})
               </button>
-              <button
-                className={`btn btn-sm ${activeTab === 'WORKBENCH' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setActiveTab('WORKBENCH')}
-              >
+              <button className={`btn btn-sm ${activeTab === 'WORKBENCH' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('WORKBENCH')}>
                 My Workbench ({myWorkbenchApps.length})
               </button>
-              <button
-                className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setActiveTab('ALL')}
-              >
+              <button className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('ALL')}>
                 All Applications ({applications.length})
               </button>
             </div>
@@ -405,8 +445,9 @@ export const OfficerDashboard = () => {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
                   <th style={{ padding: '0.75rem 1rem' }}>Tracking ID</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Applicant Name</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>Submitted Date</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Applicant</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Assigned</th>
+                  <th style={{ padding: '0.75rem 1rem' }}>Date</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Status</th>
                   <th style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -419,18 +460,31 @@ export const OfficerDashboard = () => {
                     <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
                       <td style={{ padding: '0.85rem 1rem', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{appId}</td>
                       <td style={{ padding: '0.85rem 1rem' }}>{name}</td>
-                      <td style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)' }}>{app.submittedDate || app.submitted_at}</td>
+                      <td style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>
+                        {app.assignedOfficer
+                          ? <span style={{ color: app.assignedOfficer === currentOfficer ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>● {app.assignedOfficer === currentOfficer ? 'You' : app.assignedOfficer}</span>
+                          : <span style={{ color: 'var(--text-muted)' }}>Unassigned</span>}
+                      </td>
+                      <td style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontSize: '0.82rem' }}>{app.submittedDate || app.submitted_at}</td>
                       <td style={{ padding: '0.85rem 1rem' }}>
                         <span className="badge badge-pending">{app.status}</span>
                       </td>
                       <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => handleOpenReview(app)}
-                          style={{ gap: '0.3rem' }}
-                        >
-                          <Eye size={14} /> Review & Verify
-                        </button>
+                        <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                          {activeTab === 'WORKBENCH' && (
+                            <button className="btn btn-secondary btn-sm" onClick={() => handleUnclaim(appId)} title="Remove from your workbench" style={{ gap: '0.3rem', fontSize: '0.78rem' }}>
+                              <RotateCcw size={12} /> Remove
+                            </button>
+                          )}
+                          {activeTab === 'POOL' && (
+                            <button className="btn btn-secondary btn-sm" onClick={() => handleClaimSingle(appId)} style={{ gap: '0.3rem', fontSize: '0.78rem' }}>
+                              <Sparkles size={12} color="var(--accent-amber)" /> Claim
+                            </button>
+                          )}
+                          <button className="btn btn-primary btn-sm" onClick={() => handleOpenReview(app)} style={{ gap: '0.3rem' }}>
+                            <Eye size={14} /> View
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -440,54 +494,194 @@ export const OfficerDashboard = () => {
           </div>
         </div>
 
-        {/* Modal / Detailed Verification Drawer */}
+        {/* Application Detail, Update & Pool Management Modal */}
         {selectedApp && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-            <div className="glass-card animate-fade-in" style={{ maxWidth: '850px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: '2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+            <div className="glass-card animate-fade-in" style={{ maxWidth: '900px', width: '100%', maxHeight: '92vh', display: 'flex', flexDirection: 'column', padding: '2rem' }}>
+
+              {/* Modal Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.4rem', fontWeight: 800 }}>Verification Workbench</h3>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <h3 style={{ fontSize: '1.35rem', fontWeight: 800 }}>Application Review & Management</h3>
+                    <span className="badge badge-pending">{selectedApp.status}</span>
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}>
                     {selectedApp.id || `NEX-2026-${selectedApp.application_id}`}
                   </div>
                 </div>
-                <button className="btn btn-secondary btn-sm" onClick={() => setSelectedApp(null)}>
-                  Close
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    className={`btn btn-sm ${isEditing ? 'btn-emerald' : 'btn-primary'}`}
+                    onClick={() => setIsEditing(!isEditing)}
+                    style={{ gap: '0.35rem' }}
+                  >
+                    {isEditing ? <><Eye size={13}/> View Mode</> : <><Edit3 size={13}/> Edit / Correct</>}
+                  </button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedApp(null); setIsEditing(false); }} style={{ gap: '0.35rem' }}>
+                    <X size={14} /> Close
+                  </button>
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--text-secondary)' }}>Applicant Details</h4>
-                  <div style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <div><strong>Name:</strong> {selectedApp.fullNameEn || `${selectedApp.first_name || ''} ${selectedApp.last_name || ''}`}</div>
-                    <div><strong>DOB:</strong> {selectedApp.dob || selectedApp.date_of_birth}</div>
-                    <div><strong>Gender:</strong> {selectedApp.gender}</div>
-                    <div><strong>Address:</strong> {selectedApp.address}</div>
-                    <div><strong>Phone:</strong> {selectedApp.phone || selectedApp.phone_number}</div>
+              {/* Modal Scrollable Body */}
+              <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.25rem' }}>
+
+                {isEditing ? (
+                  /* ---- Edit / Correct Details Form ---- */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                      ✏️ <strong>Record Correction Mode:</strong> Edit any discrepancies found during verification. All changes are saved to the database with an audit trail.
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.85rem' }}>
+                      {[['first_name','First Name','text'],['last_name','Last Name','text'],['dob','Date of Birth','date'],['phone_number','Phone Number','text'],['email','Email','email']].map(([key, label, type]) => (
+                        <div className="form-group" key={key}>
+                          <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600 }}>{label}</label>
+                          <input type={type} className="form-control" value={editForm[key] || ''} onChange={e => setEditForm({ ...editForm, [key]: e.target.value })} />
+                        </div>
+                      ))}
+                      <div className="form-group">
+                        <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600 }}>Gender</label>
+                        <select className="form-control" value={editForm.gender || 'Male'} onChange={e => setEditForm({ ...editForm, gender: e.target.value })}>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600 }}>Application Type</label>
+                        <select className="form-control" value={editForm.application_type || 'New'} onChange={e => setEditForm({ ...editForm, application_type: e.target.value })}>
+                          <option value="New">New NIC</option>
+                          <option value="Renewal">Renewal</option>
+                          <option value="Replacement">Replacement (Lost)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600 }}>Residential Address</label>
+                      <textarea rows={2} className="form-control" value={editForm.address || ''} onChange={e => setEditForm({ ...editForm, address: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label" style={{ fontSize: '0.8rem', fontWeight: 600 }}>Officer Notes & Remarks</label>
+                      <textarea rows={3} className="form-control" value={editForm.officerNotes || ''} onChange={e => { setEditForm({ ...editForm, officerNotes: e.target.value }); setOfficerComment(e.target.value); }} />
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                      <button className="btn btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
+                      <button className="btn btn-emerald" onClick={handleSaveUpdate} style={{ gap: '0.4rem' }}>
+                        <Save size={15} /> Save Changes
+                      </button>
+                    </div>
                   </div>
-                </div>
 
+                ) : (
+                  /* ---- View Details Mode ---- */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '1.25rem' }}>
+                      {/* Applicant Info */}
+                      <div className="glass-card" style={{ padding: '1.25rem', background: 'var(--bg-nested)' }}>
+                        <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <User size={15} color="var(--accent-primary)" /> Applicant Information
+                        </h4>
+                        {[
+                          ['Full Name', selectedApp.fullNameEn || `${selectedApp.first_name||''} ${selectedApp.last_name||''}`],
+                          ['NIC Number', selectedApp.nicNumber || selectedApp.national_id_number || 'Pending Approval'],
+                          ['Date of Birth', selectedApp.dob || selectedApp.date_of_birth || 'N/A'],
+                          ['Gender', selectedApp.gender || 'N/A'],
+                          ['Phone', selectedApp.phone || selectedApp.phone_number || 'N/A'],
+                          ['Email', selectedApp.email || 'N/A'],
+                          ['Address', selectedApp.address || 'N/A'],
+                          ['Type', selectedApp.application_type || 'New'],
+                          ['Submitted', selectedApp.submittedDate || selectedApp.submitted_at || 'Recent']
+                        ].map(([label, value]) => (
+                          <div key={label} style={{ display: 'flex', gap: '0.5rem', fontSize: '0.84rem', marginBottom: '0.45rem' }}>
+                            <span style={{ color: 'var(--text-muted)', minWidth: '100px', flexShrink: 0 }}>{label}:</span>
+                            <span style={{ color: 'var(--text-primary)', fontWeight: label === 'NIC Number' ? 700 : 400 }}>{value}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Documents + Bot Verification */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="glass-card" style={{ padding: '1.25rem', background: 'var(--bg-nested)' }}>
+                          <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <FileText size={15} color="var(--accent-amber)" /> Verification Documents
+                          </h4>
+                          {Array.isArray(selectedApp.documents) && selectedApp.documents.length > 0 ? (
+                            selectedApp.documents.map((doc, dIdx) => (
+                              <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0.75rem', borderRadius: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', marginBottom: '0.5rem' }}>
+                                <div style={{ fontSize: '0.8rem' }}>
+                                  <div style={{ fontWeight: 600 }}>{doc.document_type || `Document #${dIdx + 1}`}</div>
+                                  <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>{doc.file_name || ''} {doc.file_size ? `• ${doc.file_size}` : ''}</div>
+                                </div>
+                                {doc.file_path && (
+                                  <a href={doc.file_path} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ fontSize: '0.72rem', padding: '0.25rem 0.5rem', gap: '0.25rem' }}>
+                                    <ExternalLink size={11} /> View
+                                  </a>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <div style={{ color: 'var(--text-muted)', fontSize: '0.82rem', textAlign: 'center', padding: '0.75rem' }}>Documents on file.</div>
+                          )}
+                        </div>
+
+                        {/* Bot Verification Audit */}
+                        <div className="glass-card" style={{ padding: '1rem', background: 'var(--bg-nested)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <Sparkles size={13} color="var(--accent-purple)" /> AI Bot Verification
+                            </span>
+                            <span className="badge" style={{ background: selectedApp.bot_verified ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)', color: selectedApp.bot_verified ? 'var(--accent-emerald)' : 'var(--accent-amber)', fontSize: '0.7rem' }}>
+                              {selectedApp.bot_score || 85}% • {selectedApp.bot_verified ? 'PASSED' : 'FLAGGED'}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.5, maxHeight: '80px', overflowY: 'auto' }}>
+                            {selectedApp.bot_notes || 'Automated verification validated registry fields.'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Officer Notes */}
+                    <div className="form-group">
+                      <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>Officer Verification Notes</label>
+                      <textarea rows={3} className="form-control" placeholder="Enter findings, Grama Niladhari confirmation, or rejection grounds..." value={officerComment} onChange={e => setOfficerComment(e.target.value)} style={{ width: '100%' }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1.1rem', marginTop: '1.1rem' }}>
                 <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--text-secondary)' }}>Officer Verification Notes</h4>
-                  <textarea
-                    rows={4}
-                    className="form-textarea"
-                    placeholder="Enter verification notes or reason for rejection..."
-                    value={officerComment}
-                    onChange={e => setOfficerComment(e.target.value)}
-                    style={{ width: '100%' }}
-                  />
+                  {selectedApp.assignedOfficer === currentOfficer && (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleUnclaim(selectedApp.id || selectedApp.application_id)}
+                      title="Release this application back to general pool. It is NOT deleted from the system."
+                      style={{ gap: '0.4rem', color: 'var(--accent-amber)', border: '1px solid rgba(245,158,11,0.3)', fontSize: '0.84rem' }}
+                    >
+                      <RotateCcw size={14} /> Remove from My Job Pool
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {!isEditing && (
+                    <>
+                      <button className="btn btn-rose" onClick={handleReject} style={{ gap: '0.4rem' }}>
+                        <XCircle size={15} /> Reject Application
+                      </button>
+                      <button className="btn btn-emerald" onClick={handleApprove} style={{ gap: '0.4rem' }}>
+                        <CheckCircle2 size={15} /> Approve & Issue NIC
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
-                <button className="btn btn-rose" onClick={handleReject}>
-                  <XCircle size={16} /> Reject Application
-                </button>
-                <button className="btn btn-emerald" onClick={handleApprove}>
-                  <CheckCircle2 size={16} /> Approve & Issue NIC
-                </button>
+              {/* Officer Rights Notice */}
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <Info size={11} /> Removing from pool keeps the application in the national registry. Permanent deletion is Admin-only.
               </div>
             </div>
           </div>
