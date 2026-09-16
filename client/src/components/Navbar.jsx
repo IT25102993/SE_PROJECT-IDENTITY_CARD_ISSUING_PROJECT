@@ -15,13 +15,16 @@ import {
   Loader2,
   LogIn,
   UserPlus,
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
+import { AccountSettingsModal } from './AccountSettingsModal';
 
 export const Navbar = () => {
   const { role, setRole, theme, toggleTheme, triggerLoading, addToast } = useApp();
   const { user, isAuthenticated, logoutUser } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -200,8 +203,10 @@ export const Navbar = () => {
 
           {/* User Auth Controls */}
           {isAuthenticated ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <button
+                type="button"
+                onClick={() => setAccountModalOpen(true)}
                 style={{
                   background: 'var(--bg-nested)',
                   border: `1px solid ${currentRole.color}`,
@@ -210,8 +215,11 @@ export const Navbar = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  fontSize: '0.82rem'
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
                 }}
+                title="View Profile & Account Settings"
               >
                 <RoleIcon size={14} color={currentRole.color} />
                 <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -230,7 +238,8 @@ export const Navbar = () => {
                 >
                   {user?.role || role}
                 </span>
-              </div>
+                <Settings size={13} color="var(--text-muted)" style={{ marginLeft: '2px' }} />
+              </button>
 
               {(user?.role === 'Admin' || role === 'admin') && (
                 <NavLink to="/admin" className="btn btn-emerald btn-sm" style={{ borderRadius: '20px', fontSize: '0.8rem' }}>
@@ -327,11 +336,31 @@ export const Navbar = () => {
           <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
 
           {isAuthenticated ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user?.full_name}</span>
-              <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="btn btn-danger btn-sm">
-                Logout
-              </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user?.full_name}</span>
+                <span style={{ fontSize: '0.7rem', background: currentRole.color, color: '#fff', padding: '0.1rem 0.4rem', borderRadius: '8px' }}>
+                  {user?.role || role}
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+                <button
+                  type="button"
+                  onClick={() => { setAccountModalOpen(true); setMobileOpen(false); }}
+                  className="btn btn-outline btn-sm"
+                  style={{ flex: 1, fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  <Settings size={13} /> Account
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { handleLogout(); setMobileOpen(false); }}
+                  className="btn btn-danger btn-sm"
+                  style={{ flex: 1, fontSize: '0.8rem' }}
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
@@ -341,6 +370,9 @@ export const Navbar = () => {
           )}
         </div>
       )}
+
+      {/* Citizen Profile & Account Deletion Settings Modal */}
+      <AccountSettingsModal isOpen={accountModalOpen} onClose={() => setAccountModalOpen(false)} />
     </nav>
   );
 };
