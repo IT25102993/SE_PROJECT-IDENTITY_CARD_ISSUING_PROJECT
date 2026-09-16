@@ -2,6 +2,9 @@ import express from 'express';
 import {
   getApplications,
   createApplication,
+  updateApplication,
+  claimApplication,
+  unclaimApplication,
   deleteApplication
 } from '../modules/application-form-management/applicationController.js';
 import {
@@ -27,6 +30,11 @@ router.post('/:id/documents', uploadDocument);
 
 // Bot verification
 router.post('/:id/bot-verify', triggerBotVerification);
+
+// Officer & Staff Application Management: View, Update, Pool Management
+router.put('/:id', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateApplication);
+router.post('/:id/claim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), claimApplication);
+router.post('/:id/unclaim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), unclaimApplication);
 
 // Officer decision routes
 router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
