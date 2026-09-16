@@ -120,6 +120,7 @@ export const triggerBotVerification = async (req, res) => {
 export const approveApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const { remarks = 'Application approved.' } = req.body;
     const userId = req.user ? req.user.user_id : 1;
 
@@ -131,7 +132,7 @@ export const approveApplication = async (req, res) => {
         `SELECT a.date_of_birth, a.gender FROM applicants a 
          JOIN applications app ON a.applicant_id = app.applicant_id 
          WHERE app.application_id = ?`,
-        [id]
+        [cleanId]
       );
       if (applicantRows && applicantRows.length > 0) {
         dob = applicantRows[0].date_of_birth || '2005-01-01';
