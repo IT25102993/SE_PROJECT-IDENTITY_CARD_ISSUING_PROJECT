@@ -101,7 +101,6 @@ startxref
 %%EOF`;
         fs.writeFileSync(sampleBirthCert, minimalPdf, 'utf-8');
       }
-    }
 
     if (!fs.existsSync(sampleGrama)) {
       const dummyJpg = Buffer.from('/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=', 'base64');
