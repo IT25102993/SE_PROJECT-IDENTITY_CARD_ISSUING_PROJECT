@@ -251,6 +251,7 @@ export const AppProvider = ({ children }) => {
             ? `Other: ${formData.otherReason}`
             : (formData.applicationReason || 'G.C.E O/L'),
           other_reason: formData.otherReason || '',
+          service_type: formData.serviceType || 'Normal',
           address: formData.address || 'Colombo, Sri Lanka',
           phone_number: formData.phone || '+94 77 000 0000',
           email: formData.email || '',
