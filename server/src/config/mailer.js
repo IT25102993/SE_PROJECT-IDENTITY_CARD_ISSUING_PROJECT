@@ -4,6 +4,12 @@ dotenv.config();
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
+  pool: true, // Reuse SMTP connection pool to eliminate TLS handshake lag
+  maxConnections: 3,
+  maxMessages: 100,
+  connectionTimeout: 4000, // Fast 4-second fail-fast timeout
+  greetingTimeout: 4000,
+  socketTimeout: 6000,
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS
@@ -17,6 +23,10 @@ const transporter = nodemailer.createTransport({
  * @param {string} fullName - recipient's display name
  */
 export const sendOtpEmail = async (toEmail, otp, fullName = 'Officer') => {
+  if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+    console.warn('Mail credentials not provided in .env, skipping SMTP transport.');
+    return;
+  }
   const mailOptions = {
     from: `"NexusGov Identity System" <${process.env.MAIL_USER}>`,
     to: toEmail,
