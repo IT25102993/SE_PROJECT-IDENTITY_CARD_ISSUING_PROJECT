@@ -44,3 +44,4 @@ Thumbs.db
 tmp/
 birth_certificate.pdf
 *.pdf
+server/uploads/documents/sample_grama_cert.jpg
