@@ -22,7 +22,7 @@ import { PrintQueuePage } from './modules/operation-management/PrintQueuePage';
 import { AnalyticsPage } from './modules/operation-management/AnalyticsPage';
 import { AdminDashboard } from './modules/admin-managemnt/AdminDashboard';
 
-// ── Route guard: redirect logged-in staff away from public pages ─────────────
+// ── Route guard: redirect logged-in staff away from public citizen pages ─────
 const PublicRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (isAuthenticated && user) {
@@ -36,18 +36,18 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// ── Route guard: only Operational + Admin can access Print Queue ─────────────
+// ── Route guard: ONLY Operational role can access Print Queue ────────────────
 const OperationalRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
-  if (r !== 'operational' && r !== 'admin') {
+  if (r !== 'operational') {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
         <div style={{ fontSize: '3rem' }}>🔒</div>
         <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
-          The <strong>Print Queue</strong> is exclusively accessible to <strong>Operational</strong> staff and Administrators.
+          The <strong>Print Queue</strong> is exclusively accessible to <strong>Operational</strong> staff.
           Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
         </p>
         <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
@@ -57,7 +57,7 @@ const OperationalRoute = ({ children }) => {
   return children;
 };
 
-// ── Route guard: staff-only pages (Officer / Approver dashboard) ─────────────
+// ── Route guard: staff-only verification pages (Officer / Approver dashboard) ─
 const StaffRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -69,7 +69,27 @@ const StaffRoute = ({ children }) => {
         <div style={{ fontSize: '3rem' }}>🔒</div>
         <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
-          This portal is reserved for authorised staff only.
+          This portal is reserved for authorised Verification Officers and Senior Approvers.
+        </p>
+        <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
+      </div>
+    );
+  }
+  return children;
+};
+
+// ── Route guard: Admin-only portal ───────────────────────────────────────────
+const AdminRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (r !== 'admin') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
+        <div style={{ fontSize: '3rem' }}>🔒</div>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
+          The Administrator Portal is exclusively accessible to System Administrators.
         </p>
         <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
       </div>
@@ -97,24 +117,24 @@ function AppContent() {
       {!isAdminPath && <Navbar />}
       <main style={{ flex: 1, paddingTop: isAdminPath ? '0' : '72px' }}>
         <Routes>
-          {/* Public / citizen routes */}
+          {/* Public / citizen routes — logged-in staff are redirected to their own job pool */}
           <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
           <Route path="/apply" element={<PublicRoute><ApplyPage /></PublicRoute>} />
-          <Route path="/track" element={<TrackingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/track" element={<PublicRoute><TrackingPage /></PublicRoute>} />
+          <Route path="/about" element={<PublicRoute><AboutPage /></PublicRoute>} />
+          <Route path="/contact" element={<PublicRoute><ContactPage /></PublicRoute>} />
+          <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
           {/* Staff-only routes */}
           <Route path="/officer" element={<StaffRoute><OfficerDashboard /></StaffRoute>} />
           <Route path="/analytics" element={<StaffRoute><AnalyticsPage /></StaffRoute>} />
 
-          {/* Operational + Admin only */}
+          {/* Strictly Operational only */}
           <Route path="/print-queue" element={<OperationalRoute><PrintQueuePage /></OperationalRoute>} />
 
-          {/* Admin only */}
-          <Route path="/admin" element={<AdminDashboard />} />
+          {/* Strictly Admin only */}
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         </Routes>
       </main>
       {!isAdminPath && <Footer />}
