@@ -227,8 +227,8 @@ export const OfficerDashboard = () => {
     if (!selectedApp) return;
     const appId = selectedApp.id || selectedApp.application_id;
     triggerLoading({
-      message: 'Generating Cryptographic NIC Number...',
-      subtext: 'Validating biometrics & updating national identity registry',
+      message: 'Approving Application & Submitting for Print...',
+      subtext: 'Generating official 12-digit NIC number & queuing record for card printing',
       duration: 1500,
       onComplete: () => {
         approveApplication(appId, officerComment);
@@ -282,7 +282,7 @@ export const OfficerDashboard = () => {
   }
 
   return (
-    <div style={{ position: 'relative', zIndex: 1, padding: '2rem 0 4rem 0' }}>
+    <div style={{ position: 'relative', padding: '2rem 0 4rem 0' }}>
       <div className="container">
         {/* Admin Multi-Panel Oversight Switcher */}
         {isAdmin && (
@@ -429,42 +429,6 @@ export const OfficerDashboard = () => {
 
           <div
             className="glass-card"
-            onClick={() => setActiveTab('BOT_APPROVED')}
-            style={{
-              padding: '1.25rem',
-              cursor: 'pointer',
-              borderColor: activeTab === 'BOT_APPROVED' ? 'var(--accent-purple)' : 'var(--border-color)',
-              background: activeTab === 'BOT_APPROVED' ? 'rgba(139, 92, 246, 0.12)' : 'var(--bg-card)',
-              position: 'relative'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Bot size={16} color="var(--accent-purple)" /> Bot Approved (AI)
-              </span>
-              <span style={{
-                fontSize: '0.65rem',
-                background: 'rgba(139, 92, 246, 0.2)',
-                color: 'var(--accent-purple)',
-                padding: '0.15rem 0.45rem',
-                borderRadius: '6px',
-                fontWeight: 700
-              }}>
-                ≥80% MATCH
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-purple)', fontFamily: 'var(--font-mono)' }}>
-                {botApprovedApps.length}
-              </div>
-              <span style={{ fontSize: '0.74rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>
-                {pendingBotApps.length} pending sign-off
-              </span>
-            </div>
-          </div>
-
-          <div
-            className="glass-card"
             onClick={() => setActiveTab('ALL')}
             style={{
               padding: '1.25rem',
@@ -474,14 +438,18 @@ export const OfficerDashboard = () => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>My Approved Total</span>
+              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                {isApproverMode ? 'Approved for Print' : 'All Applications'}
+              </span>
               <CheckCircle2 size={18} color="var(--accent-emerald)" />
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
-              {completedApps.length}
+              {isApproverMode
+                ? applications.filter(a => a.status === 'Approved' || a.status === 'APPROVED').length
+                : applications.length}
             </div>
           </div>
-        </di        )}
+        </div>
 
         {/* List Table View */}
         <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
@@ -571,7 +539,7 @@ export const OfficerDashboard = () => {
 
         {/* Application Detail, Update & Pool Management Modal */}
         {selectedApp && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 99999, background: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
             <div className="glass-card animate-fade-in" style={{ maxWidth: '900px', width: '100%', maxHeight: '92vh', display: 'flex', flexDirection: 'column', padding: '2rem' }}>
 
               {/* Modal Header */}
@@ -715,7 +683,7 @@ export const OfficerDashboard = () => {
                         })()}
                       </div>
 
-                      {/* Documents + Bot Verification */}
+                      {/* Verification Documents & Teller Slip */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div className="glass-card" style={{ padding: '1.25rem', background: 'var(--bg-nested)' }}>
                           <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -818,7 +786,7 @@ export const OfficerDashboard = () => {
                             <XCircle size={15} /> Reject
                           </button>
                           <button className="btn btn-primary" onClick={handleApprove} style={{ gap: '0.4rem' }}>
-                            <CheckCircle2 size={15} /> Approve & Issue NIC
+                            <CheckCircle2 size={15} /> Approve & Submit for Print
                           </button>
                         </>
                       )}
@@ -831,8 +799,8 @@ export const OfficerDashboard = () => {
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
                 <Info size={11} />
                 {isApproverMode
-                  ? 'Senior Approvers have full authority to approve or reject applications and issue NIC numbers.'
-                  : 'Officers can review documents & request re-uploads. Approval authority is restricted to Senior Approvers only.'}
+                  ? 'Senior Approvers have full executive authority to approve applications, issue official NIC numbers, and submit records to the thermal Print Queue.'
+                  : 'Officers can review application details & documents, save notes, and request document re-uploads. Final approval & print submission is restricted to Senior Approvers.'}
               </div>
             </div>
           </div>
