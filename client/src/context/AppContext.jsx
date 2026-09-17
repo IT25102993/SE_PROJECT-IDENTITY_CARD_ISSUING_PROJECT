@@ -367,7 +367,7 @@ export const AppProvider = ({ children }) => {
     // Instant optimistic update
     setApplications(prev => prev.map(app => {
       if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
-        return { ...app, status: 'Issued' };
+        return { ...app, status: 'Dispatched' };
       }
       return app;
     }));
@@ -381,7 +381,7 @@ export const AppProvider = ({ children }) => {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
-        body: JSON.stringify({ status: 'Issued' })
+        body: JSON.stringify({ status: 'Dispatched' })
       });
       scheduleRefresh(400);
     } catch (err) {
