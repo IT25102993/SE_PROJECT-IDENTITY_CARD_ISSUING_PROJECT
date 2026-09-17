@@ -981,7 +981,7 @@ export const AdminDashboard = () => {
                                       width: 'fit-content'
                                     }}
                                   >
-                                    {isOneDay ? '🚚 1-Day (Courier)' : '📨 Normal (Post)'}
+                                    {isOneDay ? '1-Day (Courier)' : 'Normal (Post)'}
                                   </span>
                                   <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                                     Rs. {isOneDay ? '1,500' : '500'}
@@ -1529,7 +1529,7 @@ export const AdminDashboard = () => {
                                     border: `1px solid ${isOneDay ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
                                   }}
                                 >
-                                  {isOneDay ? '🚚 1-Day Priority' : '📨 Normal'}
+                                  {isOneDay ? '1-Day Priority' : 'Normal'}
                                 </span>
                               </td>
 
@@ -2653,7 +2653,7 @@ export const AdminDashboard = () => {
                           color: selectedReceiptApp.service_type === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)'
                         }}
                       >
-                        {selectedReceiptApp.service_type === '1-Day' ? '🚚 1-Day Priority (Courier)' : '📨 Normal (Post)'}
+                        {selectedReceiptApp.service_type === '1-Day' ? '1-Day Priority (Courier)' : 'Normal (Post)'}
                       </span>
                     </div>
                   </div>
