@@ -165,6 +165,13 @@ export const TrackingPage = () => {
         );
       case 'rejected':
         return <span className="badge badge-rejected">✗ Application Rejected</span>;
+      case 'documents-required':
+      case 'documents_required':
+        return (
+          <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.18)', color: 'var(--accent-amber)', border: '1px solid rgba(245, 158, 11, 0.4)', fontWeight: 700 }}>
+            ⚠️ Re-upload Documents Required
+          </span>
+        );
       case 'verification-passed':
       case 'verification_passed':
         return (
