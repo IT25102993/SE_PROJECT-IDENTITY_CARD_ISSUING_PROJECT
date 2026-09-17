@@ -12,11 +12,11 @@ const router = express.Router();
 router.post('/applications/:id/bot-verify', triggerBotVerification);
 router.post('/:id/bot-verify', triggerBotVerification);
 
-// Officer verification decision routes
-router.put('/applications/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
-router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
+// Senior Approver decision routes (strictly Approver and Admin)
+router.put('/applications/:id/approve', verifyToken, requireRole('Approver', 'Admin'), approveApplication);
+router.put('/:id/approve', verifyToken, requireRole('Approver', 'Admin'), approveApplication);
 
-router.put('/applications/:id/reject', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), rejectApplication);
-router.put('/:id/reject', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), rejectApplication);
+router.put('/applications/:id/reject', verifyToken, requireRole('Approver', 'Admin'), rejectApplication);
+router.put('/:id/reject', verifyToken, requireRole('Approver', 'Admin'), rejectApplication);
 
 export default router;
