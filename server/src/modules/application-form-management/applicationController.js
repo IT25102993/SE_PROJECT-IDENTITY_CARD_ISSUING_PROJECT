@@ -292,6 +292,7 @@ export const createApplication = async (req, res) => {
 export const updateApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const {
       first_name,
       last_name,
@@ -313,7 +314,7 @@ export const updateApplication = async (req, res) => {
 
     if (getDbStatus()) {
       // Find applicant_id for this application
-      const appRows = await queryDb('SELECT applicant_id FROM applications WHERE application_id = ?', [id]);
+      const appRows = await queryDb('SELECT applicant_id FROM applications WHERE application_id = ?', [cleanId]);
       if (!appRows || appRows.length === 0) {
         return res.status(404).json({ success: false, message: `Application #${id} not found.` });
       }
@@ -357,7 +358,7 @@ export const updateApplication = async (req, res) => {
 
       if (clauses.length > 0) {
         updateAppSql += clauses.join(', ') + ' WHERE application_id = ?';
-        updateAppParams.push(id);
+        updateAppParams.push(cleanId);
         await queryDb(updateAppSql, updateAppParams);
       }
 
@@ -365,7 +366,7 @@ export const updateApplication = async (req, res) => {
       const actorName = req.user ? (req.user.full_name || req.user.username) : 'Officer';
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'APPLICATION_UPDATED', `Application #${id} details updated by ${actorName}`]
+        [req.user ? req.user.user_id : null, 'APPLICATION_UPDATED', `Application #${cleanId} details updated by ${actorName}`]
       );
 
       return res.status(200).json({
@@ -373,7 +374,7 @@ export const updateApplication = async (req, res) => {
         message: `Application #${id} updated successfully.`
       });
     } else {
-      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (!app) {
         return res.status(404).json({ success: false, message: `Application #${id} not found.` });
       }
@@ -414,16 +415,17 @@ export const updateApplication = async (req, res) => {
 export const claimApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const officerName = req.body.officerName || (req.user ? (req.user.full_name || req.user.username) : 'Officer Wickramasinghe');
 
     if (getDbStatus()) {
-      await queryDb('UPDATE applications SET assigned_officer = ? WHERE application_id = ?', [officerName, id]);
+      await queryDb('UPDATE applications SET assigned_officer = ? WHERE application_id = ?', [officerName, cleanId]);
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'JOB_CLAIMED', `Application #${id} claimed into active pool by ${officerName}`]
+        [req.user ? req.user.user_id : null, 'JOB_CLAIMED', `Application #${cleanId} claimed into active pool by ${officerName}`]
       );
     } else {
-      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (app) app.assigned_officer = officerName;
     }
 
@@ -441,16 +443,17 @@ export const claimApplication = async (req, res) => {
 export const unclaimApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
     const officerName = req.user ? (req.user.full_name || req.user.username) : 'Officer';
 
     if (getDbStatus()) {
-      await queryDb('UPDATE applications SET assigned_officer = NULL WHERE application_id = ?', [id]);
+      await queryDb('UPDATE applications SET assigned_officer = NULL WHERE application_id = ?', [cleanId]);
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'JOB_REMOVED_FROM_POOL', `Application #${id} removed from job pool by ${officerName} and returned to unassigned queue`]
+        [req.user ? req.user.user_id : null, 'JOB_REMOVED_FROM_POOL', `Application #${cleanId} removed from job pool by ${officerName} and returned to unassigned queue`]
       );
     } else {
-      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (app) app.assigned_officer = null;
     }
 
@@ -467,6 +470,7 @@ export const unclaimApplication = async (req, res) => {
 export const deleteApplication = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
 
     // Enforce role security: Officers cannot delete from the whole system
     if (req.user && req.user.role !== 'Admin') {
@@ -477,13 +481,13 @@ export const deleteApplication = async (req, res) => {
     }
 
     if (getDbStatus()) {
-      await queryDb('DELETE FROM applications WHERE application_id = ?', [id]);
+      await queryDb('DELETE FROM applications WHERE application_id = ?', [cleanId]);
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
-        [req.user ? req.user.user_id : null, 'APPLICATION_DELETED', `Application #${id} permanently deleted from registry by Admin`]
+        [req.user ? req.user.user_id : null, 'APPLICATION_DELETED', `Application #${cleanId} permanently deleted from registry by Admin`]
       );
     } else {
-      const idx = (inMemoryDb.applications || []).findIndex(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      const idx = (inMemoryDb.applications || []).findIndex(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (idx !== -1) inMemoryDb.applications.splice(idx, 1);
     }
 
