@@ -24,8 +24,6 @@ logs/
 server/logs/
 
 # IDE & Editor files
-.idea/
-.vscode/
 *.suo
 *.ntvs*
 *.njsproj

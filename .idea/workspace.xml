@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;IT25102993&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.git&quot;,
+    &quot;accountId&quot;: &quot;6a40b234-2ce1-4089-a682-2a9495a7b2a9&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3HqFppn7mFGI6XpUnM5Xm7EE4gi" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.App.jsx.executor": "Run",
+    "Node.js.main.jsx.executor": "Run",
+    "Node.js.server.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "nodejs_package_manager_path": "npm",
+    "npm.Node Server (Dev).executor": "Run",
+    "npm.Vite Client (Dev).executor": "Run",
+    "npm.dev:client.executor": "Run",
+    "npm.dev:server.executor": "Run",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "D:\\Files\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="npm.Vite Client (Dev)" />
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
+      <created>1786587882429</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1786587882429</updated>
+      <workItem from="1786587883471" duration="3224000" />
+      <workItem from="1786591218432" duration="3263000" />
+      <workItem from="1786605094634" duration="5821000" />
+      <workItem from="1786635681028" duration="1278000" />
+      <workItem from="1786679086134" duration="2927000" />
+      <workItem from="1786682331335" duration="142000" />
+      <workItem from="1786682489414" duration="604000" />
+      <workItem from="1786691796697" duration="1348000" />
+      <workItem from="1786848498847" duration="2676000" />
+      <workItem from="1787025670614" duration="1537000" />
+      <workItem from="1787033653719" duration="585000" />
+      <workItem from="1787034282210" duration="66000" />
+      <workItem from="1787042954190" duration="3061000" />
+      <workItem from="1787710145025" duration="596000" />
+      <workItem from="1787732375726" duration="1196000" />
+      <workItem from="1787798891552" duration="626000" />
+      <workItem from="1787884616600" duration="35000" />
+      <workItem from="1787895062430" duration="1028000" />
+      <workItem from="1787975294490" duration="1907000" />
+      <workItem from="1788092754942" duration="1479000" />
+      <workItem from="1788099372292" duration="866000" />
+      <workItem from="1788100261973" duration="1775000" />
+      <workItem from="1788610532575" duration="741000" />
+      <workItem from="1789008252661" duration="618000" />
+      <workItem from="1789183047519" duration="6341000" />
+      <workItem from="1789358725793" duration="2673000" />
+      <workItem from="1789444701805" duration="2614000" />
+      <workItem from="1789456160374" duration="428000" />
+      <workItem from="1789457399361" duration="1590000" />
+      <workItem from="1789464782543" duration="890000" />
+      <workItem from="1789466123901" duration="729000" />
+      <workItem from="1789487813271" duration="832000" />
+      <workItem from="1789530555239" duration="6907000" />
+      <workItem from="1789546814916" duration="3145000" />
+      <workItem from="1789572132094" duration="8546000" />
+      <workItem from="1789601694118" duration="2755000" />
+      <workItem from="1789612610776" duration="6061000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
