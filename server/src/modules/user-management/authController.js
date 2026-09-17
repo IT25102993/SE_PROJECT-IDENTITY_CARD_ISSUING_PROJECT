@@ -73,8 +73,7 @@ export const sendOtp = async (req, res) => {
     // Immediate instant response (<15ms)
     return res.status(200).json({
       success: true,
-      message: `Verification code sent to ${email}. Please check your inbox.`,
-      devOtp: otp
+      message: `Verification code sent to ${email}. Please check your inbox.`
     });
   } catch (error) {
     console.error('Send OTP Error:', error);
