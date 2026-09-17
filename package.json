@@ -5,10 +5,13 @@
   "private": true,
   "scripts": {
     "dev:server": "cd backend && mvnw.cmd spring-boot:run",
+    "dev:node": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "start:server": "cd backend && mvnw.cmd spring-boot:run",
+    "start:node": "npm --prefix server start",
     "build:server": "cd backend && mvnw.cmd clean package -DskipTests",
     "build:client": "npm --prefix client run build",
+    "clean:db": "npm --prefix server run clean:db",
     "dev": "npm --prefix client run dev"
   },
   "keywords": [
