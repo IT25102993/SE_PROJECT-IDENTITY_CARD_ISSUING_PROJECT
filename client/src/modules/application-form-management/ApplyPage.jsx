@@ -440,6 +440,12 @@ export const ApplyPage = () => {
       const needsMarriageCert = formData.civilStatus === 'Married';
       const POLICE_DOC = 'Police Report (Wallet Stolen)';
       const MARRIAGE_DOC = 'Marriage Certificate';
+      const TELLER_DOC = 'Bank Deposit / CDM Teller Slip';
+
+      if (!formData.documents.find(d => (d.document_type || d) === TELLER_DOC)) {
+        alert(`Please upload your Bank Deposit / CDM Teller Slip (Rs. ${formData.serviceType === '1-Day' ? '1,500' : '500'} deposited to Acc: 1234 5678 9012 1234 - Department of Identity Issuance).`);
+        return;
+      }
       if (needsPoliceReport && !formData.documents.find(d => d.document_type === POLICE_DOC)) {
         alert('A Police Report is required when the reason is "Wallet Got Stolen".');
         return;
@@ -872,6 +878,11 @@ export const ApplyPage = () => {
                   const baseDocs = [
                     { name: 'Birth Certificate (Original Scan)', required: true },
                     { name: 'Grama Niladhari Certificate (Form DRP-1)', required: true },
+                    {
+                      name: 'Bank Deposit / CDM Teller Slip',
+                      required: true,
+                      badge: `Required Payment Slip — Rs. ${formData.serviceType === '1-Day' ? '1,500' : '500'}`
+                    }
                   ];
                   if (needsPoliceReport) baseDocs.push({ name: POLICE_DOC, required: true, badge: 'Required — Wallet Stolen' });
                   if (needsMarriageCert) baseDocs.push({ name: MARRIAGE_DOC, required: true, badge: 'Required — Married' });
@@ -879,12 +890,51 @@ export const ApplyPage = () => {
                   return (
                   <div className="animate-fade-in">
                     <h3 style={{ fontSize: '1.2rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <FileText size={20} color="var(--accent-primary)" /> Supporting Documents
+                      <FileText size={20} color="var(--accent-primary)" /> Supporting Documents & Payment Receipt
                     </h3>
 
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                      Upload scans of required verification documents. Supported: PDF, JPG, PNG (max 10MB each).
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                      Upload scans of required verification documents and your official bank deposit teller receipt. Supported: PDF, JPG, PNG (max 10MB each).
                     </p>
+
+                    {/* Official Bank Account Payment Information Card */}
+                    <div
+                      style={{
+                        padding: '1rem 1.25rem',
+                        background: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.28)',
+                        borderRadius: 'var(--radius-md)',
+                        marginBottom: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.45rem'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: 'var(--accent-primary)', fontSize: '0.92rem' }}>
+                          <CreditCard size={18} /> Official Bank Account for Fee Payment
+                        </div>
+                        <span style={{ fontSize: '0.78rem', background: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)', color: '#fff', padding: '0.2rem 0.6rem', borderRadius: '12px', fontWeight: 800 }}>
+                          Fee: Rs. {formData.serviceType === '1-Day' ? '1,500 (1-Day Express)' : '500 (Normal Service)'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        Please deposit your fee at any CDM Teller Machine or Bank Branch to the following government treasury account:
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem', background: 'rgba(0,0,0,0.22)', padding: '0.75rem 1rem', borderRadius: '8px', marginTop: '0.2rem', fontSize: '0.85rem' }}>
+                        <div>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>Bank Account Number</span>
+                          <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', fontSize: '0.95rem' }}>1234 5678 9012 1234</strong>
+                        </div>
+                        <div>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>Beneficiary Name</span>
+                          <strong style={{ color: 'var(--text-primary)' }}>Department of Identity Issuance</strong>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--accent-amber)', marginTop: '0.2rem' }}>
+                        * Please photograph or scan the teller machine receipt slip and attach it under <strong>Bank Deposit / CDM Teller Slip</strong> below.
+                      </div>
+                    </div>
 
                     {baseDocs.map((doc, idx) => {
                       const docName = doc.name;
