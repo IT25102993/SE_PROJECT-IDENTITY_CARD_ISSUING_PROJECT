@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "last_updated": "2026-09-17T07:41:53.033Z",
+  "last_updated": "2026-09-17T08:11:07.518Z",
   "tables": {
     "users": [
       {
@@ -158,7 +158,7 @@
         "application_id": 3,
         "applicant_id": 3,
         "application_type": "New",
-        "status": "Printed",
+        "status": "Documents-Required",
         "bot_verified": 0,
         "bot_score": 63,
         "bot_notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 63%). Below 80% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
@@ -168,9 +168,9 @@
         "application_reason": "Wallet Got Stolen",
         "marital_status": "Single",
         "service_type": "1-Day",
-        "remarks": "New citizen online submission.",
+        "remarks": "[Action Required: Re-upload Birth Certificate] New citizen online submission.",
         "submitted_at": "2026-09-17T04:45:45.000Z",
-        "updated_at": "2026-09-17T07:30:33.000Z"
+        "updated_at": "2026-09-17T07:59:20.000Z"
       }
     ],
     "documents": [
@@ -293,6 +293,34 @@
     ],
     "account_deletion_requests": [],
     "audit_logs": [
+      {
+        "log_id": 58,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T07:59:20.000Z"
+      },
+      {
+        "log_id": 57,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T07:58:30.000Z"
+      },
+      {
+        "log_id": 56,
+        "user_id": 38,
+        "action": "USER_LOGIN",
+        "details": "User operational logged in successfully.",
+        "timestamp": "2026-09-17T07:55:06.000Z"
+      },
+      {
+        "log_id": 55,
+        "user_id": 38,
+        "action": "USER_LOGIN",
+        "details": "User operational logged in successfully.",
+        "timestamp": "2026-09-17T07:54:33.000Z"
+      },
       {
         "log_id": 54,
         "user_id": 2,
@@ -936,6 +964,26 @@
     },
     {
       "timestamp": "2026-09-17T07:41:53.033Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-17T07:54:33.188Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T07:55:06.940Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T07:58:30.417Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T07:59:20.861Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T08:11:07.518Z",
       "action": "System startup baseline sync"
     }
   ],

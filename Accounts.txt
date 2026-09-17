@@ -1,41 +1,64 @@
-Officer
+========================================
+  NEXUSGOV — STAFF TEST ACCOUNTS
+  All staff passwords: #Thilina2005
+========================================
+
+
+Officer (Verification Officer Job Pool)
 _______________________________________________
-
-Officer_Thilina		#Thilina2005
-_______________________________________________
-
-
-
-
-Approver
-_______________________________________________
-
-thilinasakalasooriya@gmail.com	#Thilina2005
-_______________________________________________
-
-
-
-
-
-Admin
-_______________________________________________
-admin@nexusgov.lk	admin123
+Username : Officer_Thilina
+Email    : officer@nexusgov.lk
+Password : #Thilina2005
 _______________________________________________
 
 
-
-
-Citizen
+Approver (Senior Approver Job Pool + AI Bot)
 _______________________________________________
-Citizen_Thilina		spokenengadamin@gmail.com		#Thilina2005
-_______________________________________________
-
-
-approver_nimesh #Thilina2005
-
-
-Operational
+Username : approver_nimesh
+Email    : approver@nexusgov.lk  (or thilinasakalasooriya@gmail.com)
+Password : #Thilina2005
 _______________________________________________
 
-operational		#Thilina2005
+
+Operational (Print Queue & Dispatch — ONLY)
 _______________________________________________
+Username : operational
+Email    : operational@nexusgov.lk
+Password : #Thilina2005
+_______________________________________________
+
+
+Admin (System Administrator Panel)
+_______________________________________________
+Email    : admin@nexusgov.lk
+Password : #Thilina2005
+_______________________________________________
+
+
+Citizen (Public Applicant)
+_______________________________________________
+Username : Citizen_Thilina
+Email    : spokenengadamin@gmail.com
+Password : #Thilina2005
+_______________________________________________
+
+
+========================================
+  ROLE ACCESS SUMMARY
+========================================
+
+  Officer      → Only their own Job Pool. Can view application
+                 details & documents. Can request document
+                 re-upload. CANNOT approve.
+  
+  Approver     → Approver Job Pool + AI Bot verification panel.
+                 Can Approve & Submit for Print. Can Reject.
+  
+  Operational  → Exclusively accesses the Print Queue page.
+                 No access to Officer/Approver dashboards.
+  
+  Admin        → Admin panel only.
+  
+  Citizen      → Public: Apply, Track, About, Contact.
+
+========================================

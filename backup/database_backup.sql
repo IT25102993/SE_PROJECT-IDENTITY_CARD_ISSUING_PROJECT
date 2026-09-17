@@ -1,6 +1,6 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-09-17T07:41:53.033Z
+-- Generated / Synced: 2026-09-17T08:11:07.518Z
 -- Total Applications: 3
 -- =============================================================
 
@@ -24,7 +24,7 @@ INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `l
 -- Table: applications (3 records)
 INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (1, 1, 'New', 'Pending', 1, 95, 'Automated Bot Check: PASSED (Match Score: 95\%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100\% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85\% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100\% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100\% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).', NULL, 'G.C.E O/L', 'Single', 'Normal', 'Fast-Track Approved by thilinapak. Validated by AI Bot Verification Engine (Score: 95\%).', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (2, 2, 'New', 'Printed', 0, 62, 'Automated Bot Check: INCONCLUSIVE (Match Score: 62\%). Below 80\% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'thilinapak', 'G.C.E O/L', 'Single', 'Normal', 'New citizen online submission.', '2026-09-17 03:30:50') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
-INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (3, 3, 'New', 'Printed', 0, 63, 'Automated Bot Check: INCONCLUSIVE (Match Score: 63\%). Below 80\% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'Officer Wickramasinghe', 'Wallet Got Stolen', 'Single', '1-Day', 'New citizen online submission.', '2026-09-17 04:45:45') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
+INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (3, 3, 'New', 'Documents-Required', 0, 63, 'Automated Bot Check: INCONCLUSIVE (Match Score: 63\%). Below 80\% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'Officer Wickramasinghe', 'Wallet Got Stolen', 'Single', '1-Day', '[Action Required: Re-upload Birth Certificate] New citizen online submission.', '2026-09-17 04:45:45') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 
 -- Table: documents (9 records)
 INSERT INTO `documents` (`document_id`, `application_id`, `document_type`, `file_name`, `file_path`, `file_size`, `uploaded_at`) VALUES (1, 1, 'Birth Certificate (Original Scan)', 'birthcerificate.pdf', '/uploads/documents/1789605864300_birthcerificate.pdf', '170 KB', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `document_type`=VALUES(`document_type`);
@@ -45,11 +45,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-17T05:05:55.757Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T05:12:07.951Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T05:15:23.608Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T05:16:03.095Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T05:18:33.294Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T05:20:11.178Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T05:20:37.431Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T05:21:16.637Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
@@ -75,3 +70,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-09-17T07:30:33.951Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T07:30:36.353Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T07:41:53.033Z] System startup baseline sync
+-- [2026-09-17T07:54:33.188Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T07:55:06.940Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T07:58:30.417Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T07:59:20.861Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T08:11:07.518Z] System startup baseline sync

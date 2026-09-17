@@ -1673,16 +1673,19 @@ export const AdminDashboard = () => {
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.15)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.15)' :
                                 u.role === 'Officer' ? 'rgba(16, 185, 129, 0.15)' :
+                                u.role === 'Operational' ? 'rgba(59, 130, 246, 0.15)' :
                                 'rgba(245, 158, 11, 0.15)',
                               color:
                                 u.role === 'Admin' ? 'var(--accent-purple)' :
                                 u.role === 'Approver' ? 'var(--accent-cyan)' :
                                 u.role === 'Officer' ? 'var(--accent-emerald)' :
+                                u.role === 'Operational' ? 'var(--accent-primary)' :
                                 'var(--accent-amber)',
                               border: `1px solid ${
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.3)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.3)' :
                                 u.role === 'Officer' ? 'rgba(16, 185, 129, 0.3)' :
+                                u.role === 'Operational' ? 'rgba(59, 130, 246, 0.3)' :
                                 'rgba(245, 158, 11, 0.3)'
                               }`
                             }}

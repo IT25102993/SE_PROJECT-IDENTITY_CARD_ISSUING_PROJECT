@@ -9,12 +9,14 @@ let isConnected = false;
 
 // In-memory fallback database for offline/testing environment without MySQL daemon
 export const inMemoryDb = {
+  // NOTE: All staff passwords are '#Thilina2005' | Admin fallback also accepts 'admin123'
+  // Citizen password is '#Thilina2005'
   users: [
     {
       user_id: 1,
       username: 'admin',
       email: 'admin@nexusgov.lk',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', // bcrypt for password123
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'System Administrator',
       role: 'Admin',
       created_at: new Date().toISOString()
@@ -23,25 +25,25 @@ export const inMemoryDb = {
       user_id: 2,
       username: 'thilina_admin',
       email: 'thilinasakalasooriya@gmail.com',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Thilina Sakalasooriya',
-      role: 'Admin',
+      role: 'Approver',
       created_at: new Date().toISOString()
     },
     {
       user_id: 3,
-      username: 'officer',
+      username: 'Officer_Thilina',
       email: 'officer@nexusgov.lk',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Officer Wickramasinghe',
       role: 'Officer',
       created_at: new Date().toISOString()
     },
     {
       user_id: 4,
-      username: 'approver',
+      username: 'approver_nimesh',
       email: 'approver@nexusgov.lk',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Senior Approver Jayawardena',
       role: 'Approver',
       created_at: new Date().toISOString()
@@ -50,7 +52,7 @@ export const inMemoryDb = {
       user_id: 6,
       username: 'operational',
       email: 'operational@nexusgov.lk',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Operational Specialist Silva',
       role: 'Operational',
       created_at: new Date().toISOString()
@@ -59,7 +61,7 @@ export const inMemoryDb = {
       user_id: 5,
       username: 'Citizen_Thilina',
       email: 'spokenengadamin@gmail.com',
-      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Thilina Citizen',
       role: 'Citizen',
       created_at: new Date().toISOString()
@@ -152,7 +154,8 @@ export const inMemoryDb = {
     }
   ],
   audit_logs: [],
-  account_deletion_requests: []
+  account_deletion_requests: [],
+  dispatch_records: []
 };
 
 export const initDb = async () => {
@@ -297,8 +300,29 @@ export const initDb = async () => {
     } catch (e) { /* ignore if already updated */ }
 
     try {
-      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
+      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Dispatched', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
     } catch (e) { /* ignore */ }
+
+    // Create dispatch_records table if it does not exist (migration for pre-existing DBs)
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS \`dispatch_records\` (
+          \`dispatch_id\`        INT NOT NULL AUTO_INCREMENT,
+          \`application_id\`     INT NOT NULL,
+          \`tracking_id\`        VARCHAR(30) NOT NULL,
+          \`applicant_name\`     VARCHAR(150) NOT NULL,
+          \`nic_number\`         VARCHAR(20) NULL,
+          \`dispatch_method\`    ENUM('Courier', 'Postal') NOT NULL DEFAULT 'Postal',
+          \`delivery_address\`   TEXT NULL,
+          \`dispatched_by\`      INT NULL,
+          \`dispatched_by_name\` VARCHAR(100) NULL,
+          \`dispatched_at\`      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          \`notes\`              TEXT NULL,
+          PRIMARY KEY (\`dispatch_id\`),
+          INDEX \`idx_dispatch_app_id\` (\`application_id\`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+    } catch (e) { /* ignore if already exists */ }
 
     // Add photo_path column to applicants if missing
     try {

@@ -73,6 +73,110 @@ export const getPrintQueue = async (req, res) => {
   }
 };
 
+// ── Record Dispatch: save to dispatch_records table + update application status ──
+export const recordDispatch = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
+    const trackingId = `NEX-2026-${cleanId}`;
+
+    const {
+      applicant_name,
+      nic_number,
+      dispatch_method,   // 'Courier' | 'Postal'
+      delivery_address,
+      notes
+    } = req.body;
+
+    const staffId   = req.user ? req.user.user_id : null;
+    const staffName = req.user ? (req.user.full_name || req.user.username) : 'Operational Staff';
+
+    if (getDbStatus()) {
+      // 1. Update application status to Dispatched
+      await queryDb(
+        "UPDATE applications SET status = 'Dispatched' WHERE application_id = ?",
+        [cleanId]
+      );
+
+      // 2. Insert dispatch record
+      await queryDb(
+        `INSERT INTO dispatch_records
+          (application_id, tracking_id, applicant_name, nic_number, dispatch_method,
+           delivery_address, dispatched_by, dispatched_by_name, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          cleanId,
+          trackingId,
+          applicant_name || 'Unknown',
+          nic_number || null,
+          dispatch_method || 'Postal',
+          delivery_address || null,
+          staffId,
+          staffName,
+          notes || null
+        ]
+      );
+
+      // 3. Audit log
+      await queryDb(
+        'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
+        [staffId, 'DISPATCH', `Application ${trackingId} dispatched via ${dispatch_method || 'Postal'} by ${staffName}`]
+      );
+    } else {
+      // In-memory fallback
+      const app = (inMemoryDb.applications || []).find(
+        a => String(a.application_id) === String(cleanId)
+      );
+      if (app) app.status = 'Dispatched';
+
+      const nextId = (inMemoryDb.dispatch_records || []).length + 1;
+      (inMemoryDb.dispatch_records = inMemoryDb.dispatch_records || []).push({
+        dispatch_id:        nextId,
+        application_id:     Number(cleanId),
+        tracking_id:        trackingId,
+        applicant_name:     applicant_name || 'Unknown',
+        nic_number:         nic_number || null,
+        dispatch_method:    dispatch_method || 'Postal',
+        delivery_address:   delivery_address || null,
+        dispatched_by:      staffId,
+        dispatched_by_name: staffName,
+        dispatched_at:      new Date().toISOString(),
+        notes:              notes || null
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Application ${trackingId} dispatched successfully via ${dispatch_method || 'Postal'}.`
+    });
+  } catch (error) {
+    console.error('recordDispatch error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ── Get all Dispatch Records ───────────────────────────────────────────────────
+export const getDispatchRecords = async (req, res) => {
+  try {
+    if (getDbStatus()) {
+      const rows = await queryDb(
+        `SELECT dispatch_id, application_id, tracking_id, applicant_name, nic_number,
+                dispatch_method, delivery_address, dispatched_by, dispatched_by_name,
+                dispatched_at, notes
+         FROM dispatch_records
+         ORDER BY dispatched_at DESC`
+      );
+      return res.status(200).json({ success: true, count: rows.length, records: rows });
+    } else {
+      const records = [...(inMemoryDb.dispatch_records || [])].reverse();
+      return res.status(200).json({ success: true, count: records.length, records });
+    }
+  } catch (error) {
+    console.error('getDispatchRecords error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Get System Analytics & Operational Metrics
 export const getAnalytics = async (req, res) => {
   try {
