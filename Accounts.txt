@@ -41,24 +41,3 @@ Username : Citizen_Thilina
 Email    : spokenengadamin@gmail.com
 Password : #Thilina2005
 _______________________________________________
-
-
-========================================
-  ROLE ACCESS SUMMARY
-========================================
-
-  Officer      → Only their own Job Pool. Can view application
-                 details & documents. Can request document
-                 re-upload. CANNOT approve.
-  
-  Approver     → Approver Job Pool + AI Bot verification panel.
-                 Can Approve & Submit for Print. Can Reject.
-  
-  Operational  → Exclusively accesses the Print Queue page.
-                 No access to Officer/Approver dashboards.
-  
-  Admin        → Admin panel only.
-  
-  Citizen      → Public: Apply, Track, About, Contact.
-
-========================================
