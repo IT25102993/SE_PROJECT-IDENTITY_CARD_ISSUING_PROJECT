@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import { triggerAutoBackup, restoreFromBackupIfEmpty } from './backupService.js';
 
 dotenv.config();
 
@@ -307,10 +308,19 @@ export const initDb = async () => {
 
     isConnected = true;
     console.log('Connected to MySQL Database successfully and schema migrations verified!');
+
+    // Check if database is empty; if so, automatically restore all records from backup file
+    await restoreFromBackupIfEmpty(pool, inMemoryDb);
+
+    // Initial baseline sync to backup file
+    triggerAutoBackup(pool, inMemoryDb, 'System startup baseline sync');
   } catch (error) {
     console.warn('MySQL Connection Note:', error.message);
     console.log('Operating in Full-Stack Hybrid SQL mode (In-Memory Database Ready).');
     isConnected = false;
+
+    // Check if in-memory database is empty; if so, restore from backup file
+    restoreFromBackupIfEmpty(null, inMemoryDb);
   }
 };
 
@@ -318,6 +328,19 @@ export const queryDb = async (sql, params = [], retryCount = 1) => {
   if (isConnected && pool) {
     try {
       const [results] = await pool.query(sql, params);
+
+      // Instantly back up whenever data is modified
+      const upperSql = (sql || '').trim().toUpperCase();
+      if (
+        upperSql.startsWith('INSERT') ||
+        upperSql.startsWith('UPDATE') ||
+        upperSql.startsWith('DELETE') ||
+        upperSql.startsWith('REPLACE') ||
+        upperSql.startsWith('ALTER')
+      ) {
+        triggerAutoBackup(pool, inMemoryDb, sql.slice(0, 100).replace(/\s+/g, ' '));
+      }
+
       return results;
     } catch (err) {
       const isTransient = [
@@ -339,8 +362,22 @@ export const queryDb = async (sql, params = [], retryCount = 1) => {
       console.error('MySQL query error:', err.message);
       throw err;
     }
+  } else if (!isConnected && inMemoryDb) {
+    // If running in offline hybrid in-memory mode, still back up changes
+    const upperSql = (sql || '').trim().toUpperCase();
+    if (
+      upperSql.startsWith('INSERT') ||
+      upperSql.startsWith('UPDATE') ||
+      upperSql.startsWith('DELETE')
+    ) {
+      triggerAutoBackup(null, inMemoryDb, sql.slice(0, 100).replace(/\s+/g, ' '));
+    }
   }
   return null;
+};
+
+export const triggerInstantBackup = (actionDesc = 'Database state updated') => {
+  triggerAutoBackup(pool, inMemoryDb, actionDesc);
 };
 
 export const getDbStatus = () => isConnected;
@@ -349,5 +386,6 @@ export default {
   initDb,
   queryDb,
   getDbStatus,
+  triggerInstantBackup,
   inMemoryDb
 };
