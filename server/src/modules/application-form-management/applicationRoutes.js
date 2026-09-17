@@ -40,9 +40,9 @@ router.post('/:id/unclaim', verifyToken, requireRole('Officer', 'Admin', 'Approv
 router.patch('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
 router.put('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
 
-// Approver / Officer decisions
-router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
-router.put('/:id/reject', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), rejectApplication);
+// Approver decisions (strictly Senior Approvers and Admin)
+router.put('/:id/approve', verifyToken, requireRole('Approver', 'Admin'), approveApplication);
+router.put('/:id/reject', verifyToken, requireRole('Approver', 'Admin'), rejectApplication);
 
 // Delete - Restricted strictly to Administrator (Officers cannot delete from system)
 router.delete('/:id', verifyToken, requireRole('Admin'), deleteApplication);
