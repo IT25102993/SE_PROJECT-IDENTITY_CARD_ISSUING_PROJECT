@@ -201,7 +201,7 @@ export const initDb = async () => {
         \`password_hash\` VARCHAR(255) NOT NULL,
         \`full_name\` VARCHAR(100) NOT NULL,
         \`email\` VARCHAR(100) NOT NULL UNIQUE,
-        \`role\` ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen',
+        \`role\` ENUM('Admin', 'Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen',
         \`created_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`user_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
@@ -293,7 +293,7 @@ export const initDb = async () => {
 
     // Apply incremental schema migrations for pre-existing databases
     try {
-      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
     } catch (e) { /* ignore if already updated */ }
 
     try {
@@ -339,6 +339,24 @@ export const initDb = async () => {
     await pool.query(`
       INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
       VALUES ('admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'System Administrator', 'admin@nexusgov.lk', 'Admin');
+    `);
+
+    // Seed default verification officer
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Officer Wickramasinghe', 'officer@nexusgov.lk', 'Officer');
+    `);
+
+    // Seed default senior approver
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('approver', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Senior Approver Jayawardena', 'approver@nexusgov.lk', 'Approver');
+    `);
+
+    // Seed default operational staff
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('operational', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Operational Specialist Silva', 'operational@nexusgov.lk', 'Operational');
     `);
 
     isConnected = true;
