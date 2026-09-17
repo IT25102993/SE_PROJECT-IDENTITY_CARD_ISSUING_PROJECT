@@ -45,10 +45,15 @@ export const LoginPage = () => {
         duration: 1200,
         onComplete: () => {
           addToast(`Logged in successfully as ${loggedInUser.full_name} (${loggedInUser.role})`, 'success');
-          if (loggedInUser.role === 'Admin') {
+          const userRole = (loggedInUser.role || '').toLowerCase();
+          if (userRole === 'admin') {
             navigate('/admin');
-          } else if (loggedInUser.role === 'Officer' || loggedInUser.role === 'Approver' || loggedInUser.role === 'Verification Officer') {
-            navigate('/officer');
+          } else if (userRole === 'operational') {
+            navigate('/print-queue');
+          } else if (userRole === 'approver') {
+            navigate('/officer?view=approver');
+          } else if (userRole === 'officer' || userRole === 'verification officer' || userRole === 'form-officer' || userRole === 'document-officer') {
+            navigate('/officer?view=officer');
           } else {
             navigate('/');
           }
