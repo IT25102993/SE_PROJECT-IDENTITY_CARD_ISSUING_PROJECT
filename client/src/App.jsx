@@ -29,7 +29,7 @@ function AppContent() {
   const isAdminPath = location.pathname === '/admin';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
       {loadingState.isLoading && (
         <LoadingScreen
           message={loadingState.message}
