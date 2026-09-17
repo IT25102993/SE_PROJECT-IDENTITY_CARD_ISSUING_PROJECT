@@ -10,7 +10,7 @@ export const Footer = () => {
         borderTop: '1px solid var(--border-color)',
         padding: '3rem 0 1.5rem 0',
         position: 'relative',
-        zIndex: 10
+        zIndex: 1
       }}
     >
       <div className="container">
