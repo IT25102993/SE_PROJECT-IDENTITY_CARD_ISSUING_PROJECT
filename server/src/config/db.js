@@ -47,6 +47,15 @@ export const inMemoryDb = {
       created_at: new Date().toISOString()
     },
     {
+      user_id: 6,
+      username: 'operational',
+      email: 'operational@nexusgov.lk',
+      password_hash: '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6',
+      full_name: 'Operational Specialist Silva',
+      role: 'Operational',
+      created_at: new Date().toISOString()
+    },
+    {
       user_id: 5,
       username: 'Citizen_Thilina',
       email: 'spokenengadamin@gmail.com',
@@ -216,7 +225,7 @@ export const initDb = async () => {
         \`application_id\` INT NOT NULL AUTO_INCREMENT,
         \`applicant_id\` INT NOT NULL,
         \`application_type\` ENUM('New', 'Renewal', 'Replacement') NOT NULL DEFAULT 'New',
-        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending',
+        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending',
         \`bot_verified\` TINYINT(1) NOT NULL DEFAULT 0,
         \`bot_score\` INT NOT NULL DEFAULT 0,
         \`bot_notes\` TEXT NULL,
@@ -288,7 +297,7 @@ export const initDb = async () => {
     } catch (e) { /* ignore if already updated */ }
 
     try {
-      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed') NOT NULL DEFAULT 'Pending';`);
+      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
     } catch (e) { /* ignore */ }
 
     // Add bot columns if missing in applications table
