@@ -1,6 +1,6 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-09-17T05:50:19.332Z
+-- Generated / Synced: 2026-09-17T06:21:52.843Z
 -- Total Applications: 3
 -- =============================================================
 
@@ -21,9 +21,9 @@ INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `l
 INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `last_name`, `date_of_birth`, `gender`, `address`, `phone_number`, `email`, `registered_at`) VALUES (3, '200015775429', 'Nimesh', 'namnugama', '2000-06-03 18:00:00', 'Male', 'test address', '071 251 3663', 'sakaleyt@gmail.com', '2026-09-17 04:45:45') ON DUPLICATE KEY UPDATE `first_name`=VALUES(`first_name`);
 
 -- Table: applications (3 records)
-INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (1, 1, 'New', 'Approved', 1, 95, 'Automated Bot Check: PASSED (Match Score: 95\%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100\% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85\% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100\% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100\% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).', NULL, 'G.C.E O/L', 'Single', 'Normal', 'Fast-Track Approved by thilinapak. Validated by AI Bot Verification Engine (Score: 95\%).', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
-INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (2, 2, 'New', 'Approved', 0, 62, 'Automated Bot Check: INCONCLUSIVE (Match Score: 62\%). Below 80\% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'thilinapak', 'G.C.E O/L', 'Single', 'Normal', 'New citizen online submission.', '2026-09-17 03:30:50') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
-INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (3, 3, 'New', 'Approved', 0, 63, 'Automated Bot Check: INCONCLUSIVE (Match Score: 63\%). Below 80\% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'Officer Wickramasinghe', 'Wallet Got Stolen', 'Single', '1-Day', 'New citizen online submission.', '2026-09-17 04:45:45') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
+INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (1, 1, 'New', 'Pending', 1, 95, 'Automated Bot Check: PASSED (Match Score: 95\%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100\% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85\% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100\% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100\% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).', NULL, 'G.C.E O/L', 'Single', 'Normal', 'Fast-Track Approved by thilinapak. Validated by AI Bot Verification Engine (Score: 95\%).', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
+INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (2, 2, 'New', 'Pending', 0, 62, 'Automated Bot Check: INCONCLUSIVE (Match Score: 62\%). Below 80\% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'thilinapak', 'G.C.E O/L', 'Single', 'Normal', 'New citizen online submission.', '2026-09-17 03:30:50') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
+INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `bot_verified`, `bot_score`, `bot_notes`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (3, 3, 'New', 'Pending', 0, 63, 'Automated Bot Check: INCONCLUSIVE (Match Score: 63\%). Below 80\% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.', 'Officer Wickramasinghe', 'Wallet Got Stolen', 'Single', '1-Day', 'New citizen online submission.', '2026-09-17 04:45:45') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 
 -- Table: documents (9 records)
 INSERT INTO `documents` (`document_id`, `application_id`, `document_type`, `file_name`, `file_path`, `file_size`, `uploaded_at`) VALUES (1, 1, 'Birth Certificate (Original Scan)', 'birthcerificate.pdf', '/uploads/documents/1789605864300_birthcerificate.pdf', '170 KB', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `document_type`=VALUES(`document_type`);
@@ -44,12 +44,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-17T03:30:50.504Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:37:11.858Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:40:58.703Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:41:45.333Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:42:05.160Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:44:06.495Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T04:21:49.431Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
 -- [2026-09-17T04:24:49.723Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T04:27:12.052Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
@@ -74,3 +68,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-09-17T05:31:29.526Z] System startup baseline sync
 -- [2026-09-17T05:31:53.897Z] System startup baseline sync
 -- [2026-09-17T05:50:19.334Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:26.090Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:33.759Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:41.657Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:43.952Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:48.692Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T06:21:52.846Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
