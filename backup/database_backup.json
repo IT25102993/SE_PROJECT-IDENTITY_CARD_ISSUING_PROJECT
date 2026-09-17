@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "last_updated": "2026-09-17T00:41:39.607Z",
+  "last_updated": "2026-09-17T00:48:31.207Z",
   "tables": {
     "users": [
       {
@@ -49,12 +49,132 @@
         "created_at": "2026-09-17T00:41:39.000Z"
       }
     ],
-    "applicants": [],
-    "applications": [],
-    "documents": [],
-    "identity_cards": [],
+    "applicants": [
+      {
+        "applicant_id": 1,
+        "national_id_number": "200509084440",
+        "first_name": "Thilina",
+        "last_name": "Sakalasooriya",
+        "date_of_birth": "2005-03-30T18:00:00.000Z",
+        "gender": "Male",
+        "address": "test address 1",
+        "phone_number": "0712513663",
+        "email": "kgnadunnimesh@gmail.com",
+        "photo_path": null,
+        "registered_at": "2026-09-17T00:44:24.000Z"
+      }
+    ],
+    "applications": [
+      {
+        "application_id": 1,
+        "applicant_id": 1,
+        "application_type": "New",
+        "status": "",
+        "bot_verified": 1,
+        "bot_score": 95,
+        "bot_notes": "Automated Bot Check: PASSED (Match Score: 95%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).",
+        "bot_verified_at": "2026-09-17T00:44:24.000Z",
+        "processed_by": 2,
+        "assigned_officer": null,
+        "application_reason": "G.C.E O/L",
+        "marital_status": "Single",
+        "service_type": "Normal",
+        "remarks": "New citizen online submission.",
+        "submitted_at": "2026-09-17T00:44:24.000Z",
+        "updated_at": "2026-09-17T00:48:31.000Z"
+      }
+    ],
+    "documents": [
+      {
+        "document_id": 1,
+        "application_id": 1,
+        "document_type": "Birth Certificate (Original Scan)",
+        "file_name": "birthcerificate.pdf",
+        "file_path": "/uploads/documents/1789605864300_birthcerificate.pdf",
+        "file_size": "170 KB",
+        "uploaded_at": "2026-09-17T00:44:24.000Z"
+      },
+      {
+        "document_id": 2,
+        "application_id": 1,
+        "document_type": "Bank Deposit / CDM Teller Slip",
+        "file_name": "download (26).png",
+        "file_path": "/uploads/documents/1789605864308_download__26_.png",
+        "file_size": "162 KB",
+        "uploaded_at": "2026-09-17T00:44:24.000Z"
+      }
+    ],
+    "identity_cards": [
+      {
+        "card_id": 1,
+        "card_number": "200509084440",
+        "application_id": 1,
+        "applicant_id": 1,
+        "issue_date": "2026-09-16T18:30:00.000Z",
+        "expiry_date": "2036-09-16T18:30:00.000Z",
+        "status": "Active",
+        "issued_by": 2,
+        "created_at": "2026-09-17T00:47:05.000Z"
+      }
+    ],
     "account_deletion_requests": [],
     "audit_logs": [
+      {
+        "log_id": 10,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Dispatched",
+        "timestamp": "2026-09-17T00:48:31.000Z"
+      },
+      {
+        "log_id": 9,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Printed",
+        "timestamp": "2026-09-17T00:48:15.000Z"
+      },
+      {
+        "log_id": 8,
+        "user_id": 2,
+        "action": "APPLICATION_APPROVED",
+        "details": "Application #1 approved. Official 12-digit NIC 200509084440 generated.",
+        "timestamp": "2026-09-17T00:47:05.000Z"
+      },
+      {
+        "log_id": 7,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Rejected",
+        "timestamp": "2026-09-17T00:46:24.000Z"
+      },
+      {
+        "log_id": 6,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Approved",
+        "timestamp": "2026-09-17T00:46:20.000Z"
+      },
+      {
+        "log_id": 5,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Rejected",
+        "timestamp": "2026-09-17T00:46:19.000Z"
+      },
+      {
+        "log_id": 4,
+        "user_id": 2,
+        "action": "STATUS_UPDATE",
+        "details": "Application #1 status updated to Approved",
+        "timestamp": "2026-09-17T00:46:17.000Z"
+      },
+      {
+        "log_id": 3,
+        "user_id": null,
+        "action": "APPLICATION_CREATED",
+        "details": "Application #1 created for Thilina Sakalasooriya. Bot Verification: Verification-Passed (Score: 95%)",
+        "timestamp": "2026-09-17T00:44:24.000Z"
+      },
       {
         "log_id": 2,
         "user_id": 23,
@@ -87,13 +207,45 @@
     {
       "timestamp": "2026-09-17T00:41:39.608Z",
       "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:44:24.378Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:46:17.614Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:46:19.191Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:46:20.780Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:46:24.922Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:47:05.631Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:48:15.215Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T00:48:31.208Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
   "summary": {
     "total_users": 5,
-    "total_applicants": 0,
-    "total_applications": 0,
-    "total_documents": 0,
-    "total_cards": 0
+    "total_applicants": 1,
+    "total_applications": 1,
+    "total_documents": 2,
+    "total_cards": 1
   }
 }
