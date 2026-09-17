@@ -16,7 +16,8 @@ import {
   X,
   Sparkles,
   Search,
-  Filter
+  Filter,
+  Lock
 } from 'lucide-react';
 
 export const PrintQueuePage = () => {
