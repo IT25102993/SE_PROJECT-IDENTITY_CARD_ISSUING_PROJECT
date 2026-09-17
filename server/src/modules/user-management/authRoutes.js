@@ -29,4 +29,13 @@ router.get('/deletion-status', verifyToken, checkUserDeletionEligibility);
 router.delete('/me', verifyToken, deleteOwnAccount);
 router.post('/request-deletion', verifyToken, requestAccountDeletion);
 
+// Fallback & Compatibility routes for user administration (/api/auth/..., /api/users/...)
+import('../admin-management/adminController.js').then(({ registerStaff, getAllUsers, updateUser, deleteUser }) => {
+  router.post('/register-staff', verifyToken, registerStaff);
+  router.get('/users', verifyToken, getAllUsers);
+  router.put('/users/:id', verifyToken, updateUser);
+  router.patch('/users/:id', verifyToken, updateUser);
+  router.delete('/users/:id', verifyToken, deleteUser);
+});
+
 export default router;
