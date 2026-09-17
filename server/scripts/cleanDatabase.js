@@ -47,6 +47,13 @@ const DEFAULT_STAFF_ACCOUNTS = [
     full_name: 'Senior Approver Jayawardena',
     role: 'Approver',
     password_hash: BCRYPT_DEFAULT_PASSWORD_HASH
+  },
+  {
+    username: 'operational',
+    email: 'operational@nexusgov.lk',
+    full_name: 'Operational Specialist Silva',
+    role: 'Operational',
+    password_hash: BCRYPT_DEFAULT_PASSWORD_HASH
   }
 ];
 
@@ -102,12 +109,12 @@ async function cleanDatabase() {
       const [[{ citizenCount }]] = await connection.query(`
         SELECT COUNT(*) AS citizenCount 
         FROM \`users\` 
-        WHERE LOWER(role) NOT IN ('admin', 'officer', 'approver')
+        WHERE LOWER(role) NOT IN ('admin', 'officer', 'approver', 'operational')
       `);
 
       await connection.query(`
         DELETE FROM \`users\` 
-        WHERE LOWER(role) NOT IN ('admin', 'officer', 'approver')
+        WHERE LOWER(role) NOT IN ('admin', 'officer', 'approver', 'operational')
       `);
       console.log(`  ✓ Cleared citizen accounts from [users] (${citizenCount} citizen user accounts deleted)`);
 
