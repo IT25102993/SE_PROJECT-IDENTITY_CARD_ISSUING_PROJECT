@@ -106,9 +106,19 @@ body.light-theme {
   box-sizing: border-box;
 }
 
+html,
+#root {
+  min-height: 100vh;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
 }
 
 body {
