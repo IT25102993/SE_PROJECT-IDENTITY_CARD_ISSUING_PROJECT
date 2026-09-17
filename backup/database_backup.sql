@@ -1,6 +1,6 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-09-17T05:21:16.633Z
+-- Generated / Synced: 2026-09-17T05:50:19.332Z
 -- Total Applications: 3
 -- =============================================================
 
@@ -44,9 +44,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-17T02:55:07.377Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:17:10.069Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T03:20:06.722Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T03:30:50.504Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T03:37:11.858Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T03:40:58.703Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
@@ -74,3 +71,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-09-17T05:20:11.178Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T05:20:37.431Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T05:21:16.637Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-17T05:31:29.526Z] System startup baseline sync
+-- [2026-09-17T05:31:53.897Z] System startup baseline sync
+-- [2026-09-17T05:50:19.334Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
