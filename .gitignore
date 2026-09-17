@@ -44,3 +44,4 @@ Thumbs.db
 tmp/
 *.pdf
 server/uploads/documents/sample_grama_cert.jpg
+crud-validations-architecture.html
