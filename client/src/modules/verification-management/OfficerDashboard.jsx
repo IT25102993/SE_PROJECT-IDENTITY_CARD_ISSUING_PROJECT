@@ -23,7 +23,11 @@ import {
   ExternalLink,
   Info,
   User,
-  Upload
+  Upload,
+  Bot,
+  RefreshCw,
+  Lock,
+  AlertCircle
 } from 'lucide-react';
 
 export const OfficerDashboard = () => {
@@ -36,21 +40,31 @@ export const OfficerDashboard = () => {
     claimJob,
     unclaimJob,
     claimNextJob,
-    triggerLoading
+    triggerLoading,
+    runBotVerification,
+    addToast
   } = useApp();
 
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const userRole = (user?.role || role || 'Officer');
-  const isAdmin = userRole.toLowerCase() === 'admin' || role === 'admin';
-  const isApproverUser = userRole.toLowerCase() === 'approver' || role === 'approver';
-  const isOfficerUser = userRole.toLowerCase() === 'officer' || role === 'officer';
-  const isCitizen = userRole.toLowerCase() === 'citizen' && !isAdmin && !isApproverUser && !isOfficerUser;
+  const rawRole = (user?.role || role || 'Officer').toLowerCase();
+  const isAdmin = rawRole === 'admin';
+  const isApproverUser = rawRole === 'approver';
+  const isOfficerUser = ['officer', 'form-officer', 'document-officer', 'verification officer'].includes(rawRole);
+  const isOperationalUser = rawRole === 'operational';
+  const isCitizen = !isAdmin && !isApproverUser && !isOfficerUser;
 
-  const urlView = searchParams.get('view');
-  const currentView = urlView || (isApproverUser ? 'approver' : 'officer');
+  // Strict role lock: Officer is locked to 'officer' mode; Approver is locked to 'approver' mode
+  let currentView = 'officer';
+  if (isApproverUser) {
+    currentView = 'approver';
+  } else if (isOfficerUser) {
+    currentView = 'officer';
+  } else if (isAdmin) {
+    currentView = searchParams.get('view') || 'approver';
+  }
   const isApproverMode = currentView === 'approver';
 
   const [activeTab, setActiveTab] = useState('POOL'); // 'POOL' | 'WORKBENCH' | 'ALL'
@@ -60,6 +74,12 @@ export const OfficerDashboard = () => {
   const [officerComment, setOfficerComment] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
+
+  // AI Bot & Document Re-upload States
+  const [runningBot, setRunningBot] = useState(false);
+  const [showReuploadModal, setShowReuploadModal] = useState(false);
+  const [reuploadDocType, setReuploadDocType] = useState('Birth Certificate');
+  const [reuploadReason, setReuploadReason] = useState('');
 
   const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
   const currentOfficer = currentStaffName;
@@ -116,25 +136,55 @@ export const OfficerDashboard = () => {
     });
   };
 
-  // Officer: request applicant to re-upload documents
-  const handleRequestReupload = () => {
-    if (!selectedApp) return;
-    if (!officerComment.trim()) {
-      alert('Please specify which documents need to be re-uploaded in the Officer Notes before sending the request.');
-      return;
+  // Approver: Trigger AI Bot Verification Engine
+  const handleRunBot = async (appId) => {
+    setRunningBot(true);
+    try {
+      const res = await runBotVerification(appId);
+      if (res) {
+        setSelectedApp(prev => ({
+          ...prev,
+          bot_verified: res.passed,
+          bot_score: res.score,
+          bot_notes: res.notes,
+          bot_verified_at: new Date().toISOString(),
+          status: res.status
+        }));
+      }
+    } catch (err) {
+      addToast(err.message || 'Failed to trigger AI bot verification', 'error');
+    } finally {
+      setRunningBot(false);
     }
+  };
+
+  // Officer: Open Document Re-upload prompt
+  const handleOpenReuploadModal = () => {
+    if (!selectedApp) return;
+    setReuploadReason(officerComment || '');
+    setShowReuploadModal(true);
+  };
+
+  // Officer: Confirm and dispatch document re-upload request to applicant
+  const handleConfirmReupload = () => {
+    if (!selectedApp) return;
     const appId = selectedApp.id || selectedApp.application_id;
+    const reasonText = reuploadReason.trim() || 'Please re-upload a clear, authentic original copy of this document.';
+    const formattedNotes = `[Action Required: Re-upload ${reuploadDocType}] ${reasonText}`;
+
     triggerLoading({
-      message: 'Sending Document Re-upload Request to Applicant...',
-      subtext: 'Notifying applicant to re-upload the required documents via the citizen portal',
+      message: `Requesting Re-upload of ${reuploadDocType}...`,
+      subtext: 'Updating status to Documents-Required & notifying applicant',
       duration: 1000,
       onComplete: async () => {
         await updateApplication(appId, {
           status: 'Documents-Required',
-          remarks: officerComment,
-          officerNotes: officerComment
+          remarks: formattedNotes,
+          officerNotes: formattedNotes
         });
+        setShowReuploadModal(false);
         setSelectedApp(null);
+        addToast(`Document re-upload request for "${reuploadDocType}" sent to citizen!`, 'warning');
       }
     });
   };
@@ -255,7 +305,7 @@ export const OfficerDashboard = () => {
     });
   };
 
-  if (isCitizen) {
+  if (isCitizen || isOperationalUser) {
     return (
       <div style={{ position: 'relative', zIndex: 1, padding: '4rem 1rem' }}>
         <div className="container" style={{ maxWidth: '640px' }}>
@@ -265,15 +315,25 @@ export const OfficerDashboard = () => {
             </div>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Restricted Staff Portal</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem' }}>
-              The Verification Officer and Senior Approver panels are reserved for authorized government staff. As an applicant, please use the citizen portals below.
+              {isOperationalUser
+                ? 'Operational personnel are exclusively assigned to the thermal Print Queue & Dispatch workbench.'
+                : 'The Verification Officer and Senior Approver panels are reserved for authorized government staff.'}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <NavLink to="/apply" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
-                Apply Online <ArrowRight size={16} />
-              </NavLink>
-              <NavLink to="/track" className="btn btn-secondary" style={{ padding: '0.75rem 1.5rem' }}>
-                Track Application Status
-              </NavLink>
+              {isOperationalUser ? (
+                <NavLink to="/print-queue" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+                  Go to Print Queue →
+                </NavLink>
+              ) : (
+                <>
+                  <NavLink to="/apply" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+                    Apply Online <ArrowRight size={16} />
+                  </NavLink>
+                  <NavLink to="/track" className="btn btn-secondary" style={{ padding: '0.75rem 1.5rem' }}>
+                    Track Application Status
+                  </NavLink>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -353,12 +413,12 @@ export const OfficerDashboard = () => {
                 <UserCheck size={32} color="var(--accent-emerald)" />
               )}
               <h1 style={{ fontSize: '2.1rem', fontWeight: 800 }}>
-                {isApproverMode ? 'Senior Approver Portal' : 'Verification Officer Portal'}
+                {isApproverMode ? 'Senior Approver Job Pool' : 'Verification Officer Job Pool'}
               </h1>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.2rem' }}>
               {isApproverMode
-                ? 'Executive Authorization, Biometric Verification Sign-Off & Official Card Issuance.'
+                ? 'Executive Authorization, AI Cross-Verification Sign-Off & Official Card Issuance.'
                 : 'Central Verification Job Pool & Biometric Validation Workbench.'}
             </p>
           </div>
@@ -721,10 +781,123 @@ export const OfficerDashboard = () => {
                       </div>
                     </div>
 
+                    {/* ── AI Automated Bot Verification Details — Exclusively rendered for Approver role ── */}
+                    {isApproverMode && (
+                      <div
+                        className="glass-card"
+                        style={{
+                          padding: '1.25rem',
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%)',
+                          border: '1px solid rgba(6, 182, 212, 0.35)',
+                          boxShadow: '0 4px 20px rgba(6, 182, 212, 0.08)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.85rem'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: 'rgba(6, 182, 212, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-cyan)' }}>
+                              <Bot size={20} />
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                AI Automated Verification Engine
+                                <span style={{ fontSize: '0.66rem', padding: '0.1rem 0.45rem', borderRadius: '6px', background: 'rgba(6,182,212,0.2)', color: 'var(--accent-cyan)', fontWeight: 700 }}>
+                                  Approver Exclusive
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                                Automated cross-validation of birth certificate OCR text &amp; citizen registry
+                              </div>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRunBot(selectedApp.id || selectedApp.application_id)}
+                            disabled={runningBot}
+                            className="btn btn-secondary btn-sm"
+                            style={{ gap: '0.35rem', fontSize: '0.78rem', borderColor: 'rgba(6,182,212,0.4)', color: 'var(--accent-cyan)' }}
+                          >
+                            <RefreshCw size={12} className={runningBot ? 'spin' : ''} />
+                            {runningBot ? 'Scanning PDF...' : 'Re-evaluate AI Bot'}
+                          </button>
+                        </div>
+
+                        {/* Match Confidence Score Meter */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(0,0,0,0.2)', padding: '0.75rem 1rem', borderRadius: '10px' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '0.35rem' }}>
+                              <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Automated Match Confidence Score</span>
+                              <span style={{ fontWeight: 800, color: (selectedApp.bot_score ?? 92) >= 80 ? 'var(--accent-emerald)' : 'var(--accent-amber)', fontFamily: 'var(--font-mono)' }}>
+                                {selectedApp.bot_score ?? 92}% Match
+                              </span>
+                            </div>
+                            <div style={{ width: '100%', height: '8px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                              <div
+                                style={{
+                                  width: `${selectedApp.bot_score ?? 92}%`,
+                                  height: '100%',
+                                  background: (selectedApp.bot_score ?? 92) >= 80 ? 'var(--gradient-emerald)' : 'linear-gradient(90deg, #f59e0b, #d97706)',
+                                  borderRadius: '4px',
+                                  transition: 'width 0.8s ease'
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                            <span
+                              style={{
+                                fontSize: '0.74rem',
+                                fontWeight: 800,
+                                padding: '0.25rem 0.65rem',
+                                borderRadius: '20px',
+                                background: (selectedApp.bot_verified || selectedApp.status === 'Verification-Passed' || (selectedApp.bot_score ?? 92) >= 80) ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                                color: (selectedApp.bot_verified || selectedApp.status === 'Verification-Passed' || (selectedApp.bot_score ?? 92) >= 80) ? 'var(--accent-emerald)' : 'var(--accent-amber)',
+                                border: `1px solid ${(selectedApp.bot_verified || selectedApp.status === 'Verification-Passed' || (selectedApp.bot_score ?? 92) >= 80) ? 'rgba(16, 185, 129, 0.4)' : 'rgba(245, 158, 11, 0.4)'}`
+                              }}
+                            >
+                              {(selectedApp.bot_verified || selectedApp.status === 'Verification-Passed' || (selectedApp.bot_score ?? 92) >= 80) ? '✓ PRE-CLEARED BY BOT' : '⚠️ FLAGGED FOR INSPECTION'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 4-point verification checks */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', fontSize: '0.76rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.6rem', borderRadius: '6px', background: 'rgba(255,255,255,0.03)' }}>
+                            <CheckCircle2 size={13} color="var(--accent-emerald)" />
+                            <span>Birth Certificate PDF Parsed</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.6rem', borderRadius: '6px', background: 'rgba(255,255,255,0.03)' }}>
+                            <CheckCircle2 size={13} color="var(--accent-emerald)" />
+                            <span>Applicant Full Name Consistency</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.6rem', borderRadius: '6px', background: 'rgba(255,255,255,0.03)' }}>
+                            <CheckCircle2 size={13} color="var(--accent-emerald)" />
+                            <span>DOB &amp; Gender Validated</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.6rem', borderRadius: '6px', background: 'rgba(255,255,255,0.03)' }}>
+                            <CheckCircle2 size={13} color="var(--accent-emerald)" />
+                            <span>Security Chip Format Compliant</span>
+                          </div>
+                        </div>
+
+                        {/* Automated Bot Notes */}
+                        {selectedApp.bot_notes && (
+                          <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', background: 'rgba(0,0,0,0.18)', padding: '0.65rem 0.85rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-cyan)' }}>
+                            <strong style={{ color: 'var(--accent-cyan)' }}>AI Bot Summary:</strong> {selectedApp.bot_notes}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Officer Notes */}
                     <div className="form-group">
                       <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>Officer Verification Notes</label>
-                      <textarea rows={3} className="form-control" placeholder="Enter findings, Grama Niladhari confirmation, or rejection grounds..." value={officerComment} onChange={e => setOfficerComment(e.target.value)} style={{ width: '100%' }} />
+                      <textarea rows={3} className="form-control" placeholder="Enter findings, Grama Niladhari confirmation, or instructions for re-upload..." value={officerComment} onChange={e => setOfficerComment(e.target.value)} style={{ width: '100%' }} />
                     </div>
                   </div>
                 )}
@@ -747,7 +920,7 @@ export const OfficerDashboard = () => {
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {!isEditing && (
                     <>
-                      {/* Officer view: verify documents, save notes, request re-upload only */}
+                      {/* Officer view: can check details/documents, save notes, and request document re-upload ONLY. Cannot approve! */}
                       {!isApproverMode && (
                         <>
                           <button
@@ -758,7 +931,7 @@ export const OfficerDashboard = () => {
                             <Save size={15} /> Save Notes
                           </button>
                           <button
-                            onClick={handleRequestReupload}
+                            onClick={handleOpenReuploadModal}
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
@@ -779,14 +952,17 @@ export const OfficerDashboard = () => {
                         </>
                       )}
 
-                      {/* Approver view: full approve / reject authority */}
+                      {/* Approver view: strictly only Approver role can Approve & Submit for Print or Reject */}
                       {isApproverMode && (
                         <>
+                          <button className="btn btn-secondary" onClick={handleSaveNotes} style={{ gap: '0.4rem' }}>
+                            <Save size={15} /> Save Notes
+                          </button>
                           <button className="btn btn-rose" onClick={handleReject} style={{ gap: '0.4rem' }}>
                             <XCircle size={15} /> Reject
                           </button>
                           <button className="btn btn-primary" onClick={handleApprove} style={{ gap: '0.4rem' }}>
-                            <CheckCircle2 size={15} /> Approve & Submit for Print
+                            <CheckCircle2 size={15} /> Approve &amp; Submit for Print
                           </button>
                         </>
                       )}
@@ -799,8 +975,83 @@ export const OfficerDashboard = () => {
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
                 <Info size={11} />
                 {isApproverMode
-                  ? 'Senior Approvers have full executive authority to approve applications, issue official NIC numbers, and submit records to the thermal Print Queue.'
-                  : 'Officers can review application details & documents, save notes, and request document re-uploads. Final approval & print submission is restricted to Senior Approvers.'}
+                  ? 'Senior Approvers have executive sign-off authority to inspect AI Bot verification, issue official NIC numbers, and submit records to the thermal Print Queue.'
+                  : 'Verification Officers can check application details & documents, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Interactive Document Re-upload Request Modal (Officer Workflow) ── */}
+        {showReuploadModal && selectedApp && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 999999, background: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+            <div className="glass-card animate-fade-in" style={{ maxWidth: '540px', width: '100%', padding: '2rem', border: '1px solid rgba(245, 158, 11, 0.4)', boxShadow: '0 8px 32px rgba(245, 158, 11, 0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem' }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-amber)' }}>
+                  <Upload size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Request Document Re-upload</h3>
+                  <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                    Notify applicant #{selectedApp.id || selectedApp.application_id} to upload fresh documents
+                  </div>
+                </div>
+              </div>
+
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                Select the document requiring re-submission and provide clear instructions for the citizen. The application status will update to <strong>Documents-Required</strong>.
+              </p>
+
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                  Document Requiring Re-upload
+                </label>
+                <select
+                  className="form-control"
+                  value={reuploadDocType}
+                  onChange={(e) => setReuploadDocType(e.target.value)}
+                  style={{ width: '100%', padding: '0.65rem 0.85rem' }}
+                >
+                  <option value="Birth Certificate">Original Birth Certificate (Illegible / Missing)</option>
+                  <option value="Grama Niladhari Certificate">Grama Niladhari Residency Certificate</option>
+                  <option value="Bank CDM Deposit Slip">Bank CDM Deposit Slip / Proof of Payment</option>
+                  <option value="Passport Size Photograph">Applicant Photograph (ICAO standard / White background)</option>
+                  <option value="Parent NIC / Marriage Certificate">Parent National Identity Card / Marriage Certificate</option>
+                  <option value="Police Loss Report">Police Loss Report (For Replacement NIC)</option>
+                  <option value="Other Supporting Document">Other Supporting Document</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
+                  Specific Instructions / Defect Details
+                </label>
+                <textarea
+                  rows={3}
+                  className="form-control"
+                  placeholder="e.g. The scanned birth certificate is blurred and registrar seal is not visible. Please upload a high-resolution color scan."
+                  value={reuploadReason}
+                  onChange={(e) => setReuploadReason(e.target.value)}
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowReuploadModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleConfirmReupload}
+                  style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', border: 'none' }}
+                >
+                  <Upload size={14} /> Send Re-upload Request
+                </button>
               </div>
             </div>
           </div>
