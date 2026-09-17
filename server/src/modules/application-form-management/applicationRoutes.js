@@ -16,6 +16,7 @@ import {
   getApplicationDocuments,
   uploadDocument
 } from '../document-upload-management/documentController.js';
+import { updateStatus } from '../operation-management/operationController.js';
 import { verifyToken, requireRole } from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -34,6 +35,10 @@ router.post('/:id/bot-verify', triggerBotVerification);
 router.put('/:id', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateApplication);
 router.post('/:id/claim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), claimApplication);
 router.post('/:id/unclaim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), unclaimApplication);
+
+// Status update (Printed, Approved, Dispatched, etc.)
+router.patch('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
+router.put('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
 
 // Approver / Officer decisions
 router.put('/:id/approve', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), approveApplication);
