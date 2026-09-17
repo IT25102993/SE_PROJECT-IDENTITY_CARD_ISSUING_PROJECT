@@ -147,34 +147,34 @@ export const Navbar = () => {
               </>
             )}
 
-            {/* ── STAFF LINKS — role-specific ── */}
-            {(isOfficerRole || isAdminRole) && (
+            {/* ── STAFF LINKS — strictly role-isolated job pool ── */}
+            {isOfficerRole && (
               <li>
                 <NavLink
                   to="/officer?view=officer"
                   style={({ isActive }) => navStyle(isActive, 'var(--accent-emerald)')}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <LayoutDashboard size={14} /> Officer Portal
+                    <LayoutDashboard size={14} /> Officer Job Pool
                   </span>
                 </NavLink>
               </li>
             )}
 
-            {(isApproverRole || isAdminRole) && (
+            {isApproverRole && (
               <li>
                 <NavLink
                   to="/officer?view=approver"
                   style={({ isActive }) => navStyle(isActive, 'var(--accent-cyan)')}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <UserCheck size={14} /> Approver Portal
+                    <UserCheck size={14} /> Approver Job Pool
                   </span>
                 </NavLink>
               </li>
             )}
 
-            {(isOperationalRole || isAdminRole) && (
+            {isOperationalRole && (
               <li>
                 <NavLink
                   to="/print-queue"
@@ -322,14 +322,14 @@ export const Navbar = () => {
             </>
           )}
 
-          {/* Staff links */}
-          {(isOfficerRole || isAdminRole) && (
-            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>Officer Portal</NavLink>
+          {/* Staff links — strictly role-isolated job pool */}
+          {isOfficerRole && (
+            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>Officer Job Pool</NavLink>
           )}
-          {(isApproverRole || isAdminRole) && (
-            <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Portal</NavLink>
+          {isApproverRole && (
+            <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Job Pool</NavLink>
           )}
-          {(isOperationalRole || isAdminRole) && (
+          {isOperationalRole && (
             <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
           )}
           {isAdminRole && (
