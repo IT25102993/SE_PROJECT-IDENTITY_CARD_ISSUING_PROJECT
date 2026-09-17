@@ -26,9 +26,10 @@ const STATUS_STAGE_MAP = {
   'Processing': 1,
   'Approved': 2,
   'APPROVED': 2,
-  'Issued': 2,
   'Printed': 3,
   'PRINTED': 3,
+  'Issued': 4,
+  'ISSUED': 4,
   'Dispatched': 4,
   'DISPATCHED': 4,
   'Rejected': -1,
@@ -76,19 +77,30 @@ export const TrackingPage = () => {
           setSelectedApp({
             id: found.tracking_id || `NEX-2026-${found.application_id}`,
             application_id: found.application_id,
+            first_name: found.first_name || '',
+            last_name: found.last_name || '',
             fullNameEn: found.fullNameEn || `${found.first_name || ''} ${found.last_name || ''}`.trim(),
             nicNumber: found.national_id_number || found.nicNumber || '',
+            national_id_number: found.national_id_number || found.nicNumber || '',
             dob: found.date_of_birth || found.dob || '',
             gender: found.gender || 'Male',
             address: found.address || '',
             phone: found.phone_number || found.phone || '',
+            phone_number: found.phone_number || found.phone || '',
             email: found.email || '',
             district: found.district || '',
             status: found.status || 'Pending',
+            service_type: found.service_type || 'Normal',
+            application_reason: found.application_reason || 'G.C.E O/L',
+            marital_status: found.marital_status || 'Single',
+            bot_verified: found.bot_verified === 1 || found.bot_verified === true,
+            bot_score: found.bot_score || 0,
+            bot_notes: found.bot_notes || '',
             submittedDate: found.submitted_at || '',
             officerNotes: found.remarks || '',
+            documents: Array.isArray(found.documents) ? found.documents : [],
             trackingHistory: found.trackingHistory || [
-              { status: 'Submitted', date: found.submitted_at || 'Recent', note: 'Application filed online via citizen portal.' }
+              { status: found.status || 'Submitted', date: found.submitted_at || 'Recent', note: found.remarks || 'Application registered in national database.' }
             ]
           });
           setIsSearching(false);
@@ -135,15 +147,22 @@ export const TrackingPage = () => {
     performSearch(searchId);
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, serviceType = 'Normal') => {
+    const is1Day = (serviceType || '').toLowerCase().includes('1-day') || (serviceType || '').toLowerCase().includes('priority');
     switch ((status || '').toLowerCase()) {
       case 'approved':
-      case 'issued':
         return <span className="badge badge-approved">✓ Approved &amp; NIC Issued</span>;
       case 'printed':
         return <span className="badge badge-printed">🖨 PVC Card Printed</span>;
+      case 'issued':
       case 'dispatched':
-        return <span className="badge badge-dispatched">🚚 Dispatched via Post</span>;
+        return is1Day ? (
+          <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.18)', color: 'var(--accent-amber)', border: '1px solid rgba(245, 158, 11, 0.4)', fontWeight: 700 }}>
+            🚚 Dispatched via Courier (1-Day Priority)
+          </span>
+        ) : (
+          <span className="badge badge-dispatched">📨 Dispatched via Sri Lanka Post</span>
+        );
       case 'rejected':
         return <span className="badge badge-rejected">✗ Application Rejected</span>;
       case 'verification-passed':
@@ -214,7 +233,7 @@ export const TrackingPage = () => {
                     {selectedApp.id || `NEX-2026-${selectedApp.application_id}`}
                   </div>
                 </div>
-                <div>{getStatusBadge(selectedApp.status)}</div>
+                <div>{getStatusBadge(selectedApp.status, selectedApp.service_type || selectedApp.serviceType)}</div>
               </div>
 
               {/* Progress Stage Bar */}
@@ -326,6 +345,14 @@ export const TrackingPage = () => {
                   { label: 'NIC Number', value: selectedApp.nicNumber || selectedApp.national_id_number || 'Pending Assignment', mono: true, highlight: true },
                   { label: 'Date of Birth', value: selectedApp.dob || 'N/A' },
                   { label: 'Gender', value: selectedApp.gender || 'N/A' },
+                  { label: 'Civil Status', value: selectedApp.marital_status || selectedApp.civilStatus || 'Single' },
+                  { label: 'Application Reason', value: selectedApp.application_reason || 'G.C.E O/L' },
+                  {
+                    label: 'Service & Dispatch',
+                    value: (selectedApp.service_type === '1-Day' || selectedApp.serviceType === '1-Day')
+                      ? '🚚 1-Day Priority (Courier Delivery • Rs. 1,500)'
+                      : '📨 Normal Service (Sri Lanka Post • Rs. 500)'
+                  },
                   { label: 'District', value: selectedApp.district || 'N/A' },
                   { label: 'Submitted', value: selectedApp.submittedDate || selectedApp.submitted_at || 'Recent' }
                 ].map((row, i) => (
