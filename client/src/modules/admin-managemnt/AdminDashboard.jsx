@@ -2028,6 +2028,7 @@ export const AdminDashboard = () => {
                     >
                       <option value="Officer">Officer (Verification Personnel)</option>
                       <option value="Approver">Approver (Senior Officer)</option>
+                      <option value="Operational">Operational (Print & Dispatch Specialist)</option>
                       <option value="Admin">Admin (System Administrator)</option>
                     </select>
                   </div>
@@ -2525,6 +2526,7 @@ export const AdminDashboard = () => {
               <option value="Citizen">Citizen (Applicant)</option>
               <option value="Officer">Officer (Verification)</option>
               <option value="Approver">Approver (Senior Officer)</option>
+              <option value="Operational">Operational (Print & Dispatch)</option>
               <option value="Admin">Admin (System Administrator)</option>
             </select>
 
