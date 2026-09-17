@@ -139,7 +139,7 @@ export const approveApplication = async (req, res) => {
         gender = applicantRows[0].gender || 'Male';
       }
     } else {
-      const memApp = (inMemoryDb.applications || []).find(a => a.application_id === parseInt(id) || a.tracking_id === id);
+      const memApp = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (memApp) {
         dob = memApp.dob || '2005-01-01';
         gender = memApp.gender || 'Male';
