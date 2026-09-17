@@ -16,29 +16,19 @@ import {
   Sparkles,
   RotateCcw,
   ShieldCheck,
-  Check,
-  Layers,
   ArrowRight,
   Edit3,
   Save,
   X,
   ExternalLink,
   Info,
-  ShieldAlert,
   User,
-  Bot,
-  Cpu,
-  Zap,
-  CheckCheck,
-  RefreshCw,
-  SlidersHorizontal,
-  Award
+  Upload
 } from 'lucide-react';
 
 export const OfficerDashboard = () => {
   const {
     role,
-    setRole,
     applications,
     updateApplication,
     approveApplication,
@@ -46,7 +36,6 @@ export const OfficerDashboard = () => {
     claimJob,
     unclaimJob,
     claimNextJob,
-    runBotVerification,
     triggerLoading
   } = useApp();
 
@@ -64,27 +53,18 @@ export const OfficerDashboard = () => {
   const currentView = urlView || (isApproverUser ? 'approver' : 'officer');
   const isApproverMode = currentView === 'approver';
 
-  const [activeTab, setActiveTab] = useState('POOL'); // 'POOL' | 'WORKBENCH' | 'BOT_APPROVED' | 'ALL'
+  const [activeTab, setActiveTab] = useState('POOL'); // 'POOL' | 'WORKBENCH' | 'ALL'
   const [filterStatus, setFilterStatus] = useState('ALL');
-  const [botSubFilter, setBotSubFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'HIGH_CONFIDENCE' | 'APPROVED'
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedApp, setSelectedApp] = useState(null);
   const [officerComment, setOfficerComment] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
-  const [isReevaluating, setIsReevaluating] = useState(false);
 
   const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
   const currentOfficer = currentStaffName;
 
   const isPending = (s) => ['PENDING_VERIFICATION','Pending','Verification-Passed'].includes(s);
-
-  // Automated AI Bot Approved criteria: bot_verified true OR status 'Verification-Passed' OR score >= 80%
-  const isBotApproved = (a) => (
-    a.bot_verified === true ||
-    a.status === 'Verification-Passed' ||
-    (Number(a.bot_score) >= 80)
-  );
 
   const unassignedPoolApps = applications.filter(
     a => isPending(a.status) && (!a.assignedOfficer || a.assignedOfficer === '')
@@ -98,27 +78,12 @@ export const OfficerDashboard = () => {
     a => a.assignedOfficer === currentOfficer && !isPending(a.status)
   );
 
-  const botApprovedApps = applications.filter(isBotApproved);
-  const pendingBotApps = botApprovedApps.filter(a => isPending(a.status));
-  const highConfidenceBotApps = botApprovedApps.filter(a => Number(a.bot_score) >= 90);
-  const approvedBotApps = botApprovedApps.filter(a => !isPending(a.status));
-
   const getDisplayedApplications = () => {
     let list = [];
     if (activeTab === 'POOL') {
       list = unassignedPoolApps;
     } else if (activeTab === 'WORKBENCH') {
       list = myWorkbenchApps;
-    } else if (activeTab === 'BOT_APPROVED') {
-      if (botSubFilter === 'PENDING') {
-        list = pendingBotApps;
-      } else if (botSubFilter === 'HIGH_CONFIDENCE') {
-        list = highConfidenceBotApps;
-      } else if (botSubFilter === 'APPROVED') {
-        list = approvedBotApps;
-      } else {
-        list = botApprovedApps;
-      }
     } else {
       list = applications.filter(app => filterStatus === 'ALL' || app.status === filterStatus);
     }
@@ -136,42 +101,40 @@ export const OfficerDashboard = () => {
 
   const displayedApps = getDisplayedApplications();
 
-  const handleFastTrackApprove = (app) => {
-    const appId = app.id || `NEX-2026-${app.application_id}`;
-    const score = app.bot_score || 95;
-    const name = app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`;
-
+  // Officer: save notes without approving
+  const handleSaveNotes = () => {
+    if (!selectedApp) return;
+    const appId = selectedApp.id || selectedApp.application_id;
     triggerLoading({
-      message: `Fast-Track Approving ${name}...`,
-      subtext: `AI Bot Match verified at ${score}%. Generating Cryptographic 12-Digit NIC`,
-      duration: 1400,
-      onComplete: () => {
-        approveApplication(appId, `Fast-Track Approved by ${currentOfficer}. Validated by AI Bot Verification Engine (Score: ${score}%).`);
-        if (selectedApp && (selectedApp.id === appId || selectedApp.application_id === app.application_id)) {
-          setSelectedApp(null);
-        }
+      message: `Saving Officer Notes for #${appId}...`,
+      subtext: 'Persisting verification notes to database',
+      duration: 800,
+      onComplete: async () => {
+        await updateApplication(appId, { remarks: officerComment, officerNotes: officerComment });
+        setSelectedApp(prev => ({ ...prev, officerNotes: officerComment, remarks: officerComment }));
       }
     });
   };
 
-  const handleTriggerReBot = async (appId) => {
-    setIsReevaluating(true);
+  // Officer: request applicant to re-upload documents
+  const handleRequestReupload = () => {
+    if (!selectedApp) return;
+    if (!officerComment.trim()) {
+      alert('Please specify which documents need to be re-uploaded in the Officer Notes before sending the request.');
+      return;
+    }
+    const appId = selectedApp.id || selectedApp.application_id;
     triggerLoading({
-      message: `Executing AI Bot OCR & Biometric Scan for ${appId}...`,
-      subtext: 'Cross-referencing birth certificate registers, legal seals & civil tokens',
-      duration: 1500,
+      message: 'Sending Document Re-upload Request to Applicant...',
+      subtext: 'Notifying applicant to re-upload the required documents via the citizen portal',
+      duration: 1000,
       onComplete: async () => {
-        const result = await runBotVerification(appId);
-        setIsReevaluating(false);
-        if (result && selectedApp && (selectedApp.id === appId || selectedApp.application_id === appId)) {
-          setSelectedApp(prev => ({
-            ...prev,
-            bot_verified: result.passed,
-            bot_score: result.score,
-            bot_notes: result.notes,
-            status: result.status
-          }));
-        }
+        await updateApplication(appId, {
+          status: 'Documents-Required',
+          remarks: officerComment,
+          officerNotes: officerComment
+        });
+        setSelectedApp(null);
       }
     });
   };
@@ -518,109 +481,7 @@ export const OfficerDashboard = () => {
               {completedApps.length}
             </div>
           </div>
-        </div>
-
-        {/* Dedicated Automated AI Bot Approved Registry Section */}
-        {activeTab === 'BOT_APPROVED' && (
-          <div className="glass-card animate-fade-in" style={{
-            padding: '1.5rem',
-            marginBottom: '1.75rem',
-            background: 'linear-gradient(145deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%)',
-            border: '1px solid rgba(139, 92, 246, 0.35)',
-            boxShadow: '0 8px 32px rgba(139, 92, 246, 0.12)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.25rem', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '12px',
-                  background: 'rgba(139, 92, 246, 0.2)',
-                  border: '1px solid rgba(139, 92, 246, 0.4)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--accent-purple)'
-                }}>
-                  <Bot size={26} />
-                </div>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
-                      Automated AI Bot Verification Registry
-                    </h3>
-                    <span style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      padding: '0.2rem 0.6rem',
-                      borderRadius: '20px',
-                      background: 'rgba(16, 185, 129, 0.15)',
-                      color: 'var(--accent-emerald)',
-                      border: '1px solid rgba(16, 185, 129, 0.3)'
-                    }}>
-                      ✓ 80%+ Criteria Automated Validation Active
-                    </span>
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.84rem', margin: '0.25rem 0 0 0', maxWidth: '750px' }}>
-                    Applications that passed the automated AI birth certificate OCR verification engine. Biometrics, legal heading seals, and civil registration tokens have met statutory compliance. Officers may inspect full audit tokens or fast-track sign-off.
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                <div style={{ padding: '0.6rem 0.9rem', borderRadius: '10px', background: 'var(--bg-nested)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Average Bot Score</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
-                    {botApprovedApps.length > 0 ? Math.round(botApprovedApps.reduce((acc, a) => acc + (a.bot_score || 92), 0) / botApprovedApps.length) : 0}%
-                  </div>
-                </div>
-                <div style={{ padding: '0.6rem 0.9rem', borderRadius: '10px', background: 'var(--bg-nested)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Ready for Sign-Off</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
-                    {pendingBotApps.length}
-                  </div>
-                </div>
-                <div style={{ padding: '0.6rem 0.9rem', borderRadius: '10px', background: 'var(--bg-nested)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>High Confidence (≥90%)</div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-purple)', fontFamily: 'var(--font-mono)' }}>
-                    {highConfidenceBotApps.length}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sub-Filter Selection Chips */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid rgba(139, 92, 246, 0.2)', paddingTop: '0.85rem' }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, marginRight: '0.25rem' }}>
-                Filter Bot Records:
-              </span>
-              {[
-                ['ALL', `All AI Passed (${botApprovedApps.length})`],
-                ['PENDING', `Pending Officer Sign-Off (${pendingBotApps.length})`],
-                ['HIGH_CONFIDENCE', `High Confidence ≥90% (${highConfidenceBotApps.length})`],
-                ['APPROVED', `Finalized (${approvedBotApps.length})`]
-              ].map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => setBotSubFilter(key)}
-                  style={{
-                    fontSize: '0.76rem',
-                    padding: '0.3rem 0.75rem',
-                    borderRadius: '20px',
-                    cursor: 'pointer',
-                    fontWeight: 600,
-                    background: botSubFilter === key ? 'var(--accent-purple)' : 'var(--bg-nested)',
-                    color: botSubFilter === key ? '#fff' : 'var(--text-secondary)',
-                    border: `1px solid ${botSubFilter === key ? 'var(--accent-purple)' : 'var(--border-color)'}`,
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        </di        )}
 
         {/* List Table View */}
         <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
@@ -631,13 +492,6 @@ export const OfficerDashboard = () => {
               </button>
               <button className={`btn btn-sm ${activeTab === 'WORKBENCH' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('WORKBENCH')}>
                 My Workbench ({myWorkbenchApps.length})
-              </button>
-              <button
-                className={`btn btn-sm ${activeTab === 'BOT_APPROVED' ? 'btn-purple' : 'btn-secondary'}`}
-                onClick={() => setActiveTab('BOT_APPROVED')}
-                style={activeTab === 'BOT_APPROVED' ? { background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)', color: '#fff', border: 'none', boxShadow: '0 0 14px rgba(139, 92, 246, 0.4)' } : { border: '1px solid rgba(139, 92, 246, 0.3)' }}
-              >
-                <Bot size={13} /> Bot Approved ({botApprovedApps.length})
               </button>
               <button className={`btn btn-sm ${activeTab === 'ALL' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('ALL')}>
                 All Applications ({applications.length})
@@ -663,7 +517,6 @@ export const OfficerDashboard = () => {
                 <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
                   <th style={{ padding: '0.75rem 1rem' }}>Tracking ID</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Applicant</th>
-                  <th style={{ padding: '0.75rem 1rem' }}>AI Bot Status</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Assigned</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Date</th>
                   <th style={{ padding: '0.75rem 1rem' }}>Status</th>
@@ -674,8 +527,6 @@ export const OfficerDashboard = () => {
                 {displayedApps.map((app, idx) => {
                   const appId = app.id || `NEX-2026-${app.application_id}`;
                   const name = app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`;
-                  const hasBotApproved = isBotApproved(app);
-                  const botScore = app.bot_score || 92;
 
                   return (
                     <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)' }}>
@@ -683,34 +534,6 @@ export const OfficerDashboard = () => {
                       <td style={{ padding: '0.85rem 1rem' }}>
                         <div>{name}</div>
                         <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{app.email || app.phone || ''}</div>
-                      </td>
-                      <td style={{ padding: '0.85rem 1rem' }}>
-                        {hasBotApproved ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.3rem',
-                              fontSize: '0.74rem',
-                              fontWeight: 700,
-                              color: botScore >= 90 ? 'var(--accent-emerald)' : 'var(--accent-purple)',
-                              background: botScore >= 90 ? 'rgba(16, 185, 129, 0.12)' : 'rgba(139, 92, 246, 0.12)',
-                              padding: '0.2rem 0.55rem',
-                              borderRadius: '6px',
-                              border: `1px solid ${botScore >= 90 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(139, 92, 246, 0.3)'}`,
-                              width: 'fit-content'
-                            }}>
-                              <Bot size={12} /> {botScore}% • PASSED
-                            </span>
-                            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              Birth Cert Verified
-                            </span>
-                          </div>
-                        ) : (
-                          <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-                            Manual Review
-                          </span>
-                        )}
                       </td>
                       <td style={{ padding: '0.85rem 1rem', fontSize: '0.78rem' }}>
                         {app.assignedOfficer
@@ -723,16 +546,6 @@ export const OfficerDashboard = () => {
                       </td>
                       <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                         <div style={{ display: 'inline-flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                          {isPending(app.status) && hasBotApproved && (
-                            <button
-                              className="btn btn-emerald btn-sm"
-                              onClick={() => handleFastTrackApprove(app)}
-                              title="Fast-Track approve this AI bot certified record"
-                              style={{ gap: '0.3rem', fontSize: '0.76rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none' }}
-                            >
-                              <Zap size={12} /> Fast-Track
-                            </button>
-                          )}
                           {activeTab === 'WORKBENCH' && (
                             <button className="btn btn-secondary btn-sm" onClick={() => handleUnclaim(appId)} title="Remove from your workbench" style={{ gap: '0.3rem', fontSize: '0.78rem' }}>
                               <RotateCcw size={12} /> Remove
@@ -787,7 +600,7 @@ export const OfficerDashboard = () => {
               </div>
 
               {/* Modal Scrollable Body */}
-              <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.25rem' }}>
+              <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.25rem', minHeight: 0 }}>
 
                 {isEditing ? (
                   /* ---- Edit / Correct Details Form ---- */
@@ -936,120 +749,7 @@ export const OfficerDashboard = () => {
                           )}
                         </div>
 
-                        {/* Enhanced AI Bot Verification Audit & Certificate Panel */}
-                        <div className="glass-card" style={{
-                          padding: '1.25rem',
-                          background: 'linear-gradient(145deg, rgba(139, 92, 246, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)',
-                          border: '1px solid rgba(139, 92, 246, 0.35)',
-                          borderRadius: '12px'
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                              <div style={{
-                                width: '28px', height: '28px', borderRadius: '8px',
-                                background: 'rgba(139, 92, 246, 0.2)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: 'var(--accent-purple)'
-                              }}>
-                                <Bot size={16} />
-                              </div>
-                              <div>
-                                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                                  AI Bot Verification Audit & Certificate
-                                </span>
-                                {selectedApp.bot_verified_at && (
-                                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                                    Verified: {selectedApp.bot_verified_at}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <button
-                                className="btn btn-secondary btn-sm"
-                                onClick={() => handleTriggerReBot(selectedApp.id || selectedApp.application_id)}
-                                disabled={isReevaluating}
-                                title="Re-run automated OCR parsing and validation against uploaded birth certificate"
-                                style={{ fontSize: '0.74rem', padding: '0.25rem 0.6rem', gap: '0.3rem' }}
-                              >
-                                <RefreshCw size={12} className={isReevaluating ? 'animate-spin' : ''} />
-                                {isReevaluating ? 'Scanning...' : 'Re-run Bot Check'}
-                              </button>
-
-                              <span className="badge" style={{
-                                background: isBotApproved(selectedApp) ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)',
-                                color: isBotApproved(selectedApp) ? 'var(--accent-emerald)' : 'var(--accent-amber)',
-                                border: `1px solid ${isBotApproved(selectedApp) ? 'rgba(16,185,129,0.3)' : 'rgba(245,158,11,0.3)'}`,
-                                fontSize: '0.72rem',
-                                padding: '0.2rem 0.6rem'
-                              }}>
-                                {selectedApp.bot_score || 92}% • {isBotApproved(selectedApp) ? 'PASSED' : 'FLAGGED'}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Visual Match Score Bar */}
-                          <div style={{ marginBottom: '0.9rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '0.25rem' }}>
-                              <span style={{ color: 'var(--text-secondary)' }}>Automated Biometric & OCR Confidence:</span>
-                              <span style={{ fontWeight: 800, color: isBotApproved(selectedApp) ? 'var(--accent-emerald)' : 'var(--accent-amber)', fontFamily: 'var(--font-mono)' }}>
-                                {selectedApp.bot_score || 92}% / 100%
-                              </span>
-                            </div>
-                            <div style={{ width: '100%', height: '7px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
-                              <div style={{
-                                width: `${Math.min(100, selectedApp.bot_score || 92)}%`,
-                                height: '100%',
-                                borderRadius: '4px',
-                                background: isBotApproved(selectedApp)
-                                  ? 'linear-gradient(90deg, #10b981 0%, #06b6d4 100%)'
-                                  : 'linear-gradient(90deg, #f59e0b 0%, #f43f5e 100%)',
-                                transition: 'width 0.8s ease'
-                              }} />
-                            </div>
-                          </div>
-
-                          {/* Verification Criteria Badges */}
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.45rem', marginBottom: '0.85rem' }}>
-                            {[
-                              ['Official Birth Cert Scan', isBotApproved(selectedApp)],
-                              ['Legal Headings & Seals', isBotApproved(selectedApp)],
-                              ['Name & DOB Token Match', isBotApproved(selectedApp)],
-                              ['Civil District Validated', isBotApproved(selectedApp)]
-                            ].map(([label, ok], i) => (
-                              <div key={i} style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.35rem',
-                                fontSize: '0.69rem',
-                                padding: '0.25rem 0.5rem',
-                                borderRadius: '6px',
-                                background: ok ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)',
-                                color: ok ? 'var(--accent-emerald)' : 'var(--accent-amber)',
-                                border: `1px solid ${ok ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)'}`
-                              }}>
-                                <CheckCheck size={11} /> {label}
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Detailed Audit Findings */}
-                          <div style={{
-                            fontSize: '0.74rem',
-                            color: 'var(--text-secondary)',
-                            lineHeight: 1.5,
-                            maxHeight: '110px',
-                            overflowY: 'auto',
-                            background: 'var(--bg-nested)',
-                            padding: '0.65rem 0.85rem',
-                            borderRadius: '8px',
-                            border: '1px solid var(--border-color)',
-                            whiteSpace: 'pre-line'
-                          }}>
-                            {selectedApp.bot_notes || 'Automated verification validated registry fields and official document criteria.'}
-                          </div>
-                        </div>
                       </div>
                     </div>
 
@@ -1079,32 +779,60 @@ export const OfficerDashboard = () => {
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {!isEditing && (
                     <>
-                      <button className="btn btn-rose" onClick={handleReject} style={{ gap: '0.4rem' }}>
-                        <XCircle size={15} /> Reject
-                      </button>
-
-                      {isPending(selectedApp.status) && isBotApproved(selectedApp) && (
-                        <button
-                          className="btn btn-emerald"
-                          onClick={() => handleFastTrackApprove(selectedApp)}
-                          title="Instant sign-off based on automated AI verification"
-                          style={{ gap: '0.4rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', boxShadow: '0 0 16px rgba(16, 185, 129, 0.4)' }}
-                        >
-                          <Zap size={15} /> Fast-Track Sign-Off
-                        </button>
+                      {/* Officer view: verify documents, save notes, request re-upload only */}
+                      {!isApproverMode && (
+                        <>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={handleSaveNotes}
+                            style={{ gap: '0.4rem' }}
+                          >
+                            <Save size={15} /> Save Notes
+                          </button>
+                          <button
+                            onClick={handleRequestReupload}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.4rem',
+                              padding: '0.6rem 1.1rem',
+                              borderRadius: '10px',
+                              fontWeight: 600,
+                              fontSize: '0.88rem',
+                              cursor: 'pointer',
+                              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                              color: '#fff',
+                              border: 'none',
+                              boxShadow: '0 0 14px rgba(245, 158, 11, 0.35)'
+                            }}
+                          >
+                            <Upload size={15} /> Request Document Re-upload
+                          </button>
+                        </>
                       )}
 
-                      <button className="btn btn-primary" onClick={handleApprove} style={{ gap: '0.4rem' }}>
-                        <CheckCircle2 size={15} /> Standard Approve & Issue NIC
-                      </button>
+                      {/* Approver view: full approve / reject authority */}
+                      {isApproverMode && (
+                        <>
+                          <button className="btn btn-rose" onClick={handleReject} style={{ gap: '0.4rem' }}>
+                            <XCircle size={15} /> Reject
+                          </button>
+                          <button className="btn btn-primary" onClick={handleApprove} style={{ gap: '0.4rem' }}>
+                            <CheckCircle2 size={15} /> Approve & Issue NIC
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                 </div>
               </div>
 
-              {/* Officer Rights Notice */}
+              {/* Role Authority Notice */}
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-                <Info size={11} /> Removing from pool keeps the application in the national registry. Permanent deletion is Admin-only.
+                <Info size={11} />
+                {isApproverMode
+                  ? 'Senior Approvers have full authority to approve or reject applications and issue NIC numbers.'
+                  : 'Officers can review documents & request re-uploads. Approval authority is restricted to Senior Approvers only.'}
               </div>
             </div>
           </div>
