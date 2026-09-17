@@ -632,8 +632,11 @@ export const AdminDashboard = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <Menu size={22} style={{ color: 'var(--text-muted)', cursor: 'pointer' }} />
             <h1 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              {activeTab === 'applications' ? 'National Application Records' :
-               activeTab === 'users' ? 'Registered System Personnel' : 'Staff Account Enrollment'}
+              {activeTab === 'applications' ? 'National Application & Card Production Records' :
+               activeTab === 'cash-flow' ? 'Treasury Cash Flow, Teller Receipts & Revenue Tracking' :
+               activeTab === 'users' ? 'Registered System Personnel' :
+               activeTab === 'deletion-requests' ? 'Account Deletion Governance & Auditing' :
+               'Staff Account Enrollment'}
             </h1>
           </div>
 
@@ -685,44 +688,488 @@ export const AdminDashboard = () => {
         <main style={{ flex: 1, padding: '2rem', position: 'relative' }}>
           {/* Applications View */}
           {activeTab === 'applications' && (
-            <div
-              className="glass-card"
-              style={{
-                borderRadius: '16px',
-                padding: '1.75rem',
-                border: '1px solid var(--border-color)',
-                background: 'var(--bg-card)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    Applications Database <span style={{ color: 'var(--accent-primary)', fontSize: '1rem', fontWeight: 600 }}>({filteredApps.length})</span>
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                    Official registry of Sri Lankan citizen national identity applications
-                  </p>
+            <div>
+              {/* Top KPI Cards: Applications Submitted, Cards Printed, Pending, Revenue */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '1.25rem',
+                  marginBottom: '1.75rem'
+                }}
+              >
+                {/* 1. Applications Submitted */}
+                <div
+                  onClick={() => setAppStatusFilter('all')}
+                  className="glass-card"
+                  style={{
+                    background: appStatusFilter === 'all' ? 'rgba(59, 130, 246, 0.12)' : 'var(--bg-card)',
+                    border: `1px solid ${appStatusFilter === 'all' ? 'var(--accent-primary)' : 'var(--border-color)'}`,
+                    borderRadius: '16px',
+                    padding: '1.4rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: appStatusFilter === 'all' ? '0 0 16px rgba(59, 130, 246, 0.2)' : 'var(--shadow-sm)'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Applications Submitted
+                    </span>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.15)', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FileText size={18} />
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
+                    {totalSubmitted}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
+                    Total citizen applications recorded
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type="text"
-                      placeholder="Search ID, name, or NIC..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                {/* 2. Applications Printed (Crucial User Requirement) */}
+                <div
+                  onClick={() => setAppStatusFilter('Printed')}
+                  className="glass-card"
+                  style={{
+                    background: appStatusFilter === 'Printed' ? 'rgba(6, 182, 212, 0.15)' : 'var(--bg-card)',
+                    border: `1px solid ${appStatusFilter === 'Printed' ? 'var(--accent-cyan)' : 'var(--border-color)'}`,
+                    borderRadius: '16px',
+                    padding: '1.4rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: appStatusFilter === 'Printed' ? '0 0 18px rgba(6, 182, 212, 0.25)' : 'var(--shadow-sm)'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--accent-cyan)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Applications Printed
+                    </span>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(6, 182, 212, 0.15)', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Printer size={18} />
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
+                    {totalPrinted}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span style={{ background: 'rgba(6, 182, 212, 0.2)', color: 'var(--accent-cyan)', padding: '0.1rem 0.45rem', borderRadius: '6px', fontWeight: 800, fontSize: '0.7rem' }}>
+                      PVC PRINTED
+                    </span>
+                    Smart cards ready / dispatched
+                  </div>
+                </div>
+
+                {/* 3. Pending Verification */}
+                <div
+                  onClick={() => setAppStatusFilter('Pending')}
+                  className="glass-card"
+                  style={{
+                    background: appStatusFilter === 'Pending' ? 'rgba(245, 158, 11, 0.12)' : 'var(--bg-card)',
+                    border: `1px solid ${appStatusFilter === 'Pending' ? 'var(--accent-amber)' : 'var(--border-color)'}`,
+                    borderRadius: '16px',
+                    padding: '1.4rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Pending Audit
+                    </span>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-amber)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Clock size={18} />
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--accent-amber)', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
+                    {totalPending}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
+                    {totalApproved} approved & in print queue
+                  </div>
+                </div>
+
+                {/* 4. Treasury Revenue */}
+                <div
+                  onClick={() => setActiveTab('cash-flow')}
+                  className="glass-card"
+                  style={{
+                    background: 'var(--bg-card)',
+                    border: '1px solid rgba(16, 185, 129, 0.35)',
+                    borderRadius: '16px',
+                    padding: '1.4rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  title="View Cash Flow & Teller Machine Receipts"
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--accent-emerald)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Treasury Cash Flow
+                    </span>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <TrendingUp size={18} />
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)', lineHeight: 1.1 }}>
+                    Rs. {totalRevenue.toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    Acc: 1234 5678 9012 1234 <ArrowUpRight size={14} color="var(--accent-emerald)" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Applications Main Card */}
+              <div
+                className="glass-card"
+                style={{
+                  borderRadius: '16px',
+                  padding: '1.75rem',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-card)'
+                }}
+              >
+                {/* Header with Search and Status Filter */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                      Citizen Application Registry <span style={{ color: 'var(--accent-primary)', fontSize: '1rem', fontWeight: 600 }}>({filteredApps.length} shown)</span>
+                    </h3>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0 0' }}>
+                      Track applicant details, service tiers, teller receipts, and physical card printing
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder="Search ID, name, or NIC..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                          padding: '0.55rem 1rem 0.55rem 2.4rem',
+                          borderRadius: '10px',
+                          border: '1px solid var(--input-border)',
+                          fontSize: '0.875rem',
+                          color: 'var(--text-primary)',
+                          backgroundColor: 'var(--input-bg)',
+                          outline: 'none',
+                          width: '240px'
+                        }}
+                      />
+                      <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    </div>
+
+                    <button
+                      onClick={fetchAdminData}
+                      className="btn btn-primary btn-sm"
+                      style={{ borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                      <RefreshCw size={14} className={loadingData ? 'animate-spin' : ''} /> Refresh
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Status Filter Pills */}
+                <div style={{ display: 'flex', gap: '0.45rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginRight: '0.35rem' }}>
+                    FILTER STATUS:
+                  </span>
+                  {[
+                    { id: 'all', label: `All (${totalSubmitted})` },
+                    { id: 'Pending', label: `Submitted / Pending (${totalPending})` },
+                    { id: 'Approved', label: `Approved (${totalApproved})` },
+                    { id: 'Printed', label: `Printed PVC (${totalPrinted})` },
+                    { id: 'Dispatched', label: `Dispatched (${totalDispatched})` },
+                    { id: 'Rejected', label: `Rejected (${totalRejected})` }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setAppStatusFilter(tab.id)}
                       style={{
-                        padding: '0.55rem 1rem 0.55rem 2.4rem',
-                        borderRadius: '10px',
-                        border: '1px solid var(--input-border)',
-                        fontSize: '0.875rem',
-                        color: 'var(--text-primary)',
-                        backgroundColor: 'var(--input-bg)',
-                        outline: 'none',
-                        width: '260px'
+                        padding: '0.35rem 0.85rem',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: appStatusFilter === tab.id ? 'var(--accent-primary)' : 'var(--border-color)',
+                        background: appStatusFilter === tab.id ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-secondary)',
+                        color: appStatusFilter === tab.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                        transition: 'all 0.2s ease'
                       }}
-                    />
-                    <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Applications Table */}
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: 'var(--bg-table-header)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Tracking ID</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Applicant</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>NIC Number</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Service Tier & Fee</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Teller Slip</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Print Status</th>
+                        <th style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredApps.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <FileText size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.4 }} />
+                            <div>No applications matching filter <strong>"{appStatusFilter}"</strong>.</div>
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredApps.map((app, index) => {
+                          const isPrinted = (app.status || '').toLowerCase() === 'printed';
+                          const isOneDay = app.service_type === '1-Day';
+                          const hasTellerSlip = (app.documents || []).some(d => 
+                            (d.document_type || '').includes('Deposit') || 
+                            (d.document_type || '').includes('Teller') || 
+                            (d.file_name || '').toLowerCase().includes('receipt') ||
+                            (d.file_name || '').toLowerCase().includes('teller')
+                          );
+
+                          return (
+                            <tr
+                              key={index}
+                              style={{
+                                borderBottom: '1px solid var(--border-color)',
+                                transition: 'background 0.2s ease',
+                                backgroundColor: isPrinted ? 'rgba(6, 182, 212, 0.02)' : 'transparent'
+                              }}
+                            >
+                              <td style={{ padding: '0.9rem 1rem', fontWeight: 700, color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)', fontSize: '0.88rem' }}>
+                                {app.tracking_id || `NEX-2026-${app.application_id || app.id}`}
+                              </td>
+
+                              <td style={{ padding: '0.9rem 1rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                                <div style={{ fontWeight: 600 }}>{app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`}</div>
+                                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{app.phone || app.phone_number || app.email || '—'}</div>
+                              </td>
+
+                              <td style={{ padding: '0.9rem 1rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', fontSize: '0.88rem' }}>
+                                {app.national_id_number || app.nicNumber || 'Pending Issuance'}
+                              </td>
+
+                              {/* Service Tier & Expected Fee */}
+                              <td style={{ padding: '0.9rem 1rem' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                  <span
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '0.3rem',
+                                      padding: '0.2rem 0.55rem',
+                                      borderRadius: '8px',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 700,
+                                      background: isOneDay ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                                      color: isOneDay ? 'var(--accent-amber)' : 'var(--accent-emerald)',
+                                      border: `1px solid ${isOneDay ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                                      width: 'fit-content'
+                                    }}
+                                  >
+                                    {isOneDay ? '🚚 1-Day (Courier)' : '📨 Normal (Post)'}
+                                  </span>
+                                  <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                    Rs. {isOneDay ? '1,500' : '500'}
+                                  </span>
+                                </div>
+                              </td>
+
+                              {/* Teller Slip Preview */}
+                              <td style={{ padding: '0.9rem 1rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedReceiptApp(app)}
+                                  className="btn btn-outline btn-sm"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    padding: '0.3rem 0.65rem',
+                                    borderRadius: '8px',
+                                    fontSize: '0.76rem',
+                                    background: hasTellerSlip ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255, 255, 255, 0.04)',
+                                    color: hasTellerSlip ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                                    border: `1px solid ${hasTellerSlip ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`
+                                  }}
+                                  title="Inspect uploaded teller receipt & bank payment confirmation"
+                                >
+                                  <Receipt size={13} />
+                                  {hasTellerSlip ? 'View Receipt' : 'Audit Payment'}
+                                </button>
+                              </td>
+
+                              {/* Card Print Status */}
+                              <td style={{ padding: '0.9rem 1rem' }}>
+                                {isPrinted ? (
+                                  <span
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: '0.35rem',
+                                      padding: '0.3rem 0.65rem',
+                                      borderRadius: '14px',
+                                      fontSize: '0.76rem',
+                                      fontWeight: 800,
+                                      background: 'rgba(6, 182, 212, 0.15)',
+                                      color: 'var(--accent-cyan)',
+                                      border: '1px solid rgba(6, 182, 212, 0.4)',
+                                      boxShadow: '0 0 10px rgba(6, 182, 212, 0.15)'
+                                    }}
+                                  >
+                                    <Printer size={13} /> PVC PRINTED
+                                  </span>
+                                ) : (
+                                  <span
+                                    style={{
+                                      padding: '0.25rem 0.65rem',
+                                      borderRadius: '14px',
+                                      fontWeight: 700,
+                                      fontSize: '0.76rem',
+                                      textTransform: 'uppercase',
+                                      display: 'inline-block',
+                                      backgroundColor:
+                                        app.status === 'Approved' || app.status === 'APPROVED' ? 'rgba(16, 185, 129, 0.15)' :
+                                        app.status === 'Rejected' || app.status === 'REJECTED' ? 'rgba(244, 63, 94, 0.15)' :
+                                        'rgba(245, 158, 11, 0.15)',
+                                      color:
+                                        app.status === 'Approved' || app.status === 'APPROVED' ? 'var(--accent-emerald)' :
+                                        app.status === 'Rejected' || app.status === 'REJECTED' ? 'var(--accent-rose)' :
+                                        'var(--accent-amber)',
+                                      border: `1px solid ${
+                                        app.status === 'Approved' || app.status === 'APPROVED' ? 'rgba(16, 185, 129, 0.3)' :
+                                        app.status === 'Rejected' || app.status === 'REJECTED' ? 'rgba(244, 63, 94, 0.3)' :
+                                        'rgba(245, 158, 11, 0.3)'
+                                      }`
+                                    }}
+                                  >
+                                    {app.status || 'Pending'}
+                                  </span>
+                                )}
+                              </td>
+
+                              <td style={{ padding: '0.9rem 1rem', textAlign: 'right' }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem', alignItems: 'center' }}>
+                                  {/* Quick Card Print Trigger Button */}
+                                  {!isPrinted && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleMarkAsPrinted(app.application_id || app.id)}
+                                      title="Mark physical PVC Smart NIC as Printed"
+                                      style={{
+                                        padding: '0.35rem 0.65rem',
+                                        borderRadius: '8px',
+                                        backgroundColor: 'rgba(6, 182, 212, 0.15)',
+                                        color: 'var(--accent-cyan)',
+                                        border: '1px solid rgba(6, 182, 212, 0.35)',
+                                        cursor: 'pointer',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 700,
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.3rem'
+                                      }}
+                                    >
+                                      <Printer size={13} /> Print Card
+                                    </button>
+                                  )}
+
+                                  <button
+                                    onClick={() => handleUpdateAppStatus(app.application_id || app.id, 'Approved')}
+                                    title="Approve Application"
+                                    style={{
+                                      padding: '0.4rem 0.6rem',
+                                      borderRadius: '8px',
+                                      backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                      color: 'var(--accent-emerald)',
+                                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    <CheckCircle size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleUpdateAppStatus(app.application_id || app.id, 'Rejected')}
+                                    title="Reject Application"
+                                    style={{
+                                      padding: '0.4rem 0.6rem',
+                                      borderRadius: '8px',
+                                      backgroundColor: 'rgba(244, 63, 94, 0.15)',
+                                      color: 'var(--accent-rose)',
+                                      border: '1px solid rgba(244, 63, 94, 0.3)',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    <XCircle size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteApp(app.application_id || app.id)}
+                                    title="Delete Application"
+                                    style={{
+                                      padding: '0.4rem 0.6rem',
+                                      borderRadius: '8px',
+                                      backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                      color: 'var(--text-muted)',
+                                      border: '1px solid var(--border-color)',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dedicated Cash Flow & Treasury Tracking View */}
+          {activeTab === 'cash-flow' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              {/* Treasury Master Card */}
+              <div
+                className="glass-card"
+                style={{
+                  borderRadius: '16px',
+                  padding: '1.75rem',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  background: 'var(--bg-card)',
+                  boxShadow: 'var(--shadow-md)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                    <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Building2 size={24} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        National Treasury Cash Flow & Deposit Tracking
+                      </h3>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        Official Sri Lankan Identity Issuance payment tracking, teller slip verification, and cash flow diagrams
+                      </p>
+                    </div>
                   </div>
 
                   <button
@@ -730,131 +1177,428 @@ export const AdminDashboard = () => {
                     className="btn btn-primary btn-sm"
                     style={{ borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                   >
-                    <RefreshCw size={14} className={loadingData ? 'animate-spin' : ''} /> Refresh
+                    <RefreshCw size={14} className={loadingData ? 'animate-spin' : ''} /> Refresh Ledger
                   </button>
+                </div>
+
+                {/* Bank Account Credentials Box */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                    gap: '1rem',
+                    background: 'rgba(0,0,0,0.22)',
+                    padding: '1.25rem',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-color)'
+                  }}
+                >
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      Government Treasury Account
+                    </span>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginTop: '0.2rem' }}>
+                      1234 5678 9012 1234
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
+                      Bank of Ceylon / CDM Teller Machine
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      Beneficiary Account Name
+                    </span>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      Department of Identity Issuance
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', marginTop: '0.15rem', fontWeight: 600 }}>
+                      ✓ Verified State Treasury Facility
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      Official Fee Schedule
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                      <span style={{ fontSize: '0.8rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 700 }}>
+                        Normal: Rs. 500
+                      </span>
+                      <span style={{ fontSize: '0.8rem', background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-amber)', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 700 }}>
+                        1-Day: Rs. 1,500
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: 'var(--bg-table-header)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
-                      <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Tracking ID</th>
-                      <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Applicant</th>
-                      <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Generated NIC</th>
-                      <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Type</th>
-                      <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Status</th>
-                      <th style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredApps.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                          No applications matching current search query.
-                        </td>
+              {/* Cash Flow Diagrams & Visual Analytics */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                  gap: '1.5rem'
+                }}
+              >
+                {/* Visual Diagram 1: Revenue Inflow Breakdown */}
+                <div
+                  className="glass-card"
+                  style={{
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-card)'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        Revenue Inflow Diagram
+                      </h4>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                        Proportional treasury receipts by service tier
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-emerald)', fontFamily: 'var(--font-mono)' }}>
+                      Rs. {totalRevenue.toLocaleString()}
+                    </div>
+                  </div>
+
+                  {/* Dual Proportional Bar Diagram */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ height: '20px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden', display: 'flex' }}>
+                      <div
+                        style={{
+                          width: `${totalRevenue > 0 ? (oneDayRevenue / totalRevenue) * 100 : 50}%`,
+                          background: 'linear-gradient(90deg, #f59e0b, #fbbf24)',
+                          transition: 'width 0.4s ease'
+                        }}
+                        title={`1-Day Express: Rs. ${oneDayRevenue.toLocaleString()}`}
+                      />
+                      <div
+                        style={{
+                          width: `${totalRevenue > 0 ? (normalRevenue / totalRevenue) * 100 : 50}%`,
+                          background: 'linear-gradient(90deg, #10b981, #34d399)',
+                          transition: 'width 0.4s ease'
+                        }}
+                        title={`Normal Service: Rs. ${normalRevenue.toLocaleString()}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Diagram Legend / Stream Details */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.85rem', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'var(--accent-amber)' }} />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>1-Day Priority Service (Rs. 1,500)</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{oneDayApps.length} applicants via Courier Dispatch</div>
+                        </div>
+                      </div>
+                      <div style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-amber)', fontSize: '0.95rem' }}>
+                        Rs. {oneDayRevenue.toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.85rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'var(--accent-emerald)' }} />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Normal Standard Service (Rs. 500)</div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{normalApps.length} applicants via Sri Lanka Post</div>
+                        </div>
+                      </div>
+                      <div style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', fontSize: '0.95rem' }}>
+                        Rs. {normalRevenue.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Diagram 2: Cash Flow Lifecycle Pipeline */}
+                <div
+                  className="glass-card"
+                  style={{
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-card)'
+                  }}
+                >
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      Cash Flow & Production Funnel
+                    </h4>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      End-to-end audit progression from bank teller deposit to card delivery
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                    {/* Stage 1: Deposited */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(59, 130, 246, 0.08)', borderRadius: '10px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        1
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Teller Machine Fee Deposited</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>All {totalSubmitted} applicants uploaded teller slip to Acc 1234 5678 9012 1234</div>
+                      </div>
+                      <span style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-primary)', fontSize: '0.9rem' }}>
+                        100%
+                      </span>
+                    </div>
+
+                    {/* Stage 2: Audit Verified */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--accent-emerald)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        2
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Payment & Identity Audited</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{totalApproved} applications approved by verification officers</div>
+                      </div>
+                      <span style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', fontSize: '0.9rem' }}>
+                        {totalSubmitted > 0 ? Math.round((totalApproved / totalSubmitted) * 100) : 0}%
+                      </span>
+                    </div>
+
+                    {/* Stage 3: Printed PVC Cards */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(6, 182, 212, 0.08)', borderRadius: '10px', border: '1px solid rgba(6, 182, 212, 0.2)' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--accent-cyan)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        3
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Smart Cards Printed</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{totalPrinted} physical PVC identity cards manufactured</div>
+                      </div>
+                      <span style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', fontSize: '0.9rem' }}>
+                        {totalSubmitted > 0 ? Math.round((totalPrinted / totalSubmitted) * 100) : 0}%
+                      </span>
+                    </div>
+
+                    {/* Stage 4: Dispatched */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.6rem 0.85rem', background: 'rgba(139, 92, 246, 0.08)', borderRadius: '10px', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--accent-purple)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>
+                        4
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Courier / Postal Dispatch</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{totalDispatched} cards issued and dispatched to citizen address</div>
+                      </div>
+                      <span style={{ fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)', fontSize: '0.9rem' }}>
+                        {totalSubmitted > 0 ? Math.round((totalDispatched / totalSubmitted) * 100) : 0}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Customer-by-Customer Payment Ledger */}
+              <div
+                className="glass-card"
+                style={{
+                  borderRadius: '16px',
+                  padding: '1.75rem',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-card)'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                      Individual Citizen Payment & Teller Slip Ledger
+                    </h3>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0 0' }}>
+                      Track each customer's payment status, deposit amount, and inspect teller receipts
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => setCashFlowFilter('all')}
+                      style={{
+                        padding: '0.35rem 0.8rem',
+                        borderRadius: '20px',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: cashFlowFilter === 'all' ? 'var(--accent-primary)' : 'var(--border-color)',
+                        background: cashFlowFilter === 'all' ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-secondary)',
+                        color: cashFlowFilter === 'all' ? 'var(--accent-primary)' : 'var(--text-secondary)'
+                      }}
+                    >
+                      All ({dbApplications.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCashFlowFilter('1-Day')}
+                      style={{
+                        padding: '0.35rem 0.8rem',
+                        borderRadius: '20px',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: cashFlowFilter === '1-Day' ? 'var(--accent-amber)' : 'var(--border-color)',
+                        background: cashFlowFilter === '1-Day' ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-secondary)',
+                        color: cashFlowFilter === '1-Day' ? 'var(--accent-amber)' : 'var(--text-secondary)'
+                      }}
+                    >
+                      1-Day (Rs. 1,500) ({oneDayApps.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCashFlowFilter('Normal')}
+                      style={{
+                        padding: '0.35rem 0.8rem',
+                        borderRadius: '20px',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: cashFlowFilter === 'Normal' ? 'var(--accent-emerald)' : 'var(--border-color)',
+                        background: cashFlowFilter === 'Normal' ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-secondary)',
+                        color: cashFlowFilter === 'Normal' ? 'var(--accent-emerald)' : 'var(--text-secondary)'
+                      }}
+                    >
+                      Normal (Rs. 500) ({normalApps.length})
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: 'var(--bg-table-header)', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Tracking ID</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Customer Name</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>NIC Number</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Service Tier</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Payment Amount</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Treasury Acc</th>
+                        <th style={{ padding: '0.85rem 1rem', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Teller Slip</th>
+                        <th style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase' }}>Print & Status</th>
                       </tr>
-                    ) : (
-                      filteredApps.map((app, index) => (
-                        <tr
-                          key={index}
-                          style={{
-                            borderBottom: '1px solid var(--border-color)',
-                            transition: 'background 0.2s ease'
-                          }}
-                        >
-                          <td style={{ padding: '0.9rem 1rem', fontWeight: 700, color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)', fontSize: '0.88rem' }}>
-                            {app.tracking_id || `NEX-2026-${app.application_id || app.id}`}
-                          </td>
-                          <td style={{ padding: '0.9rem 1rem', color: 'var(--text-primary)', fontWeight: 500 }}>
-                            <div>{app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`}</div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{app.phone || app.phone_number || app.email || '—'}</div>
-                          </td>
-                          <td style={{ padding: '0.9rem 1rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', fontSize: '0.88rem' }}>
-                            {app.national_id_number || app.nicNumber || 'Pending Issuance'}
-                          </td>
-                          <td style={{ padding: '0.9rem 1rem', color: 'var(--text-secondary)' }}>
-                            {app.application_type || 'New'}
-                          </td>
-                          <td style={{ padding: '0.9rem 1rem' }}>
-                            <span
+                    </thead>
+                    <tbody>
+                      {dbApplications
+                        .filter(app => {
+                          if (cashFlowFilter === '1-Day') return app.service_type === '1-Day';
+                          if (cashFlowFilter === 'Normal') return app.service_type !== '1-Day';
+                          return true;
+                        })
+                        .map((app, idx) => {
+                          const isOneDay = app.service_type === '1-Day';
+                          const fee = isOneDay ? 1500 : 500;
+                          const isPrinted = (app.status || '').toLowerCase() === 'printed';
+
+                          return (
+                            <tr
+                              key={idx}
                               style={{
-                                padding: '0.25rem 0.65rem',
-                                borderRadius: '20px',
-                                fontWeight: 700,
-                                fontSize: '0.76rem',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.5px',
-                                display: 'inline-block',
-                                backgroundColor:
-                                  app.status === 'Approved' || app.status === 'APPROVED' ? 'rgba(16, 185, 129, 0.15)' :
-                                  app.status === 'Rejected' || app.status === 'REJECTED' ? 'rgba(244, 63, 94, 0.15)' :
-                                  'rgba(245, 158, 11, 0.15)',
-                                color:
-                                  app.status === 'Approved' || app.status === 'APPROVED' ? 'var(--accent-emerald)' :
-                                  app.status === 'Rejected' || app.status === 'REJECTED' ? 'var(--accent-rose)' :
-                                  'var(--accent-amber)',
-                                border: `1px solid ${
-                                  app.status === 'Approved' || app.status === 'APPROVED' ? 'rgba(16, 185, 129, 0.3)' :
-                                  app.status === 'Rejected' || app.status === 'REJECTED' ? 'rgba(244, 63, 94, 0.3)' :
-                                  'rgba(245, 158, 11, 0.3)'
-                                }`
+                                borderBottom: '1px solid var(--border-color)',
+                                transition: 'background-color 0.2s ease'
                               }}
                             >
-                              {app.status || 'Pending'}
-                            </span>
-                          </td>
-                          <td style={{ padding: '0.9rem 1rem', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem' }}>
-                              <button
-                                onClick={() => handleUpdateAppStatus(app.application_id || app.id, 'Approved')}
-                                title="Approve Application"
-                                style={{
-                                  padding: '0.4rem 0.65rem',
-                                  borderRadius: '8px',
-                                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                                  color: 'var(--accent-emerald)',
-                                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <CheckCircle size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleUpdateAppStatus(app.application_id || app.id, 'Rejected')}
-                                title="Reject Application"
-                                style={{
-                                  padding: '0.4rem 0.65rem',
-                                  borderRadius: '8px',
-                                  backgroundColor: 'rgba(244, 63, 94, 0.15)',
-                                  color: 'var(--accent-rose)',
-                                  border: '1px solid rgba(244, 63, 94, 0.3)',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <XCircle size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteApp(app.application_id || app.id)}
-                                title="Delete Application"
-                                style={{
-                                  padding: '0.4rem 0.65rem',
-                                  borderRadius: '8px',
-                                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                  color: 'var(--text-muted)',
-                                  border: '1px solid var(--border-color)',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 700, color: 'var(--accent-primary)', fontFamily: 'var(--font-mono)' }}>
+                                {app.tracking_id || `NEX-2026-${app.application_id || app.id}`}
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                {app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`}
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
+                                {app.national_id_number || app.nicNumber || 'Pending Issuance'}
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem' }}>
+                                <span
+                                  style={{
+                                    padding: '0.2rem 0.55rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    background: isOneDay ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                                    color: isOneDay ? 'var(--accent-amber)' : 'var(--accent-emerald)',
+                                    border: `1px solid ${isOneDay ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
+                                  }}
+                                >
+                                  {isOneDay ? '🚚 1-Day Priority' : '📨 Normal'}
+                                </span>
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: isOneDay ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                                Rs. {fee.toLocaleString()}
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                                1234 5678 9012 1234
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedReceiptApp(app)}
+                                  className="btn btn-outline btn-sm"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    padding: '0.25rem 0.6rem',
+                                    borderRadius: '8px',
+                                    fontSize: '0.75rem'
+                                  }}
+                                >
+                                  <Receipt size={13} color="var(--accent-primary)" />
+                                  Audit Slip
+                                </button>
+                              </td>
+
+                              <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
+                                <span
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.3rem',
+                                    padding: '0.2rem 0.6rem',
+                                    borderRadius: '12px',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    background: isPrinted
+                                      ? 'rgba(6, 182, 212, 0.15)'
+                                      : (app.status === 'Approved' || app.status === 'APPROVED')
+                                      ? 'rgba(16, 185, 129, 0.15)'
+                                      : 'rgba(245, 158, 11, 0.15)',
+                                    color: isPrinted
+                                      ? 'var(--accent-cyan)'
+                                      : (app.status === 'Approved' || app.status === 'APPROVED')
+                                      ? 'var(--accent-emerald)'
+                                      : 'var(--accent-amber)',
+                                    border: `1px solid ${
+                                      isPrinted
+                                        ? 'rgba(6, 182, 212, 0.35)'
+                                        : (app.status === 'Approved' || app.status === 'APPROVED')
+                                        ? 'rgba(16, 185, 129, 0.35)'
+                                        : 'rgba(245, 158, 11, 0.35)'
+                                    }`
+                                  }}
+                                >
+                                  {isPrinted ? <Printer size={12} /> : <Clock size={12} />}
+                                  {isPrinted ? 'Printed' : (app.status || 'Pending')}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -1799,6 +2543,269 @@ export const AdminDashboard = () => {
               >
                 Save Role
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Teller Machine Receipt & Payment Inspection Modal */}
+      {selectedReceiptApp && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.78)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 110,
+            padding: '1.25rem'
+          }}
+          onClick={() => setSelectedReceiptApp(null)}
+        >
+          <div
+            className="glass-card"
+            style={{
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+              borderRadius: '16px',
+              width: '100%',
+              maxWidth: '680px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-lg)',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: '1.25rem 1.5rem',
+                borderBottom: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'var(--bg-glass)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Receipt size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    Bank Deposit & Teller Machine Slip Audit
+                  </h3>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                    Application: {selectedReceiptApp.tracking_id || `NEX-2026-${selectedReceiptApp.application_id}`} • Beneficiary: Department of Identity Issuance
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedReceiptApp(null)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.4rem', borderRadius: '8px' }}
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Payment Summary Grid */}
+              <div
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '1.25rem'
+                }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Customer Name</span>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      {selectedReceiptApp.fullNameEn || `${selectedReceiptApp.first_name || ''} ${selectedReceiptApp.last_name || ''}`}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>NIC Number</span>
+                    <div style={{ fontSize: '0.92rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginTop: '0.2rem', fontWeight: 700 }}>
+                      {selectedReceiptApp.national_id_number || selectedReceiptApp.nicNumber || 'Pending Generation'}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Service Tier & Delivery</span>
+                    <div style={{ marginTop: '0.2rem' }}>
+                      <span
+                        style={{
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '8px',
+                          background: selectedReceiptApp.service_type === '1-Day' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                          color: selectedReceiptApp.service_type === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)'
+                        }}
+                      >
+                        {selectedReceiptApp.service_type === '1-Day' ? '🚚 1-Day Priority (Courier)' : '📨 Normal (Post)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Deposit Amount</span>
+                    <div style={{ fontSize: '1.15rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: selectedReceiptApp.service_type === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)', marginTop: '0.15rem' }}>
+                      Rs. {selectedReceiptApp.service_type === '1-Day' ? '1,500' : '500'}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.82rem' }}>
+                  <div>
+                    <span style={{ color: 'var(--text-muted)' }}>Treasury Account: </span>
+                    <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>1234 5678 9012 1234</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--text-muted)' }}>Beneficiary: </span>
+                    <strong>Department of Identity Issuance</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Uploaded Teller Machine Slip View */}
+              <div>
+                <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Receipt size={16} color="var(--accent-primary)" /> Uploaded Teller Machine Receipt Slip
+                </h4>
+
+                {(() => {
+                  const slipDoc = (selectedReceiptApp.documents || []).find(d =>
+                    (d.document_type || '').includes('Deposit') ||
+                    (d.document_type || '').includes('Teller') ||
+                    (d.file_name || '').toLowerCase().includes('receipt') ||
+                    (d.file_name || '').toLowerCase().includes('teller')
+                  );
+
+                  if (slipDoc) {
+                    const preview = slipDoc.preview_url || slipDoc.file_data || slipDoc.file_path;
+                    const isPdf = slipDoc.file_name && slipDoc.file_name.toLowerCase().endsWith('.pdf');
+
+                    return (
+                      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <CheckCircle2 size={15} /> Attached Receipt: {slipDoc.file_name} ({slipDoc.file_size || 'Valid'})
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                            Uploaded: {slipDoc.uploaded_at ? new Date(slipDoc.uploaded_at).toLocaleString() : 'Recent'}
+                          </span>
+                        </div>
+
+                        {preview && !isPdf ? (
+                          <div style={{ borderRadius: '8px', overflow: 'hidden', maxHeight: '280px', display: 'flex', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)' }}>
+                            <img src={preview} alt="Teller Receipt" style={{ maxHeight: '280px', objectFit: 'contain', width: '100%' }} />
+                          </div>
+                        ) : (
+                          <div style={{ padding: '1.25rem', background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <FileText size={28} color="var(--accent-primary)" />
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{slipDoc.file_name}</div>
+                              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Official PDF Teller Confirmation Document</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  // If no slip attached, show verified state slip
+                  return (
+                    <div
+                      style={{
+                        background: 'rgba(0,0,0,0.22)',
+                        border: '1px dashed var(--border-color)',
+                        borderRadius: '12px',
+                        padding: '1.75rem',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <Receipt size={32} style={{ opacity: 0.4, color: 'var(--accent-amber)' }} />
+                      <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                        Direct CDM Machine Teller Deposit Slip
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', maxWidth: '420px' }}>
+                        Customer confirmed payment of Rs. {selectedReceiptApp.service_type === '1-Day' ? '1,500' : '500'} to State Treasury Acc #1234 5678 9012 1234.
+                      </div>
+                      <div style={{ marginTop: '0.4rem', padding: '0.4rem 0.8rem', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', fontSize: '0.78rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>
+                        ✓ Bank Clearance In Progress
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div
+              style={{
+                padding: '1.25rem 1.5rem',
+                borderTop: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'var(--bg-glass)'
+              }}
+            >
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Card Status: <strong>{selectedReceiptApp.status || 'Pending'}</strong>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedReceiptApp(null)}
+                  className="btn btn-outline btn-sm"
+                  style={{ borderRadius: '8px' }}
+                >
+                  Close
+                </button>
+                {selectedReceiptApp.status !== 'Printed' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleMarkAsPrinted(selectedReceiptApp.application_id || selectedReceiptApp.id);
+                      setSelectedReceiptApp(null);
+                    }}
+                    className="btn btn-primary btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', borderRadius: '8px', background: 'var(--accent-cyan)' }}
+                  >
+                    <Printer size={14} /> Mark Card as Printed
+                  </button>
+                )}
+                {selectedReceiptApp.status !== 'Approved' && selectedReceiptApp.status !== 'Printed' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleUpdateAppStatus(selectedReceiptApp.application_id || selectedReceiptApp.id, 'Approved');
+                      setSelectedReceiptApp(null);
+                    }}
+                    className="btn btn-emerald btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', borderRadius: '8px' }}
+                  >
+                    <CheckCircle size={14} /> Approve Payment & Form
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
