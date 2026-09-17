@@ -627,8 +627,8 @@ export const ApplyPage = () => {
                       />
                       <div style={{ fontSize: '0.75rem', color: isTaManuallyEdited ? 'var(--accent-primary)' : 'var(--text-muted)', marginTop: '0.3rem' }}>
                         {isTaManuallyEdited
-                          ? '✓ Custom manual Tamil input active (Clear field to re-enable auto-typing)'
-                          : '⚡ Auto-typed using both English & Sinhala names. You can also edit Tamil directly anytime.'}
+                          ? 'Custom manual Tamil input active (Clear field to re-enable auto-typing)'
+                          : 'Auto-typed using both English & Sinhala names. You can also edit Tamil directly anytime.'}
                       </div>
                     </div>
 
@@ -673,7 +673,7 @@ export const ApplyPage = () => {
                       </select>
                       {formData.applicationReason === 'Wallet Got Stolen' && (
                         <div style={{ marginTop: '0.5rem', padding: '0.6rem 0.85rem', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '8px', fontSize: '0.82rem', color: 'var(--accent-amber)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          ⚠️ A Police Report will be required in Step 4 — Documents.
+                          A Police Report will be required in Step 4 — Documents.
                         </div>
                       )}
                       {formData.applicationReason === 'Other' && (
@@ -746,7 +746,7 @@ export const ApplyPage = () => {
                         </div>
                       </div>
                       <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        📍 Payment of <strong style={{ color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>Rs. {formData.serviceType === '1-Day' ? '1,500' : '500'}</strong> to be deposited to A/C No. <strong>1234 5678 9012 1234</strong> — Dept. of Identity Issuance. Upload receipt in Step 4.
+                        Payment of <strong style={{ color: formData.serviceType === '1-Day' ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>Rs. {formData.serviceType === '1-Day' ? '1,500' : '500'}</strong> to be deposited to A/C No. <strong>1234 5678 9012 1234</strong> — Dept. of Identity Issuance. Upload receipt in Step 4.
                       </div>
                     </div>
                   </div>

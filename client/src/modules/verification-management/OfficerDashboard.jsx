@@ -793,7 +793,7 @@ export const OfficerDashboard = () => {
                   /* ---- Edit / Correct Details Form ---- */
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                      ✏️ <strong>Record Correction Mode:</strong> Edit any discrepancies found during verification. All changes are saved to the database with an audit trail.
+                      <strong>Record Correction Mode:</strong> Edit any discrepancies found during verification. All changes are saved to the database with an audit trail.
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.85rem' }}>
                       {[['first_name','First Name','text'],['last_name','Last Name','text'],['dob','Date of Birth','date'],['phone_number','Phone Number','text'],['email','Email','email']].map(([key, label, type]) => (

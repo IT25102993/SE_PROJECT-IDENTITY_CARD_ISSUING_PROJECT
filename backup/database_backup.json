@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "last_updated": "2026-09-17T02:44:07.003Z",
+  "last_updated": "2026-09-17T05:21:16.633Z",
   "tables": {
     "users": [
       {
@@ -27,7 +27,7 @@
         "password_hash": "$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6",
         "full_name": "Officer Wickramasinghe",
         "email": "officer@nexusgov.lk",
-        "role": "Citizen",
+        "role": "Officer",
         "created_at": "2026-09-17T00:22:14.000Z"
       },
       {
@@ -47,12 +47,30 @@
         "email": "sakaleyt@gmail.com",
         "role": "Citizen",
         "created_at": "2026-09-17T00:41:39.000Z"
+      },
+      {
+        "user_id": 28,
+        "username": "nadun_nimesh",
+        "password_hash": "$2a$10$Jo47Byg7bXaPR9LxrXqOUOsXevk.rRLQMcgpRg2N1kbEjuTGgUwq.",
+        "full_name": "Nadun Nimesh",
+        "email": "kgnadunnimesh@gmail.com",
+        "role": "Citizen",
+        "created_at": "2026-09-17T03:20:06.000Z"
+      },
+      {
+        "user_id": 29,
+        "username": "thilinapak",
+        "password_hash": "$2a$10$TngWAqpOyLk2Zlc.Ri8hs.bcFHdTmhcggfjg/gTMBbG4FRmV6ugDK",
+        "full_name": "thilinapak",
+        "email": "thilinapak@gmail.com",
+        "role": "Citizen",
+        "created_at": "2026-09-17T03:40:58.000Z"
       }
     ],
     "applicants": [
       {
         "applicant_id": 1,
-        "national_id_number": "200509084440",
+        "national_id_number": "200509055367",
         "first_name": "Thilina",
         "last_name": "Sakalasooriya",
         "date_of_birth": "2005-03-30T18:00:00.000Z",
@@ -62,6 +80,32 @@
         "email": "kgnadunnimesh@gmail.com",
         "photo_path": null,
         "registered_at": "2026-09-17T00:44:24.000Z"
+      },
+      {
+        "applicant_id": 2,
+        "national_id_number": "200200476386",
+        "first_name": "KULASINGHA",
+        "last_name": "GAMAGE NADUN NIMESH",
+        "date_of_birth": "2002-01-03T18:00:00.000Z",
+        "gender": "Male",
+        "address": "65/6,siyambalape waththa,dewala rd,delgoda",
+        "phone_number": "0703064656",
+        "email": "kgnadunnimesh@gmail.com",
+        "photo_path": null,
+        "registered_at": "2026-09-17T03:30:50.000Z"
+      },
+      {
+        "applicant_id": 3,
+        "national_id_number": "200015775429",
+        "first_name": "Nimesh",
+        "last_name": "namnugama",
+        "date_of_birth": "2000-06-03T18:00:00.000Z",
+        "gender": "Male",
+        "address": "test address",
+        "phone_number": "071 251 3663",
+        "email": "sakaleyt@gmail.com",
+        "photo_path": null,
+        "registered_at": "2026-09-17T04:45:45.000Z"
       }
     ],
     "applications": [
@@ -69,19 +113,55 @@
         "application_id": 1,
         "applicant_id": 1,
         "application_type": "New",
-        "status": "",
+        "status": "Approved",
         "bot_verified": 1,
         "bot_score": 95,
         "bot_notes": "Automated Bot Check: PASSED (Match Score: 95%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).",
         "bot_verified_at": "2026-09-17T00:44:24.000Z",
-        "processed_by": 2,
+        "processed_by": 29,
         "assigned_officer": null,
         "application_reason": "G.C.E O/L",
         "marital_status": "Single",
         "service_type": "Normal",
-        "remarks": "New citizen online submission.",
+        "remarks": "Fast-Track Approved by thilinapak. Validated by AI Bot Verification Engine (Score: 95%).",
         "submitted_at": "2026-09-17T00:44:24.000Z",
-        "updated_at": "2026-09-17T00:48:31.000Z"
+        "updated_at": "2026-09-17T04:27:11.000Z"
+      },
+      {
+        "application_id": 2,
+        "applicant_id": 2,
+        "application_type": "New",
+        "status": "Approved",
+        "bot_verified": 0,
+        "bot_score": 62,
+        "bot_notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 62%). Below 80% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+        "bot_verified_at": "2026-09-17T03:30:50.000Z",
+        "processed_by": 29,
+        "assigned_officer": "thilinapak",
+        "application_reason": "G.C.E O/L",
+        "marital_status": "Single",
+        "service_type": "Normal",
+        "remarks": "New citizen online submission.",
+        "submitted_at": "2026-09-17T03:30:50.000Z",
+        "updated_at": "2026-09-17T04:24:49.000Z"
+      },
+      {
+        "application_id": 3,
+        "applicant_id": 3,
+        "application_type": "New",
+        "status": "Approved",
+        "bot_verified": 0,
+        "bot_score": 63,
+        "bot_notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 63%). Below 80% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+        "bot_verified_at": "2026-09-17T04:45:45.000Z",
+        "processed_by": 17,
+        "assigned_officer": "Officer Wickramasinghe",
+        "application_reason": "Wallet Got Stolen",
+        "marital_status": "Single",
+        "service_type": "1-Day",
+        "remarks": "New citizen online submission.",
+        "submitted_at": "2026-09-17T04:45:45.000Z",
+        "updated_at": "2026-09-17T05:16:03.000Z"
       }
     ],
     "documents": [
@@ -102,12 +182,75 @@
         "file_path": "/uploads/documents/1789605864308_download__26_.png",
         "file_size": "162 KB",
         "uploaded_at": "2026-09-17T00:44:24.000Z"
+      },
+      {
+        "document_id": 3,
+        "application_id": 2,
+        "document_type": "Birth Certificate (Original Scan)",
+        "file_name": "birth_certificate.pdf",
+        "file_path": "/uploads/documents/1789615850418_birth_certificate.pdf",
+        "file_size": "69 KB",
+        "uploaded_at": "2026-09-17T03:30:50.000Z"
+      },
+      {
+        "document_id": 4,
+        "application_id": 2,
+        "document_type": "Grama Niladhari Certificate (Form DRP-1)",
+        "file_name": "download (3).png",
+        "file_path": "/uploads/documents/1789615850424_download__3_.png",
+        "file_size": "813 KB",
+        "uploaded_at": "2026-09-17T03:30:50.000Z"
+      },
+      {
+        "document_id": 5,
+        "application_id": 2,
+        "document_type": "Bank Deposit / CDM Teller Slip",
+        "file_name": "light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg",
+        "file_path": "/uploads/documents/1789615850431_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg",
+        "file_size": "439 KB",
+        "uploaded_at": "2026-09-17T03:30:50.000Z"
+      },
+      {
+        "document_id": 6,
+        "application_id": 3,
+        "document_type": "Birth Certificate (Original Scan)",
+        "file_name": "birthcerificate.pdf",
+        "file_path": "/uploads/documents/1789620345725_birthcerificate.pdf",
+        "file_size": "170 KB",
+        "uploaded_at": "2026-09-17T04:45:45.000Z"
+      },
+      {
+        "document_id": 7,
+        "application_id": 3,
+        "document_type": "Grama Niladhari Certificate (Form DRP-1)",
+        "file_name": "birthcerificate.pdf",
+        "file_path": "/uploads/documents/1789620345731_birthcerificate.pdf",
+        "file_size": "170 KB",
+        "uploaded_at": "2026-09-17T04:45:45.000Z"
+      },
+      {
+        "document_id": 8,
+        "application_id": 3,
+        "document_type": "Bank Deposit / CDM Teller Slip",
+        "file_name": "light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg",
+        "file_path": "/uploads/documents/1789620345735_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg",
+        "file_size": "439 KB",
+        "uploaded_at": "2026-09-17T04:45:45.000Z"
+      },
+      {
+        "document_id": 9,
+        "application_id": 3,
+        "document_type": "Police Report (Wallet Stolen)",
+        "file_name": "5.png",
+        "file_path": "/uploads/documents/1789620345739_5.png",
+        "file_size": "16 KB",
+        "uploaded_at": "2026-09-17T04:45:45.000Z"
       }
     ],
     "identity_cards": [
       {
         "card_id": 1,
-        "card_number": "200509084440",
+        "card_number": "200509055367",
         "application_id": 1,
         "applicant_id": 1,
         "issue_date": "2026-09-16T18:30:00.000Z",
@@ -115,10 +258,221 @@
         "status": "Active",
         "issued_by": 2,
         "created_at": "2026-09-17T00:47:05.000Z"
+      },
+      {
+        "card_id": 2,
+        "card_number": "200200476386",
+        "application_id": 2,
+        "applicant_id": 2,
+        "issue_date": "2026-09-16T18:30:00.000Z",
+        "expiry_date": "2036-09-16T18:30:00.000Z",
+        "status": "Active",
+        "issued_by": 29,
+        "created_at": "2026-09-17T04:24:49.000Z"
+      },
+      {
+        "card_id": 4,
+        "card_number": "200015775429",
+        "application_id": 3,
+        "applicant_id": 3,
+        "issue_date": "2026-09-16T18:30:00.000Z",
+        "expiry_date": "2036-09-16T18:30:00.000Z",
+        "status": "Active",
+        "issued_by": 17,
+        "created_at": "2026-09-17T05:16:03.000Z"
       }
     ],
     "account_deletion_requests": [],
     "audit_logs": [
+      {
+        "log_id": 37,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T05:21:16.000Z"
+      },
+      {
+        "log_id": 36,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T05:20:37.000Z"
+      },
+      {
+        "log_id": 35,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T05:20:11.000Z"
+      },
+      {
+        "log_id": 34,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T05:18:33.000Z"
+      },
+      {
+        "log_id": 33,
+        "user_id": 17,
+        "action": "APPLICATION_APPROVED",
+        "details": "Application #3 approved. Official 12-digit NIC 200015775429 generated.",
+        "timestamp": "2026-09-17T05:16:03.000Z"
+      },
+      {
+        "log_id": 32,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T05:15:23.000Z"
+      },
+      {
+        "log_id": 31,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T05:12:07.000Z"
+      },
+      {
+        "log_id": 30,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T05:05:55.000Z"
+      },
+      {
+        "log_id": 29,
+        "user_id": 17,
+        "action": "APPLICATION_REJECTED",
+        "details": "Application #3 rejected. Reason: New citizen online submission.",
+        "timestamp": "2026-09-17T04:55:13.000Z"
+      },
+      {
+        "log_id": 28,
+        "user_id": 17,
+        "action": "JOB_CLAIMED",
+        "details": "Application #3 claimed into active pool by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T04:55:04.000Z"
+      },
+      {
+        "log_id": 27,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T04:54:37.000Z"
+      },
+      {
+        "log_id": 26,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T04:53:53.000Z"
+      },
+      {
+        "log_id": 25,
+        "user_id": null,
+        "action": "APPLICATION_CREATED",
+        "details": "Application #3 created for Nimesh namnugama. Bot Verification: Pending (Score: 63%)",
+        "timestamp": "2026-09-17T04:45:45.000Z"
+      },
+      {
+        "log_id": 24,
+        "user_id": 28,
+        "action": "USER_LOGIN",
+        "details": "User nadun_nimesh logged in successfully.",
+        "timestamp": "2026-09-17T04:32:15.000Z"
+      },
+      {
+        "log_id": 23,
+        "user_id": 28,
+        "action": "USER_LOGIN",
+        "details": "User nadun_nimesh logged in successfully.",
+        "timestamp": "2026-09-17T04:31:44.000Z"
+      },
+      {
+        "log_id": 22,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T04:31:00.000Z"
+      },
+      {
+        "log_id": 21,
+        "user_id": 29,
+        "action": "APPLICATION_APPROVED",
+        "details": "Application #1 approved. Official 12-digit NIC 200509055367 generated.",
+        "timestamp": "2026-09-17T04:27:11.000Z"
+      },
+      {
+        "log_id": 20,
+        "user_id": 29,
+        "action": "APPLICATION_APPROVED",
+        "details": "Application #2 approved. Official 12-digit NIC 200200476386 generated.",
+        "timestamp": "2026-09-17T04:24:49.000Z"
+      },
+      {
+        "log_id": 19,
+        "user_id": 29,
+        "action": "JOB_CLAIMED",
+        "details": "Application #2 claimed into active pool by thilinapak",
+        "timestamp": "2026-09-17T03:44:06.000Z"
+      },
+      {
+        "log_id": 18,
+        "user_id": 29,
+        "action": "USER_LOGIN",
+        "details": "User thilinapak logged in successfully.",
+        "timestamp": "2026-09-17T03:42:05.000Z"
+      },
+      {
+        "log_id": 17,
+        "user_id": 28,
+        "action": "USER_LOGIN",
+        "details": "User nadun_nimesh logged in successfully.",
+        "timestamp": "2026-09-17T03:41:45.000Z"
+      },
+      {
+        "log_id": 16,
+        "user_id": 2,
+        "action": "ADMIN_CREATE_USER",
+        "details": "Admin created staff user: thilinapak (Officer)",
+        "timestamp": "2026-09-17T03:40:58.000Z"
+      },
+      {
+        "log_id": 15,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T03:37:11.000Z"
+      },
+      {
+        "log_id": 14,
+        "user_id": null,
+        "action": "APPLICATION_CREATED",
+        "details": "Application #2 created for KULASINGHA GAMAGE NADUN NIMESH. Bot Verification: Pending (Score: 62%)",
+        "timestamp": "2026-09-17T03:30:50.000Z"
+      },
+      {
+        "log_id": 13,
+        "user_id": 28,
+        "action": "USER_REGISTER",
+        "details": "New citizen registered: nadun_nimesh (Citizen)",
+        "timestamp": "2026-09-17T03:20:06.000Z"
+      },
+      {
+        "log_id": 12,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T03:17:10.000Z"
+      },
+      {
+        "log_id": 11,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T02:55:07.000Z"
+      },
       {
         "log_id": 10,
         "user_id": 2,
@@ -243,13 +597,137 @@
     {
       "timestamp": "2026-09-17T02:44:07.003Z",
       "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-17T02:54:21.386Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-17T02:55:07.377Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:17:10.069Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:20:06.722Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:30:50.504Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:37:11.858Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:40:58.703Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:41:45.333Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:42:05.160Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T03:44:06.495Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:21:49.431Z",
+      "action": "UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, "
+    },
+    {
+      "timestamp": "2026-09-17T04:24:49.723Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:27:12.052Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:31:00.828Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:31:37.380Z",
+      "action": "UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, "
+    },
+    {
+      "timestamp": "2026-09-17T04:31:44.070Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:32:15.475Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:45:45.806Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:53:53.091Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:54:17.083Z",
+      "action": "UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, "
+    },
+    {
+      "timestamp": "2026-09-17T04:54:37.737Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:55:04.687Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T04:55:13.410Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:05:55.757Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:12:07.951Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:15:23.608Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:16:03.095Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:18:33.294Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:20:11.178Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:20:37.431Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-17T05:21:16.637Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
   "summary": {
-    "total_users": 5,
-    "total_applicants": 1,
-    "total_applications": 1,
-    "total_documents": 2,
-    "total_cards": 1
+    "total_users": 7,
+    "total_applicants": 3,
+    "total_applications": 3,
+    "total_documents": 9,
+    "total_cards": 3
   }
 }
