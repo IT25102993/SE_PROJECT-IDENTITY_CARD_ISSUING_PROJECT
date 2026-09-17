@@ -82,6 +82,32 @@ export const inMemoryDb = {
       bot_notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
       bot_verified_at: '2026-08-01 09:35:00',
       submitted_at: '2026-08-01'
+    },
+    {
+      application_id: 2,
+      tracking_id: 'NEX-2026-90415',
+      first_name: 'Kavindu',
+      last_name: 'Perera',
+      fullNameEn: 'Kavindu Perera',
+      national_id_number: '',
+      dob: '2004-05-14',
+      gender: 'Male',
+      address: 'No. 45/A, Galle Road, Moratuwa',
+      phone_number: '+94 71 987 6543',
+      phone: '+94 71 987 6543',
+      email: 'kavindu.p@gmail.com',
+      status: 'Verification-Passed',
+      application_type: 'New',
+      remarks: 'Automated document scan complete. Ready for officer sign-off.',
+      assigned_officer: null,
+      application_reason: 'G.C.E O/L',
+      marital_status: 'Single',
+      service_type: '1-Day',
+      bot_verified: true,
+      bot_score: 96,
+      bot_notes: 'Automated Bot Check: PASSED (Match Score: 96%). Official Birth Certificate confirmed for Kavindu Perera. Specimen Document validated against Sri Lanka civil registration criteria.',
+      bot_verified_at: '2026-08-02 10:15:00',
+      submitted_at: '2026-08-02'
     }
   ],
   documents: [
