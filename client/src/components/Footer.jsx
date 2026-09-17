@@ -9,7 +9,6 @@ export const Footer = () => {
         background: 'var(--bg-glass-heavy)',
         borderTop: '1px solid var(--border-color)',
         padding: '3rem 0 1.5rem 0',
-        marginTop: '4rem',
         position: 'relative',
         zIndex: 10
       }}
