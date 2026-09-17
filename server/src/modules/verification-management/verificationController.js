@@ -35,14 +35,15 @@ export const generateSriLankan12DigitNIC = (dobString, gender = 'Male', serialNu
 export const triggerBotVerification = async (req, res) => {
   try {
     const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
 
     if (getDbStatus()) {
       const rows = await queryDb(
         `SELECT app.application_id, a.first_name, a.last_name, a.date_of_birth AS dob, a.gender, a.address, app.status
          FROM applications app
          JOIN applicants a ON app.applicant_id = a.applicant_id
-         WHERE app.application_id = ?`,
-        [id]
+         WHERE app.application_id = ? OR CONCAT('NEX-2026-', app.application_id) = ?`,
+        [cleanId, id]
       );
 
       if (!rows || rows.length === 0) {
@@ -52,7 +53,7 @@ export const triggerBotVerification = async (req, res) => {
       const appData = rows[0];
       const docs = await queryDb(
         `SELECT * FROM documents WHERE application_id = ?`,
-        [id]
+        [appData.application_id]
       );
 
       const botResult = evaluateBotVerification(
@@ -71,7 +72,7 @@ export const triggerBotVerification = async (req, res) => {
         `UPDATE applications 
          SET status = ?, bot_verified = ?, bot_score = ?, bot_notes = ?, bot_verified_at = NOW() 
          WHERE application_id = ?`,
-        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, id]
+        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, appData.application_id]
       );
 
       return res.status(200).json({
@@ -80,7 +81,7 @@ export const triggerBotVerification = async (req, res) => {
         botResult
       });
     } else {
-      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(id) || a.tracking_id === id);
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
       if (!app) {
         return res.status(404).json({ success: false, message: 'Application not found' });
       }
