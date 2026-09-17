@@ -300,6 +300,11 @@ export const initDb = async () => {
       await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
     } catch (e) { /* ignore */ }
 
+    // Add photo_path column to applicants if missing
+    try {
+      await pool.query(`ALTER TABLE applicants ADD COLUMN photo_path VARCHAR(255) NULL;`);
+    } catch (e) { /* ignore if already exists */ }
+
     // Add bot columns if missing in applications table
     const [cols] = await pool.query(`SHOW COLUMNS FROM applications;`);
     const colNames = cols.map(c => c.Field);

@@ -5,7 +5,8 @@ import {
   updateApplication,
   claimApplication,
   unclaimApplication,
-  deleteApplication
+  deleteApplication,
+  updateApplicationStatus
 } from './applicationController.js';
 import {
   triggerBotVerification,
@@ -36,9 +37,9 @@ router.put('/:id', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Ver
 router.post('/:id/claim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), claimApplication);
 router.post('/:id/unclaim', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), unclaimApplication);
 
-// Status update (Printed, Approved, Dispatched, etc.)
-router.patch('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
-router.put('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer'), updateStatus);
+// Status update (Printed, Approved, Dispatched, Documents-Required, etc.) — accessible by all staff roles
+router.patch('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer', 'Operational', 'Form-Officer', 'Document-Officer'), updateApplicationStatus);
+router.put('/:id/status', verifyToken, requireRole('Officer', 'Admin', 'Approver', 'Verification Officer', 'Operational', 'Form-Officer', 'Document-Officer'), updateApplicationStatus);
 
 // Approver decisions (strictly Senior Approvers and Admin)
 router.put('/:id/approve', verifyToken, requireRole('Approver', 'Admin'), approveApplication);

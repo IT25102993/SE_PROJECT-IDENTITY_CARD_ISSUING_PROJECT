@@ -12,16 +12,17 @@ import {
   Printer,
   ShieldAlert,
   User,
-  Loader2,
   LogIn,
   UserPlus,
   LogOut,
-  Settings
+  Settings,
+  LayoutDashboard,
+  ClipboardList
 } from 'lucide-react';
 import { AccountSettingsModal } from './AccountSettingsModal';
 
 export const Navbar = () => {
-  const { role, setRole, theme, toggleTheme, triggerLoading, addToast } = useApp();
+  const { role, theme, toggleTheme, addToast } = useApp();
   const { user, isAuthenticated, logoutUser } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountModalOpen, setAccountModalOpen] = useState(false);
@@ -33,13 +34,27 @@ export const Navbar = () => {
     navigate('/login');
   };
 
+  // Normalised role string (always lowercase)
+  const userRoleName = (user?.role || role || '').toLowerCase();
+
+  // Role flags
+  const isStaffMember = ['admin', 'officer', 'approver', 'operational', 'form-officer', 'document-officer'].includes(userRoleName);
+  const isAdminRole       = userRoleName === 'admin';
+  const isOfficerRole     = userRoleName === 'officer' || userRoleName === 'form-officer' || userRoleName === 'document-officer';
+  const isApproverRole    = userRoleName === 'approver';
+  const isOperationalRole = userRoleName === 'operational';
+
+  // Badge config
   const getRoleBadge = () => {
-    const currentRole = user?.role ? user.role.toLowerCase() : role;
-    switch (currentRole) {
+    switch (userRoleName) {
       case 'officer':
         return { label: 'Verification Officer', icon: UserCheck, color: '#10b981' };
-      case 'printer':
-        return { label: 'Printing Tech', icon: Printer, color: '#3b82f6' };
+      case 'form-officer':
+        return { label: 'Form Officer', icon: UserCheck, color: '#10b981' };
+      case 'document-officer':
+        return { label: 'Document Officer', icon: ClipboardList, color: '#06b6d4' };
+      case 'operational':
+        return { label: 'Operational Staff', icon: Printer, color: '#3b82f6' };
       case 'admin':
         return { label: 'System Admin', icon: ShieldAlert, color: '#8b5cf6' };
       case 'approver':
@@ -52,10 +67,14 @@ export const Navbar = () => {
   const currentRole = getRoleBadge();
   const RoleIcon = currentRole.icon;
 
-  const userRoleName = (user?.role ? user.role.toLowerCase() : role || '').toLowerCase();
-  const isAdminRole = userRoleName === 'admin';
-  const isOfficerRole = userRoleName === 'officer';
-  const isApproverRole = userRoleName === 'approver';
+  // ── Nav link style helper ────────────────────────────────
+  const navStyle = (isActive, color = 'var(--accent-primary)') => ({
+    color: isActive ? color : 'var(--text-secondary)',
+    fontWeight: isActive ? 600 : 500,
+    fontSize: '0.92rem',
+    textDecoration: 'none',
+    transition: 'color 0.2s ease'
+  });
 
   return (
     <nav
@@ -75,7 +94,7 @@ export const Navbar = () => {
     >
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '72px' }}>
         {/* Logo */}
-        <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
+        <NavLink to={isStaffMember ? getDashboardPath(userRoleName) : '/'} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
           <div
             style={{
               width: '42px',
@@ -108,97 +127,78 @@ export const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }} className="desktop-nav">
-          <ul style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', listStyle: 'none' }}>
-            <li>
-              <NavLink
-                to="/"
-                style={({ isActive }) => ({
-                  color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.92rem'
-                })}
-              >
-                Home
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/apply"
-                style={({ isActive }) => ({
-                  color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.92rem'
-                })}
-              >
-                Apply Online
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/track"
-                style={({ isActive }) => ({
-                  color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.92rem'
-                })}
-              >
-                Track Status
-              </NavLink>
-            </li>
+          <ul style={{ display: 'flex', alignItems: 'center', gap: '1.1rem', listStyle: 'none', margin: 0, padding: 0 }}>
+
+            {/* ── PUBLIC LINKS — visible only to citizens / unauthenticated ── */}
+            {!isStaffMember && (
+              <>
+                <li>
+                  <NavLink to="/" style={({ isActive }) => navStyle(isActive)}>Home</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/apply" style={({ isActive }) => navStyle(isActive)}>Apply Online</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/track" style={({ isActive }) => navStyle(isActive)}>Track Status</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/about" style={({ isActive }) => navStyle(isActive)}>About</NavLink>
+                </li>
+              </>
+            )}
+
+            {/* ── STAFF LINKS — role-specific ── */}
             {(isOfficerRole || isAdminRole) && (
               <li>
                 <NavLink
                   to="/officer?view=officer"
-                  style={({ isActive }) => ({
-                    color: isActive ? 'var(--accent-emerald)' : 'var(--text-secondary)',
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: '0.92rem'
-                  })}
+                  style={({ isActive }) => navStyle(isActive, 'var(--accent-emerald)')}
                 >
-                  Officer Portal
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <LayoutDashboard size={14} /> Officer Portal
+                  </span>
                 </NavLink>
               </li>
             )}
+
             {(isApproverRole || isAdminRole) && (
               <li>
                 <NavLink
                   to="/officer?view=approver"
-                  style={({ isActive }) => ({
-                    color: isActive ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: '0.92rem'
-                  })}
+                  style={({ isActive }) => navStyle(isActive, 'var(--accent-cyan)')}
                 >
-                  Approver Portal
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <UserCheck size={14} /> Approver Portal
+                  </span>
                 </NavLink>
               </li>
             )}
-            {(userRoleName === 'printer' || isAdminRole) && (
+
+            {(isOperationalRole || isAdminRole) && (
               <li>
                 <NavLink
                   to="/print-queue"
-                  style={({ isActive }) => ({
-                    color: isActive ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: '0.92rem'
-                  })}
+                  style={({ isActive }) => navStyle(isActive, '#3b82f6')}
                 >
-                  Print Queue
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Printer size={14} /> Print Queue
+                  </span>
                 </NavLink>
               </li>
             )}
-            <li>
-              <NavLink
-                to="/about"
-                style={({ isActive }) => ({
-                  color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  fontWeight: isActive ? 600 : 500,
-                  fontSize: '0.92rem'
-                })}
-              >
-                About
-              </NavLink>
-            </li>
+
+            {isAdminRole && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  style={({ isActive }) => navStyle(isActive, '#8b5cf6')}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <ShieldAlert size={14} /> Admin Portal
+                  </span>
+                </NavLink>
+              </li>
+            )}
           </ul>
 
           {/* User Auth Controls */}
@@ -241,12 +241,6 @@ export const Navbar = () => {
                 <Settings size={13} color="var(--text-muted)" style={{ marginLeft: '2px' }} />
               </button>
 
-              {(user?.role === 'Admin' || role === 'admin') && (
-                <NavLink to="/admin" className="btn btn-emerald btn-sm" style={{ borderRadius: '20px', fontSize: '0.8rem' }}>
-                  Admin Portal
-                </NavLink>
-              )}
-
               <button
                 type="button"
                 onClick={handleLogout}
@@ -268,7 +262,7 @@ export const Navbar = () => {
             </div>
           )}
 
-          {/* Theme Switcher Toggle */}
+          {/* Theme Switcher */}
           <button
             onClick={toggleTheme}
             style={{
@@ -290,7 +284,7 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile menu toggle button */}
+        {/* Mobile menu toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           style={{
@@ -318,22 +312,29 @@ export const Navbar = () => {
             gap: '1rem'
           }}
         >
-          <NavLink to="/" onClick={() => setMobileOpen(false)}>Home</NavLink>
-          <NavLink to="/apply" onClick={() => setMobileOpen(false)}>Apply Online</NavLink>
-          <NavLink to="/track" onClick={() => setMobileOpen(false)}>Track Status</NavLink>
+          {/* Public links — only for citizens */}
+          {!isStaffMember && (
+            <>
+              <NavLink to="/" onClick={() => setMobileOpen(false)}>Home</NavLink>
+              <NavLink to="/apply" onClick={() => setMobileOpen(false)}>Apply Online</NavLink>
+              <NavLink to="/track" onClick={() => setMobileOpen(false)}>Track Status</NavLink>
+              <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
+            </>
+          )}
+
+          {/* Staff links */}
           {(isOfficerRole || isAdminRole) && (
             <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>Officer Portal</NavLink>
           )}
           {(isApproverRole || isAdminRole) && (
             <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Portal</NavLink>
           )}
+          {(isOperationalRole || isAdminRole) && (
+            <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
+          )}
           {isAdminRole && (
             <NavLink to="/admin" onClick={() => setMobileOpen(false)}>Admin Portal</NavLink>
           )}
-          {(userRoleName === 'printer' || isAdminRole) && (
-            <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
-          )}
-          <NavLink to="/about" onClick={() => setMobileOpen(false)}>About</NavLink>
 
           {isAuthenticated ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)' }}>
@@ -371,8 +372,18 @@ export const Navbar = () => {
         </div>
       )}
 
-      {/* Citizen Profile & Account Deletion Settings Modal */}
+      {/* Account Settings Modal */}
       <AccountSettingsModal isOpen={accountModalOpen} onClose={() => setAccountModalOpen(false)} />
     </nav>
   );
 };
+
+// Helper: get the default dashboard path for a staff role
+function getDashboardPath(roleName) {
+  switch (roleName) {
+    case 'operational': return '/print-queue';
+    case 'admin':       return '/admin';
+    case 'approver':    return '/officer?view=approver';
+    default:            return '/officer?view=officer'; // officer, form-officer, document-officer
+  }
+}

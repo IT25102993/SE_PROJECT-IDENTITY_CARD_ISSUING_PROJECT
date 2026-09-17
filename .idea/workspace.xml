@@ -5,7 +5,13 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backup/database_backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backup/database_backup.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/context/AppContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/context/AppContext.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/modules/operation-management/PrintQueuePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/operation-management/PrintQueuePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/config/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/config/db.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationRoutes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +122,7 @@
       <workItem from="1789546814916" duration="3145000" />
       <workItem from="1789572132094" duration="8546000" />
       <workItem from="1789601694118" duration="2755000" />
-      <workItem from="1789612610776" duration="9494000" />
+      <workItem from="1789612610776" duration="11107000" />
     </task>
     <servers />
   </component>

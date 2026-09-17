@@ -35,6 +35,7 @@ export const getApplications = async (req, res) => {
           a.address,
           a.phone_number AS phone,
           a.email,
+          a.photo_path,
           u.full_name AS processed_by_name
         FROM applications app
         JOIN applicants a ON app.applicant_id = a.applicant_id
@@ -118,6 +119,7 @@ export const createApplication = async (req, res) => {
       phone_number,
       email,
       application_type = 'New',
+      photo_url,
       documents = []
     } = req.body;
 
@@ -136,11 +138,17 @@ export const createApplication = async (req, res) => {
     const officialNic = generateSriLankan12DigitNIC(dob, gender);
 
     if (getDbStatus()) {
+      // Save passport photo if provided
+      let savedPhotoPath = null;
+      if (photo_url) {
+        savedPhotoPath = await saveDocumentFile(photo_url, `passport_photo_${Date.now()}.jpg`);
+      }
+
       // Insert into applicants
       const appRes = await queryDb(
-        `INSERT INTO applicants (national_id_number, first_name, last_name, date_of_birth, gender, address, phone_number, email)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [officialNic, first_name, last_name, dob, gender, address, phone_number, email]
+        `INSERT INTO applicants (national_id_number, first_name, last_name, date_of_birth, gender, address, phone_number, email, photo_path)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [officialNic, first_name, last_name, dob, gender, address, phone_number, email, savedPhotoPath]
       );
 
       const applicantId = appRes.insertId;
@@ -492,6 +500,64 @@ export const deleteApplication = async (req, res) => {
     }
 
     return res.status(200).json({ success: true, message: `Application #${id} deleted successfully from system.` });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update application status only (direct PATCH for Printed, Documents-Required, Processing, etc.)
+export const updateApplicationStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
+    const { status, remarks } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ success: false, message: 'Status field is required.' });
+    }
+
+    const allowedStatuses = ['Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status value. Allowed: ${allowedStatuses.join(', ')}`
+      });
+    }
+
+    if (getDbStatus()) {
+      const setClauses = ['status = ?'];
+      const params = [status];
+
+      if (remarks !== undefined) {
+        setClauses.push('remarks = ?');
+        params.push(remarks);
+      }
+      params.push(cleanId);
+
+      await queryDb(
+        `UPDATE applications SET ${setClauses.join(', ')}, updated_at = NOW() WHERE application_id = ?`,
+        params
+      );
+
+      await queryDb(
+        'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
+        [req.user ? req.user.user_id : null, 'STATUS_UPDATED', `Application #${cleanId} status set to '${status}'`]
+      );
+    } else {
+      const app = (inMemoryDb.applications || []).find(
+        a => String(a.application_id) === String(cleanId) || a.tracking_id === id
+      );
+      if (!app) {
+        return res.status(404).json({ success: false, message: `Application #${id} not found.` });
+      }
+      app.status = status;
+      if (remarks !== undefined) app.remarks = remarks;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Application #${cleanId} status updated to '${status}' successfully.`
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

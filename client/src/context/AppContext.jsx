@@ -183,6 +183,8 @@ export const AppProvider = ({ children }) => {
             submitted_at: app.submitted_at || '',
             officerNotes: app.remarks || '',
             remarks: app.remarks || '',
+            photoUrl: app.photo_path || '',
+            photo_path: app.photo_path || '',
             documents: Array.isArray(app.documents) ? app.documents : [],
             trackingHistory: [
               { status: app.status || 'Submitted', date: app.submitted_at || 'Recent', note: app.remarks || 'Database synced' }
@@ -303,6 +305,7 @@ export const AppProvider = ({ children }) => {
           phone_number: formData.phone || '+94 77 000 0000',
           email: formData.email || '',
           application_type: 'New',
+          photo_url: formData.photoUrl || null,
           documents: documentsPayload
         })
       });

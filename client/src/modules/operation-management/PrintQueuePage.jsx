@@ -26,7 +26,8 @@ export const PrintQueuePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const activeRole = (user?.role || role || 'citizen').toLowerCase();
-  const isStaff = activeRole === 'admin' || activeRole === 'officer' || activeRole === 'approver';
+  const isStaff = activeRole === 'admin' || activeRole === 'operational';
+  const canManage = isStaff; // only Operational + Admin can print/dispatch
 
   const approvedList = applications.filter(a => a.status === 'APPROVED' || a.status === 'Approved');
   const printedList = applications.filter(a => a.status === 'PRINTED' || a.status === 'Printed');
@@ -177,7 +178,7 @@ export const PrintQueuePage = () => {
                           color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)',
                           border: `1px solid ${is1Day ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
                         }}>
-                          {is1Day ? '🚚 1-Day Priority' : '📨 Normal Post'}
+                          {is1Day ? '1-Day Priority' : 'Normal Post'}
                         </span>
                       </div>
 
@@ -239,7 +240,7 @@ export const PrintQueuePage = () => {
                           color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)',
                           border: `1px solid ${is1Day ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
                         }}>
-                          {is1Day ? '🚚 Courier Delivery' : '📨 Postal Delivery'}
+                          {is1Day ? 'Courier Delivery' : 'Postal Delivery'}
                         </span>
                       </div>
 
@@ -315,7 +316,7 @@ export const PrintQueuePage = () => {
                           color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)',
                           border: `1px solid ${is1Day ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
                         }}>
-                          {is1Day ? '🚚 Courier Priority' : '📨 Sri Lanka Post'}
+                          {is1Day ? 'Courier Priority' : 'Sri Lanka Post'}
                         </span>
                       </div>
 
@@ -404,7 +405,7 @@ export const PrintQueuePage = () => {
                   }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.84rem', color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
-                        {is1Day ? '🚚 1-Day Priority Service • Courier Dispatch' : '📨 Normal Service • Sri Lanka Postal Service'}
+                        {is1Day ? '1-Day Priority Service • Courier Dispatch' : 'Normal Service • Sri Lanka Postal Service'}
                       </div>
                       <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                         Delivery Destination: <strong>{selectedApp.address || 'Sri Lanka'}</strong>
