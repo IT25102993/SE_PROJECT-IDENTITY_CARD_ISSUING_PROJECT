@@ -113,7 +113,7 @@ export const AdminDashboard = () => {
     }
 
     try {
-      const res = await fetch('/api/auth/register-staff', {
+      const res = await fetch('/api/admin/register-staff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ export const AdminDashboard = () => {
     if (!window.confirm(`Are you sure you want to remove user #${userId}?`)) return;
 
     try {
-      const res = await fetch(`/api/auth/users/${userId}`, {
+      const res = await fetch(`/api/admin/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -159,8 +159,8 @@ export const AdminDashboard = () => {
     if (!editingUser || !newRole) return;
 
     try {
-      const res = await fetch(`/api/auth/users/${editingUser.user_id}`, {
-        method: 'PATCH',
+      const res = await fetch(`/api/admin/users/${editingUser.user_id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
