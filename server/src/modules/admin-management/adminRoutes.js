@@ -20,6 +20,7 @@ router.use(verifyToken, requireRole('Admin'));
 router.get('/users', getAllUsers);
 router.post('/register-staff', registerStaff);
 router.put('/users/:id', updateUser);
+router.patch('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
 router.get('/audit-logs', getAuditLogs);
 
