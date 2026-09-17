@@ -26,8 +26,8 @@ export const PrintQueuePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const activeRole = (user?.role || role || 'citizen').toLowerCase();
-  const isStaff = activeRole === 'admin' || activeRole === 'operational';
-  const canManage = isStaff; // only Operational + Admin can print/dispatch
+  const isOperational = activeRole === 'operational';
+  const canManage = isOperational; // strictly Operational role only
 
   const approvedList = applications.filter(a => a.status === 'APPROVED' || a.status === 'Approved');
   const printedList = applications.filter(a => a.status === 'PRINTED' || a.status === 'Printed');
@@ -58,9 +58,30 @@ export const PrintQueuePage = () => {
   };
 
   const is1DayService = (app) => {
-    const sType = (app.service_type || app.serviceType || '').toLowerCase();
-    return sType.includes('1-day') || sType.includes('priority');
+    const s = app.service_type || app.serviceType || 'Normal';
+    return s === '1-Day' || s === '1-day';
   };
+
+  if (!isOperational) {
+    return (
+      <div style={{ position: 'relative', zIndex: 1, padding: '4rem 1rem' }}>
+        <div className="container" style={{ maxWidth: '640px' }}>
+          <div className="glass-card animate-fade-in" style={{ padding: '2.5rem 2rem', textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '18px', background: 'rgba(239, 68, 68, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.25rem', color: 'var(--accent-rose)' }}>
+              <Lock size={36} />
+            </div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Operational Personnel Only</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+              The <strong>Print Queue &amp; Dispatch Management</strong> workbench is strictly restricted to authorized <strong>Operational</strong> personnel.
+            </p>
+            <button className="btn btn-primary" onClick={() => window.history.back()} style={{ padding: '0.75rem 1.5rem' }}>
+              ← Return Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const filterApps = (list) => {
     if (!searchTerm.trim()) return list;
@@ -76,34 +97,6 @@ export const PrintQueuePage = () => {
   return (
     <div style={{ position: 'relative', zIndex: 1, padding: '2rem 0 4rem 0' }}>
       <div className="container">
-        {/* Permission Switcher if in Citizen Mode */}
-        {!isStaff && (
-          <div className="glass-card" style={{
-            padding: '1.25rem 1.5rem',
-            marginBottom: '2rem',
-            borderColor: 'var(--accent-amber)',
-            background: 'rgba(245, 158, 11, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '1rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <AlertTriangle color="var(--accent-amber)" size={24} />
-              <div>
-                <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Viewing in Citizen Mode</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Switch to Officer / Operator mode to manage thermal printing queue and Courier/Postal dispatches.
-                </div>
-              </div>
-            </div>
-            <button className="btn btn-emerald btn-sm" onClick={() => setRole('officer')}>
-              Switch to Officer Mode
-            </button>
-          </div>
-        )}
-
         {/* Header */}
         <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 2.5rem auto' }}>
           <span className="badge badge-printed" style={{ marginBottom: '0.5rem' }}>Production &amp; Logistics Hub</span>
