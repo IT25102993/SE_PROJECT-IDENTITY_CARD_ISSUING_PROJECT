@@ -24,19 +24,35 @@ import {
   Clock,
   AlertCircle,
   UserX,
-  FileCheck
+  FileCheck,
+  Printer,
+  DollarSign,
+  CreditCard,
+  TrendingUp,
+  ArrowUpRight,
+  Eye,
+  ShieldAlert,
+  Info,
+  Building2,
+  Layers,
+  Receipt,
+  Download,
+  Check
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
   const { user, token, logoutUser } = useAuth();
   const { addToast, theme, toggleTheme } = useApp();
 
-  const [activeTab, setActiveTab] = useState('applications'); // 'applications', 'users', 'register-staff', 'deletion-requests'
+  const [activeTab, setActiveTab] = useState('applications'); // 'applications', 'cash-flow', 'users', 'register-staff', 'deletion-requests'
 
   const [dbApplications, setDbApplications] = useState([]);
   const [dbUsers, setDbUsers] = useState([]);
   const [deletionRequests, setDeletionRequests] = useState([]);
   const [deletionFilter, setDeletionFilter] = useState('all');
+  const [appStatusFilter, setAppStatusFilter] = useState('all');
+  const [cashFlowFilter, setCashFlowFilter] = useState('all');
+  const [selectedReceiptApp, setSelectedReceiptApp] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -198,6 +214,27 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleMarkAsPrinted = async (appId) => {
+    try {
+      const res = await fetch(`/api/applications/${appId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: 'Printed' })
+      });
+      if (res.ok) {
+        addToast(`Smart Card for #${appId} marked as PRINTED!`, 'success');
+        fetchAdminData();
+      } else {
+        throw new Error('Failed to update print status');
+      }
+    } catch (err) {
+      addToast(err.message || 'Failed to update print status', 'error');
+    }
+  };
+
   const handleApproveDeletion = async (requestId, username) => {
     if (!window.confirm(`Are you sure you want to approve account deletion for user "${username}"? This will permanently delete the user account.`)) return;
 
@@ -245,14 +282,46 @@ export const AdminDashboard = () => {
 
   const pendingDeletionCount = deletionRequests.filter(r => r.status === 'Pending').length;
 
+  // Real-time Application Metrics
+  const totalSubmitted = dbApplications.length;
+  const totalPrinted = dbApplications.filter(a => (a.status || '').toLowerCase() === 'printed').length;
+  const totalApproved = dbApplications.filter(a => {
+    const s = (a.status || '').toLowerCase();
+    return s === 'approved' || s === 'verification-passed';
+  }).length;
+  const totalPending = dbApplications.filter(a => (a.status || '').toLowerCase().includes('pending')).length;
+  const totalDispatched = dbApplications.filter(a => {
+    const s = (a.status || '').toLowerCase();
+    return s === 'dispatched' || s === 'issued';
+  }).length;
+  const totalRejected = dbApplications.filter(a => (a.status || '').toLowerCase() === 'rejected').length;
+
+  // Treasury Cash Flow Metrics (1-Day = Rs. 1500, Normal = Rs. 500)
+  const oneDayApps = dbApplications.filter(a => a.service_type === '1-Day');
+  const normalApps = dbApplications.filter(a => a.service_type !== '1-Day');
+  const oneDayRevenue = oneDayApps.length * 1500;
+  const normalRevenue = normalApps.length * 500;
+  const totalRevenue = oneDayRevenue + normalRevenue;
+
   const filteredApps = dbApplications.filter(app => {
+    if (appStatusFilter !== 'all') {
+      const s = (app.status || '').toLowerCase();
+      if (appStatusFilter === 'Submitted' && !s.includes('pending') && s !== '') return false;
+      if (appStatusFilter === 'Pending' && !s.includes('pending')) return false;
+      if (appStatusFilter === 'Approved' && !s.includes('approved') && !s.includes('verification-passed')) return false;
+      if (appStatusFilter === 'Printed' && s !== 'printed') return false;
+      if (appStatusFilter === 'Dispatched' && s !== 'dispatched' && s !== 'issued') return false;
+      if (appStatusFilter === 'Rejected' && s !== 'rejected') return false;
+    }
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
       (app.tracking_id && app.tracking_id.toLowerCase().includes(term)) ||
       (app.first_name && app.first_name.toLowerCase().includes(term)) ||
       (app.last_name && app.last_name.toLowerCase().includes(term)) ||
+      (app.fullNameEn && app.fullNameEn.toLowerCase().includes(term)) ||
       (app.national_id_number && app.national_id_number.includes(term)) ||
+      (app.service_type && app.service_type.toLowerCase().includes(term)) ||
       (app.status && app.status.toLowerCase().includes(term))
     );
   });
@@ -324,7 +393,7 @@ export const AdminDashboard = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.85rem',
+              justifyContent: 'space-between',
               width: '100%',
               padding: '0.8rem 1rem',
               borderRadius: '10px',
@@ -338,7 +407,39 @@ export const AdminDashboard = () => {
               transition: 'all 0.2s ease'
             }}
           >
-            <FileText size={18} /> Applications
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <FileText size={18} /> Applications
+            </div>
+            <span style={{ fontSize: '0.72rem', background: 'rgba(59, 130, 246, 0.2)', color: 'var(--accent-primary)', padding: '0.1rem 0.5rem', borderRadius: '10px', fontWeight: 700 }}>
+              {totalSubmitted}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('cash-flow')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              padding: '0.8rem 1rem',
+              borderRadius: '10px',
+              border: activeTab === 'cash-flow' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid transparent',
+              backgroundColor: activeTab === 'cash-flow' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+              color: activeTab === 'cash-flow' ? 'var(--accent-emerald)' : 'var(--text-secondary)',
+              fontWeight: 600,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <TrendingUp size={18} /> Cash Flow & Revenue
+            </div>
+            <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.2)', color: 'var(--accent-emerald)', padding: '0.1rem 0.45rem', borderRadius: '10px', fontWeight: 700 }}>
+              Rs. {totalRevenue.toLocaleString()}
+            </span>
           </button>
 
           <button
@@ -346,7 +447,7 @@ export const AdminDashboard = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.85rem',
+              justifyContent: 'space-between',
               width: '100%',
               padding: '0.8rem 1rem',
               borderRadius: '10px',
@@ -360,7 +461,41 @@ export const AdminDashboard = () => {
               transition: 'all 0.2s ease'
             }}
           >
-            <Users size={18} /> User Management
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <Users size={18} /> User Management
+            </div>
+            <span style={{ fontSize: '0.72rem', background: 'rgba(255, 255, 255, 0.08)', color: 'var(--text-muted)', padding: '0.1rem 0.45rem', borderRadius: '10px', fontWeight: 700 }}>
+              {dbUsers.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('deletion-requests')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              padding: '0.8rem 1rem',
+              borderRadius: '10px',
+              border: activeTab === 'deletion-requests' ? '1px solid rgba(244, 63, 94, 0.4)' : '1px solid transparent',
+              backgroundColor: activeTab === 'deletion-requests' ? 'rgba(244, 63, 94, 0.15)' : 'transparent',
+              color: activeTab === 'deletion-requests' ? 'var(--accent-rose)' : 'var(--text-secondary)',
+              fontWeight: 600,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <UserX size={18} /> Deletion Governance
+            </div>
+            {pendingDeletionCount > 0 && (
+              <span style={{ fontSize: '0.7rem', background: 'var(--accent-rose)', color: '#fff', padding: '0.1rem 0.45rem', borderRadius: '10px', fontWeight: 700 }}>
+                {pendingDeletionCount}
+              </span>
+            )}
           </button>
 
           <button
