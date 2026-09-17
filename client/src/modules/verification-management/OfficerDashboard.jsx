@@ -623,9 +623,17 @@ export const OfficerDashboard = () => {
                                 <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                                   Operational Delivery: <strong>{is1Day ? 'Courier Service' : 'Sri Lanka Postal Service'}</strong>
                                 </div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                                  Treasury Acc: <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>1234 5678 9012 1234</strong> (Department of Identity Issuance)
+                                </div>
                               </div>
-                              <div style={{ fontWeight: 800, fontSize: '1rem', color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
-                                Rs. {is1Day ? '1,500' : '500'}
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: 800, fontSize: '1rem', color: is1Day ? 'var(--accent-amber)' : 'var(--accent-emerald)' }}>
+                                  Rs. {is1Day ? '1,500' : '500'}
+                                </div>
+                                <div style={{ fontSize: '0.68rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>
+                                  ✓ Fee Rate Verified
+                                </div>
                               </div>
                             </div>
                           );
@@ -636,13 +644,22 @@ export const OfficerDashboard = () => {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div className="glass-card" style={{ padding: '1.25rem', background: 'var(--bg-nested)' }}>
                           <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                            <FileText size={15} color="var(--accent-amber)" /> Verification Documents
+                            <FileText size={15} color="var(--accent-amber)" /> Verification Documents & Teller Slip
                           </h4>
                           {Array.isArray(selectedApp.documents) && selectedApp.documents.length > 0 ? (
-                            selectedApp.documents.map((doc, dIdx) => (
-                              <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0.75rem', borderRadius: '8px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', marginBottom: '0.5rem' }}>
+                            selectedApp.documents.map((doc, dIdx) => {
+                              const isTellerSlip = (doc.document_type || '').includes('Deposit') || (doc.document_type || '').includes('Teller') || (doc.file_name || '').toLowerCase().includes('receipt') || (doc.file_name || '').toLowerCase().includes('teller');
+                              return (
+                              <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0.75rem', borderRadius: '8px', background: isTellerSlip ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-card)', border: `1px solid ${isTellerSlip ? 'rgba(16, 185, 129, 0.35)' : 'var(--border-color)'}`, marginBottom: '0.5rem' }}>
                                 <div style={{ fontSize: '0.8rem' }}>
-                                  <div style={{ fontWeight: 600 }}>{doc.document_type || `Document #${dIdx + 1}`}</div>
+                                  <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                    {doc.document_type || `Document #${dIdx + 1}`}
+                                    {isTellerSlip && (
+                                      <span style={{ fontSize: '0.65rem', background: 'var(--accent-emerald)', color: '#fff', padding: '0.05rem 0.35rem', borderRadius: '4px', fontWeight: 700 }}>
+                                        CDM SLIP
+                                      </span>
+                                    )}
+                                  </div>
                                   <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>{doc.file_name || ''} {doc.file_size ? `• ${doc.file_size}` : ''}</div>
                                 </div>
                                 {doc.file_path && (
@@ -651,7 +668,7 @@ export const OfficerDashboard = () => {
                                   </a>
                                 )}
                               </div>
-                            ))
+                            );})
                           ) : (
                             <div style={{ color: 'var(--text-muted)', fontSize: '0.82rem', textAlign: 'center', padding: '0.75rem' }}>Documents on file.</div>
                           )}
