@@ -172,12 +172,20 @@ public class AuthService {
             return new RegisterResult(false, "Username or Email is already registered.", null, null);
         }
 
+        String role = req.getRole();
+        boolean validStaffRole = role != null && List.of("Admin", "Officer", "Approver", "Operational").contains(role);
+        if (!validStaffRole) {
+            return new RegisterResult(false,
+                "Invalid staff role. Admin, Officer, Approver, and Operational roles are the only roles that can be registered by an Admin.",
+                null, null);
+        }
+
         User user = User.builder()
             .username(req.getUsername())
             .email(req.getEmail())
             .passwordHash(passwordEncoder.encode(req.getPassword()))
             .fullName(req.getFull_name())
-            .role(User.UserRole.valueOf(req.getRole()))
+            .role(User.UserRole.valueOf(role))
             .build();
 
         user = userRepository.save(user);
@@ -185,11 +193,11 @@ public class AuthService {
         auditLogRepository.save(AuditLog.builder()
             .user(adminUser)
             .action("ADMIN_CREATE_USER")
-            .details("Admin created staff user: " + user.getUsername() + " (" + req.getRole() + ")")
+            .details("Admin created staff user: " + user.getUsername() + " (" + role + ")")
             .build());
 
         return new RegisterResult(true,
-            "Successfully registered new staff member: " + user.getFullName() + " (" + req.getRole() + ")",
+            "Successfully registered new staff member: " + user.getFullName() + " (" + role + ")",
             null, toDto(user));
     }
 
