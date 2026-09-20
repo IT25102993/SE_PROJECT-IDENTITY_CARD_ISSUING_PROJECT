@@ -13,10 +13,10 @@ export const registerStaff = async (req, res) => {
       });
     }
 
-    if (!['Admin', 'Officer', 'Approver', 'Operational'].includes(role)) {
+    if (!['Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational'].includes(role)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid staff role. Admin, Officer, Approver, and Operational roles are the only roles that can be registered by an Admin.'
+        message: 'Invalid staff role. Admin, Form-Officer, Document-Officer, Approver, and Operational roles are the only roles that can be registered by an Admin.'
       });
     }
 

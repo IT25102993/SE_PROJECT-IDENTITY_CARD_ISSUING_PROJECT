@@ -139,7 +139,7 @@ public class ApplicationController {
     // ── PUT /api/applications/:id (Officer / Admin / Approver) ────────────────
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OFFICER', 'ADMIN', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('FORM_OFFICER', 'ADMIN', 'APPROVER')")
     public ResponseEntity<Map<String, Object>> updateApplication(
             @PathVariable String id,
             @RequestBody ApplicationDtos.UpdateApplicationRequest req,
@@ -155,7 +155,7 @@ public class ApplicationController {
     // ── POST /api/applications/:id/claim ──────────────────────────────────────
 
     @PostMapping("/{id}/claim")
-    @PreAuthorize("hasAnyRole('OFFICER', 'ADMIN', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('FORM_OFFICER', 'DOCUMENT_OFFICER', 'ADMIN', 'APPROVER')")
     public ResponseEntity<Map<String, Object>> claimApplication(
             @PathVariable String id,
             @RequestBody(required = false) ApplicationDtos.ClaimRequest req,
@@ -170,7 +170,7 @@ public class ApplicationController {
     // ── POST /api/applications/:id/unclaim ────────────────────────────────────
 
     @PostMapping("/{id}/unclaim")
-    @PreAuthorize("hasAnyRole('OFFICER', 'ADMIN', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('FORM_OFFICER', 'DOCUMENT_OFFICER', 'ADMIN', 'APPROVER')")
     public ResponseEntity<Map<String, Object>> unclaimApplication(
             @PathVariable String id,
             @AuthenticationPrincipal User currentUser) {
@@ -185,7 +185,7 @@ public class ApplicationController {
     // ── PATCH / PUT /api/applications/:id/status ──────────────────────────────
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('OFFICER', 'ADMIN', 'APPROVER', 'OPERATIONAL')")
+    @PreAuthorize("hasAnyRole('FORM_OFFICER', 'DOCUMENT_OFFICER', 'ADMIN', 'APPROVER', 'OPERATIONAL')")
     public ResponseEntity<Map<String, Object>> patchStatus(
             @PathVariable Long id,
             @RequestBody ApplicationDtos.StatusUpdateRequest req) {
@@ -198,7 +198,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('OFFICER', 'ADMIN', 'APPROVER', 'OPERATIONAL')")
+    @PreAuthorize("hasAnyRole('FORM_OFFICER', 'DOCUMENT_OFFICER', 'ADMIN', 'APPROVER', 'OPERATIONAL')")
     public ResponseEntity<Map<String, Object>> putStatus(
             @PathVariable Long id,
             @RequestBody ApplicationDtos.StatusUpdateRequest req) {

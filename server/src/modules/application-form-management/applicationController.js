@@ -296,7 +296,7 @@ export const createApplication = async (req, res) => {
   }
 };
 
-// Update Application & Applicant details (Accessible by Officer, Admin, Approver)
+// Update Application & Applicant details (Accessible by Form Officer, Admin, Approver)
 export const updateApplication = async (req, res) => {
   try {
     const { id } = req.params;
@@ -371,7 +371,7 @@ export const updateApplication = async (req, res) => {
       }
 
       // Audit log
-      const actorName = req.user ? (req.user.full_name || req.user.username) : 'Officer';
+      const actorName = req.user ? (req.user.full_name || req.user.username) : 'Form Officer';
       await queryDb(
         'INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)',
         [req.user ? req.user.user_id : null, 'APPLICATION_UPDATED', `Application #${cleanId} details updated by ${actorName}`]
@@ -424,7 +424,7 @@ export const claimApplication = async (req, res) => {
   try {
     const { id } = req.params;
     const cleanId = String(id).replace(/^NEX-2026-/, '');
-    const officerName = req.body.officerName || (req.user ? (req.user.full_name || req.user.username) : 'Officer Wickramasinghe');
+    const officerName = req.body.officerName || (req.user ? (req.user.full_name || req.user.username) : 'Form Handling Officer Perera');
 
     if (getDbStatus()) {
       await queryDb('UPDATE applications SET assigned_officer = ? WHERE application_id = ?', [officerName, cleanId]);
@@ -452,7 +452,7 @@ export const unclaimApplication = async (req, res) => {
   try {
     const { id } = req.params;
     const cleanId = String(id).replace(/^NEX-2026-/, '');
-    const officerName = req.user ? (req.user.full_name || req.user.username) : 'Officer';
+    const officerName = req.user ? (req.user.full_name || req.user.username) : 'Form Officer';
 
     if (getDbStatus()) {
       await queryDb('UPDATE applications SET assigned_officer = NULL WHERE application_id = ?', [cleanId]);
@@ -474,17 +474,17 @@ export const unclaimApplication = async (req, res) => {
   }
 };
 
-// Delete Application (Strictly reserved for Admin - Officers CANNOT delete applications from the system)
+// Delete Application (Strictly reserved for Admin - Staff officers CANNOT delete applications from the system)
 export const deleteApplication = async (req, res) => {
   try {
     const { id } = req.params;
     const cleanId = String(id).replace(/^NEX-2026-/, '');
 
-    // Enforce role security: Officers cannot delete from the whole system
+    // Enforce role security: Officer roles cannot delete from the whole system
     if (req.user && req.user.role !== 'Admin') {
       return res.status(403).json({
         success: false,
-        message: 'Permission Denied: Officer role cannot delete applications from the system. You can only remove applications from your job pool.'
+        message: 'Permission Denied: Officer roles cannot delete applications from the system. You can only remove applications from your job pool.'
       });
     }
 

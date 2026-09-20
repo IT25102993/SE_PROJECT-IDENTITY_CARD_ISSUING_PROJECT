@@ -30,7 +30,7 @@ export const AnalyticsPage = () => {
   }, {});
 
   const auditLogs = [
-    { time: '2026-08-08 11:20 AM', event: 'Cryptographic NIC 200512345678 assigned', user: 'Officer Wickramasinghe (OFF-402)', status: 'Success' },
+    { time: '2026-08-08 11:20 AM', event: 'Cryptographic NIC 200512345678 assigned', user: 'Form Handling Officer Perera (FOM-401)', status: 'Success' },
     { time: '2026-08-08 10:45 AM', event: 'PVC Thermal Print Batch #982 started', user: 'Tech Perera (PRT-109)', status: 'Info' },
     { time: '2026-08-08 09:15 AM', event: 'New Online Registration NEX-2026-92410', user: 'Citizen Self-Service', status: 'Success' },
     { time: '2026-08-07 04:30 PM', event: 'Dispatched 45 cards via Sri Lanka Post', user: 'System Dispatch Engine', status: 'Success' },

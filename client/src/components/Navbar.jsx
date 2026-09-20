@@ -38,17 +38,17 @@ export const Navbar = () => {
   const userRoleName = (user?.role || role || '').toLowerCase();
 
   // Role flags
-  const isStaffMember = ['admin', 'officer', 'approver', 'operational', 'form-officer', 'document-officer'].includes(userRoleName);
+  const isStaffMember = ['admin', 'approver', 'operational', 'form-officer', 'document-officer'].includes(userRoleName);
   const isAdminRole       = userRoleName === 'admin';
-  const isOfficerRole     = userRoleName === 'officer' || userRoleName === 'form-officer' || userRoleName === 'document-officer';
+  const isOfficerRole     = userRoleName === 'form-officer' || userRoleName === 'document-officer';
+  const isFormOfficerRole     = userRoleName === 'form-officer';
+  const isDocumentOfficerRole = userRoleName === 'document-officer';
   const isApproverRole    = userRoleName === 'approver';
   const isOperationalRole = userRoleName === 'operational';
 
   // Badge config
   const getRoleBadge = () => {
     switch (userRoleName) {
-      case 'officer':
-        return { label: 'Verification Officer', icon: UserCheck, color: '#10b981' };
       case 'form-officer':
         return { label: 'Form Officer', icon: UserCheck, color: '#10b981' };
       case 'document-officer':
@@ -155,7 +155,7 @@ export const Navbar = () => {
                   style={({ isActive }) => navStyle(isActive, 'var(--accent-emerald)')}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <LayoutDashboard size={14} /> Officer Job Pool
+                    <LayoutDashboard size={14} /> {isFormOfficerRole ? 'Form Officer Job Pool' : 'Document Officer Job Pool'}
                   </span>
                 </NavLink>
               </li>
@@ -324,7 +324,7 @@ export const Navbar = () => {
 
           {/* Staff links — strictly role-isolated job pool */}
           {isOfficerRole && (
-            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>Officer Job Pool</NavLink>
+            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>{isFormOfficerRole ? 'Form Officer Job Pool' : 'Document Officer Job Pool'}</NavLink>
           )}
           {isApproverRole && (
             <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Job Pool</NavLink>
@@ -384,6 +384,6 @@ function getDashboardPath(roleName) {
     case 'operational': return '/print-queue';
     case 'admin':       return '/admin';
     case 'approver':    return '/officer?view=approver';
-    default:            return '/officer?view=officer'; // officer, form-officer, document-officer
+    default:            return '/officer?view=officer'; // form-officer, document-officer
   }
 }

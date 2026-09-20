@@ -42,7 +42,7 @@ export const AboutPage = () => {
             </div>
             <h3 style={{ fontSize: '1.25rem', marginBottom: '0.75rem' }}>Strict Role-Based Access (RBAC)</h3>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Hierarchical security permissions governing Applicant, Data Entry Clerk, Verification Officer, Super Administrator, and Printing Technician roles.
+              Hierarchical security permissions governing Applicant, Form Officer, Document Officer, Super Administrator, and Printing Technician roles.
             </p>
           </div>
 

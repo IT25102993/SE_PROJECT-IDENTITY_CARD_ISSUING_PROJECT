@@ -439,7 +439,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const claimJob = async (appId, officerName = 'Officer Wickramasinghe') => {
+  const claimJob = async (appId, officerName = 'Form Handling Officer Perera') => {
     const numericId = String(appId).replace(/^NEX-2026-/, '');
 
     setApplications(prev => prev.map(app => {
@@ -498,7 +498,7 @@ export const AppProvider = ({ children }) => {
     addToast(`Application ${appId} removed from your job pool and returned to general queue.`, 'info');
   };
 
-  const claimNextJob = (officerName = 'Officer Wickramasinghe') => {
+  const claimNextJob = (officerName = 'Form Handling Officer Perera') => {
     const unassigned = applications.find(
       a => (a.status === 'PENDING_VERIFICATION' || a.status === 'Pending' || a.status === 'Verification-Passed') && !a.assignedOfficer
     );

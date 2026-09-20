@@ -12,7 +12,8 @@ echo    [x] Delete all citizen user accounts
 echo    [x] Reset all auto-increment counters to 1
 echo.
 echo  PRESERVED ACCOUNTS (WILL NOT BE DELETED):
-echo    [OK] Officer Accounts  (e.g., officer@nexusgov.lk)
+echo    [OK] Form Officer Accounts     (e.g., form-officer@nexusgov.lk)
+echo    [OK] Document Officer Accounts (e.g., document-officer@nexusgov.lk)
 echo    [OK] Approver Accounts (e.g., approver@nexusgov.lk)
 echo    [OK] Admin Accounts    (e.g., admin@nexusgov.lk, thilinasakalasooriya@gmail.com)
 echo.

@@ -22,7 +22,7 @@ const transporter = nodemailer.createTransport({
  * @param {string} otp      - 6-digit OTP string
  * @param {string} fullName - recipient's display name
  */
-export const sendOtpEmail = async (toEmail, otp, fullName = 'Officer') => {
+export const sendOtpEmail = async (toEmail, otp, fullName = 'Form Officer') => {
   if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
     console.warn('Mail credentials not provided in .env, skipping SMTP transport.');
     return;

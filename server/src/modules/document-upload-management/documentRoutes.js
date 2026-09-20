@@ -15,10 +15,10 @@ router.post('/application/:id', uploadDocument);
 router.get('/applications/:id/documents', getApplicationDocuments);
 router.post('/applications/:id/documents', uploadDocument);
 
-// Admin & Officer: View all uploaded documents
-router.get('/', verifyToken, requireRole('Admin', 'Officer', 'Approver'), getAllDocuments);
+// Admin, Form Officer & Document Officer: View all uploaded documents
+router.get('/', verifyToken, requireRole('Admin', 'Form-Officer', 'Document-Officer', 'Approver'), getAllDocuments);
 
-// Admin: Delete a document
-router.delete('/:documentId', verifyToken, requireRole('Admin'), deleteDocument);
+// Admin & Document Officer: Delete a document
+router.delete('/:documentId', verifyToken, requireRole('Admin', 'Document-Officer'), deleteDocument);
 
 export default router;

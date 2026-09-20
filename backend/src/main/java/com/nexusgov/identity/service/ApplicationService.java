@@ -400,7 +400,7 @@ public class ApplicationService {
 
         String officerName = req != null && req.getOfficerName() != null && !req.getOfficerName().isBlank()
             ? req.getOfficerName()
-            : (currentUser != null ? currentUser.getFullName() : "Officer");
+            : (currentUser != null ? currentUser.getFullName() : "Form Officer");
 
         app.setAssignedOfficer(officerName);
         applicationRepository.save(app);

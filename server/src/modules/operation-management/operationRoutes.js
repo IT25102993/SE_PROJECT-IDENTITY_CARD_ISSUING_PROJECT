@@ -11,7 +11,7 @@ import { verifyToken, requireRole } from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Operational metrics & analytics
-router.get('/analytics', verifyToken, requireRole('Admin', 'Officer', 'Approver'), getAnalytics);
+router.get('/analytics', verifyToken, requireRole('Admin', 'Form-Officer', 'Document-Officer', 'Approver'), getAnalytics);
 
 // Card printing queue (strictly Operational personnel only)
 router.get('/print-queue', verifyToken, requireRole('Operational'), getPrintQueue);

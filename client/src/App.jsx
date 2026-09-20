@@ -30,7 +30,7 @@ const PublicRoute = ({ children }) => {
     if (r === 'operational')   return <Navigate to="/print-queue" replace />;
     if (r === 'admin')         return <Navigate to="/admin" replace />;
     if (r === 'approver')      return <Navigate to="/officer?view=approver" replace />;
-    if (r === 'officer' || r === 'form-officer' || r === 'document-officer')
+    if (r === 'form-officer' || r === 'document-officer')
       return <Navigate to="/officer?view=officer" replace />;
   }
   return children;
@@ -62,7 +62,7 @@ const StaffRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
-  const isStaff = ['admin', 'officer', 'approver', 'form-officer', 'document-officer'].includes(r);
+  const isStaff = ['admin', 'approver', 'form-officer', 'document-officer'].includes(r);
   if (!isStaff) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>

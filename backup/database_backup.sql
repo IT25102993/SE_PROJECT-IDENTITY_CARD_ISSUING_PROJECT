@@ -1,21 +1,14 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-09-20T11:42:04.958Z
+-- Generated / Synced: 2026-09-20T12:28:08.987Z
 -- Total Applications: 3
 -- =============================================================
 
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Table: users (9 records)
+-- Table: users (2 records)
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (1, 'thilina_admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Thilina Sakalasooriya', 'thilinasakalasooriya@gmail.com', 'Admin', '2026-09-16 08:56:11');
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (2, 'admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'System Admin', 'admin@nexusgov.lk', 'Admin', '2026-09-16 08:56:11');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (17, 'officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Officer Wickramasinghe', 'officer@nexusgov.lk', 'Officer', '2026-09-17 00:22:14');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (18, 'approver', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Senior Approver Jayawardena', 'approver@nexusgov.lk', 'Approver', '2026-09-17 00:22:14');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (23, 'citizen_thilina', '$2a$10$d7c4JYu9y3EDOZKTyxYnQe7tnvpbvFtAJxq4JT3txY6eE0K7gInza', 'Thilina new', 'sakaleyt@gmail.com', 'Admin', '2026-09-17 00:41:39');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (28, 'nadun_nimesh', '$2a$10$Jo47Byg7bXaPR9LxrXqOUOsXevk.rRLQMcgpRg2N1kbEjuTGgUwq.', 'Nadun Nimesh', 'kgnadunnimesh@gmail.com', 'Citizen', '2026-09-17 03:20:06');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (29, 'thilinapak', '$2a$10$TngWAqpOyLk2Zlc.Ri8hs.bcFHdTmhcggfjg/gTMBbG4FRmV6ugDK', 'thilinapak', 'thilinapak@gmail.com', 'Citizen', '2026-09-17 03:40:58');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (38, 'operational', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Operational Specialist Silva', 'operational@nexusgov.lk', 'Operational', '2026-09-17 07:22:28');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (54, 'officer_buddhima', '$2a$10$XdSZNPayuOJB9Q2zO9shQu7cMiuvMaqQPCgZU9NgxQMw7NGpG0nBy', 'operational officer', 'operation@nexusgov.lk', 'Operational', '2026-09-17 08:19:22');
 
 -- Table: applicants (3 records)
 INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `last_name`, `date_of_birth`, `gender`, `address`, `phone_number`, `email`, `registered_at`) VALUES (1, '200509055367', 'Thilina', 'Sakalasooriya', '2005-03-30 18:00:00', 'Male', 'test address 1', '0712513663', 'kgnadunnimesh@gmail.com', '2026-09-17 00:44:24') ON DUPLICATE KEY UPDATE `first_name`=VALUES(`first_name`);
@@ -46,16 +39,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-17T05:31:29.526Z] System startup baseline sync
--- [2026-09-17T05:31:53.897Z] System startup baseline sync
--- [2026-09-17T05:50:19.334Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:26.090Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:33.759Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:41.657Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:43.952Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:48.692Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T06:21:52.846Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-17T07:22:28.207Z] System startup baseline sync
 -- [2026-09-17T07:23:38.625Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T07:25:30.105Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-17T07:26:27.904Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
@@ -76,3 +59,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-09-20T11:35:29.068Z] System startup baseline sync
 -- [2026-09-20T11:37:58.966Z] System startup baseline sync
 -- [2026-09-20T11:42:04.962Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-20T11:51:34.456Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-09-20T12:26:59.134Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
+-- [2026-09-20T12:27:13.364Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
+-- [2026-09-20T12:27:25.114Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:27:53.299Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:27:55.383Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:27:57.565Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:28:03.208Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:28:06.521Z] DELETE FROM users WHERE user_id = ?
+-- [2026-09-20T12:28:08.989Z] DELETE FROM users WHERE user_id = ?

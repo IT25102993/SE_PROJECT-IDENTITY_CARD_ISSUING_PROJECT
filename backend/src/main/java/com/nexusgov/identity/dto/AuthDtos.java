@@ -26,7 +26,7 @@ public class AuthDtos {
         private String email;
         private String password;
         private String full_name;
-        private String role = "Officer";
+        private String role = "Form-Officer";
 
         public RegisterRequest() {}
 

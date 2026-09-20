@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 /**
  * User entity — maps to the `users` table.
- * Roles: Admin, Officer, Approver
+ * Roles: Admin, Form Officer, Document Officer, Approver, Operational, Citizen
  */
 @Entity
 @Table(name = "users")
@@ -28,7 +28,7 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = UserRoleConverter.class)
     @Column(name = "role", nullable = false)
     private UserRole role;
 
@@ -55,7 +55,42 @@ public class User {
     }
 
     public enum UserRole {
-        Admin, Officer, Approver, Operational, Citizen
+        Admin, FORM_OFFICER, DOCUMENT_OFFICER, Approver, Operational, Citizen;
+
+        // DB stores hyphenated values ('Form-Officer') for Node.js compatibility.
+        public String dbValue() {
+            return switch (this) {
+                case FORM_OFFICER -> "Form-Officer";
+                case DOCUMENT_OFFICER -> "Document-Officer";
+                default -> name();
+            };
+        }
+    }
+
+    @Converter
+    public static class UserRoleConverter implements AttributeConverter<UserRole, String> {
+
+        @Override
+        public String convertToDatabaseColumn(UserRole role) {
+            return role == null ? null : role.dbValue();
+        }
+
+        @Override
+        public UserRole convertToEntityAttribute(String dbValue) {
+            if (dbValue == null) {
+                return null;
+            }
+            return switch (dbValue) {
+                case "Form-Officer" -> UserRole.FORM_OFFICER;
+                case "Document-Officer" -> UserRole.DOCUMENT_OFFICER;
+                default -> UserRole.valueOf(normalizeRole(dbValue));
+            };
+        }
+
+        // 'Admin' -> ADMIN, 'form-officer' -> FORM_OFFICER, 'APPROVER' -> APPROVER, etc.
+        private static String normalizeRole(String role) {
+            return role.toUpperCase().replace('-', '_');
+        }
     }
 
     public Long getUserId() { return userId; }

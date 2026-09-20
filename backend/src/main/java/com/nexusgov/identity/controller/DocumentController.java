@@ -30,7 +30,7 @@ public class DocumentController {
     // ── GET /api/documents?search=... ─────────────────────────────────────────
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'OFFICER', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FORM_OFFICER', 'DOCUMENT_OFFICER', 'APPROVER')")
     public ResponseEntity<Map<String, Object>> getAllDocuments(
             @RequestParam(required = false) String search) {
         List<DocumentDtos.DocumentDto> docs = documentService.getAllDocuments(search);
@@ -75,7 +75,7 @@ public class DocumentController {
     // ── DELETE /api/documents/:documentId ─────────────────────────────────────
 
     @DeleteMapping("/{documentId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'OFFICER', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCUMENT_OFFICER')")
     public ResponseEntity<Map<String, Object>> deleteDocument(@PathVariable Long documentId) {
         try {
             String msg = documentService.deleteDocument(documentId);

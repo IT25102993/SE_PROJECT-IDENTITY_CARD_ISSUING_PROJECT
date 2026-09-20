@@ -32,11 +32,11 @@ export const inMemoryDb = {
     },
     {
       user_id: 3,
-      username: 'Officer_Thilina',
-      email: 'officer@nexusgov.lk',
+      username: 'Form_Officer_Thilina',
+      email: 'form-officer@nexusgov.lk',
       password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
-      full_name: 'Officer Wickramasinghe',
-      role: 'Officer',
+      full_name: 'Form Handling Officer Perera',
+      role: 'Form-Officer',
       created_at: new Date().toISOString()
     },
     {
@@ -46,6 +46,15 @@ export const inMemoryDb = {
       password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
       full_name: 'Senior Approver Jayawardena',
       role: 'Approver',
+      created_at: new Date().toISOString()
+    },
+    {
+      user_id: 7,
+      username: 'Document_Officer_Silva',
+      email: 'document-officer@nexusgov.lk',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
+      full_name: 'Document Handling Officer Silva',
+      role: 'Document-Officer',
       created_at: new Date().toISOString()
     },
     {
@@ -204,7 +213,7 @@ export const initDb = async () => {
         \`password_hash\` VARCHAR(255) NOT NULL,
         \`full_name\` VARCHAR(100) NOT NULL,
         \`email\` VARCHAR(100) NOT NULL UNIQUE,
-        \`role\` ENUM('Admin', 'Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen',
+        \`role\` ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen',
         \`created_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`user_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
@@ -296,7 +305,12 @@ export const initDb = async () => {
 
     // Apply incremental schema migrations for pre-existing databases
     try {
-      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      // Step 1: Add the new roles while keeping legacy 'Officer' so existing rows can migrate
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      // Step 2: Convert legacy Officer accounts to the new Form-Officer role
+      await pool.query(`UPDATE users SET role = 'Form-Officer' WHERE LOWER(role) = 'officer';`);
+      // Step 3: Retire the generic 'Officer' role from the schema
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
     } catch (e) { /* ignore if already updated */ }
 
     try {
@@ -370,10 +384,16 @@ export const initDb = async () => {
       VALUES ('admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'System Administrator', 'admin@nexusgov.lk', 'Admin');
     `);
 
-    // Seed default verification officer
+    // Seed default form handling officer
     await pool.query(`
       INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
-      VALUES ('officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Officer Wickramasinghe', 'officer@nexusgov.lk', 'Officer');
+      VALUES ('form_officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Form Handling Officer Perera', 'form-officer@nexusgov.lk', 'Form-Officer');
+    `);
+
+    // Seed default document handling officer
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('document_officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Document Handling Officer Silva', 'document-officer@nexusgov.lk', 'Document-Officer');
     `);
 
     // Seed default senior approver

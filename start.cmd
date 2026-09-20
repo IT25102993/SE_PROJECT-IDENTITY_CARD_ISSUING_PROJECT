@@ -53,7 +53,8 @@ echo.
 echo   Citizen Portal:       http://localhost:5173
 echo   Online Application:   http://localhost:5173/apply
 echo   Live Card Tracking:   http://localhost:5173/track
-echo   Verification Officer: http://localhost:5173/officer
+echo   Form Officer:         http://localhost:5173/officer
+echo   Document Officer:     http://localhost:5173/officer
 echo   Senior Approver:      http://localhost:5173/officer?view=approver
 echo   Production / Print:   http://localhost:5173/print-queue
 echo   Executive Admin:      http://localhost:5173/admin
@@ -64,7 +65,8 @@ echo.
 echo ----------------------------------------------------------------------
 echo   DEFAULT CREDENTIALS (All passwords: password123 or #Thilina2005):
 echo     * Admin:    admin@nexusgov.lk  /  thilinasakalasooriya@gmail.com
-echo     * Officer:  officer@nexusgov.lk
+echo     * Form Officer:     form-officer@nexusgov.lk
+echo     * Document Officer: document-officer@nexusgov.lk
 echo     * Approver: approver@nexusgov.lk
 echo ======================================================================
 echo.

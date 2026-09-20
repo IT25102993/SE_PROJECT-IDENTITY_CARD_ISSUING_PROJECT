@@ -173,10 +173,10 @@ public class AuthService {
         }
 
         String role = req.getRole();
-        boolean validStaffRole = role != null && List.of("Admin", "Officer", "Approver", "Operational").contains(role);
+        boolean validStaffRole = role != null && List.of("Admin", "Form-Officer", "Document-Officer", "Approver", "Operational").contains(role);
         if (!validStaffRole) {
             return new RegisterResult(false,
-                "Invalid staff role. Admin, Officer, Approver, and Operational roles are the only roles that can be registered by an Admin.",
+                "Invalid staff role. Admin, Form-Officer, Document-Officer, Approver, and Operational roles are the only roles that can be registered by an Admin.",
                 null, null);
         }
 
@@ -185,7 +185,7 @@ public class AuthService {
             .email(req.getEmail())
             .passwordHash(passwordEncoder.encode(req.getPassword()))
             .fullName(req.getFull_name())
-            .role(User.UserRole.valueOf(role))
+            .role(parseRole(role))
             .build();
 
         user = userRepository.save(user);
@@ -261,7 +261,7 @@ public class AuthService {
 
         if (req.getFull_name() != null) user.setFullName(req.getFull_name());
         if (req.getEmail() != null) user.setEmail(req.getEmail());
-        if (req.getRole() != null) user.setRole(User.UserRole.valueOf(req.getRole()));
+        if (req.getRole() != null) user.setRole(parseRole(req.getRole()));
 
         userRepository.save(user);
         return "User #" + id + " updated successfully.";
@@ -277,13 +277,24 @@ public class AuthService {
 
     // ── Helper: Entity → DTO ──────────────────────────────────────────────────
 
+    /**
+     * Map a role string to the matching enum constant.
+     * Accepts 'Form-Officer', 'DOCUMENT_OFFICER', 'Admin', 'APPROVER', etc.
+     */
+    private static User.UserRole parseRole(String role) {
+        if (role == null) {
+            throw new IllegalArgumentException("Role must not be null.");
+        }
+        return User.UserRole.valueOf(role.toUpperCase().replace('-', '_'));
+    }
+
     public AuthDtos.UserDto toDto(User user) {
         AuthDtos.UserDto dto = new AuthDtos.UserDto();
         dto.setUser_id(user.getUserId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
         dto.setFull_name(user.getFullName());
-        dto.setRole(user.getRole().name());
+        dto.setRole(user.getRole() != null ? user.getRole().dbValue() : null);
         dto.setCreated_at(user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
         return dto;
     }

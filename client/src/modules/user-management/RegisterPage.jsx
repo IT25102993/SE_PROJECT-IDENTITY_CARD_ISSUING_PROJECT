@@ -257,7 +257,7 @@ export const RegisterPage = () => {
             color: 'var(--text-muted)',
             lineHeight: 1.4
           }}>
-            ℹ️ <strong>Official Notice:</strong> Public registration is strictly for <strong>Citizen</strong> applicants. Staff accounts (Admin, Officer, Approver) are provisioned exclusively through the internal Admin Console.
+            ℹ️ <strong>Official Notice:</strong> Public registration is strictly for <strong>Citizen</strong> applicants. Staff accounts (Admin, Form Officer, Document Officer, Approver) are provisioned exclusively through the internal Admin Console.
           </div>
         </div>
 

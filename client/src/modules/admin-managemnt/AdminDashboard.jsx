@@ -56,13 +56,13 @@ export const AdminDashboard = () => {
   const [loadingData, setLoadingData] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Register Officer Form State
+  // Register Staff Form State
   const [staffForm, setStaffForm] = useState({
     username: '',
     email: '',
     full_name: '',
     password: '',
-    role: 'Officer'
+    role: 'Form-Officer'
   });
 
   // Edit Role Modal State
@@ -128,7 +128,7 @@ export const AdminDashboard = () => {
       }
 
       addToast(`Successfully registered ${staffForm.full_name} as ${staffForm.role}!`, 'success');
-      setStaffForm({ username: '', email: '', full_name: '', password: '', role: 'Officer' });
+      setStaffForm({ username: '', email: '', full_name: '', password: '', role: 'Form-Officer' });
       fetchAdminData();
     } catch (err) {
       addToast(err.message, 'error');
@@ -543,7 +543,7 @@ export const AdminDashboard = () => {
               transition: 'all 0.2s ease'
             }}
           >
-            <UserCheck size={18} /> Officer Panel
+            <UserCheck size={18} /> Officer Job Pool
           </NavLink>
 
           <NavLink
@@ -1672,19 +1672,22 @@ export const AdminDashboard = () => {
                               backgroundColor:
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.15)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.15)' :
-                                u.role === 'Officer' ? 'rgba(16, 185, 129, 0.15)' :
+                                u.role === 'Form-Officer' ? 'rgba(16, 185, 129, 0.15)' :
+                                u.role === 'Document-Officer' ? 'rgba(6, 182, 212, 0.15)' :
                                 u.role === 'Operational' ? 'rgba(59, 130, 246, 0.15)' :
                                 'rgba(245, 158, 11, 0.15)',
                               color:
                                 u.role === 'Admin' ? 'var(--accent-purple)' :
                                 u.role === 'Approver' ? 'var(--accent-cyan)' :
-                                u.role === 'Officer' ? 'var(--accent-emerald)' :
+                                u.role === 'Form-Officer' ? 'var(--accent-emerald)' :
+                                u.role === 'Document-Officer' ? 'var(--accent-cyan)' :
                                 u.role === 'Operational' ? 'var(--accent-primary)' :
                                 'var(--accent-amber)',
                               border: `1px solid ${
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.3)' :
                                 u.role === 'Approver' ? 'rgba(6, 182, 212, 0.3)' :
-                                u.role === 'Officer' ? 'rgba(16, 185, 129, 0.3)' :
+                                u.role === 'Form-Officer' ? 'rgba(16, 185, 129, 0.3)' :
+                                u.role === 'Document-Officer' ? 'rgba(6, 182, 212, 0.3)' :
                                 u.role === 'Operational' ? 'rgba(59, 130, 246, 0.3)' :
                                 'rgba(245, 158, 11, 0.3)'
                               }`
@@ -1970,7 +1973,7 @@ export const AdminDashboard = () => {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Officer Wickramasinghe"
+                    placeholder="e.g. Form Handling Officer Perera"
                     value={staffForm.full_name}
                     onChange={e => setStaffForm({ ...staffForm, full_name: e.target.value })}
                     style={{
@@ -2029,7 +2032,8 @@ export const AdminDashboard = () => {
                         fontSize: '0.92rem'
                       }}
                     >
-                      <option value="Officer">Officer (Verification Personnel)</option>
+                      <option value="Form-Officer">Form Officer (Application Form Handling)</option>
+                      <option value="Document-Officer">Document Officer (Document Handling)</option>
                       <option value="Approver">Approver (Senior Officer)</option>
                       <option value="Operational">Operational (Print & Dispatch Specialist)</option>
                       <option value="Admin">Admin (System Administrator)</option>
@@ -2043,7 +2047,7 @@ export const AdminDashboard = () => {
                   </label>
                   <input
                     type="email"
-                    placeholder="e.g. officer@nexusgov.lk"
+                    placeholder="e.g. form-officer@nexusgov.lk"
                     value={staffForm.email}
                     onChange={e => setStaffForm({ ...staffForm, email: e.target.value })}
                     style={{
@@ -2527,7 +2531,8 @@ export const AdminDashboard = () => {
               }}
             >
               <option value="Citizen">Citizen (Applicant)</option>
-              <option value="Officer">Officer (Verification)</option>
+              <option value="Form-Officer">Form Officer (Form Handling)</option>
+              <option value="Document-Officer">Document Officer (Document Handling)</option>
               <option value="Approver">Approver (Senior Officer)</option>
               <option value="Operational">Operational (Print & Dispatch)</option>
               <option value="Admin">Admin (System Administrator)</option>

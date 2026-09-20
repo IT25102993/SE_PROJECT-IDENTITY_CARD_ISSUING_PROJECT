@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password_hash` VARCHAR(255) NOT NULL,
   `full_name` VARCHAR(100) NOT NULL,
   `email` VARCHAR(100) NOT NULL UNIQUE,
-  `role` ENUM('Admin', 'Officer', 'Approver', 'Citizen') NOT NULL DEFAULT 'Citizen',
+  `role` ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
@@ -157,8 +157,10 @@ CREATE TABLE IF NOT EXISTS `audit_logs` (
 INSERT INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`) VALUES
 (1, 'admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'System Administrator', 'admin@nexusgov.lk', 'Admin'),
 (2, 'thilina_admin', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Thilina Sakalasooriya', 'thilinasakalasooriya@gmail.com', 'Admin'),
-(3, 'officer1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Officer Wickramasinghe', 'officer1@nexusgov.lk', 'Officer'),
-(4, 'approver1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Senior Approver Jayawardena', 'approver1@nexusgov.lk', 'Approver');
+(3, 'officer1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Form Handling Officer Perera', 'officer1@nexusgov.lk', 'Form-Officer'),
+(4, 'approver1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Senior Approver Jayawardena', 'approver1@nexusgov.lk', 'Approver'),
+(5, 'document_officer1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Document Handling Officer Silva', 'document-officer@nexusgov.lk', 'Document-Officer'),
+(6, 'operational1', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Operational Specialist Silva', 'operational@nexusgov.lk', 'Operational');
 
 -- Seed Applicants
 INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `last_name`, `date_of_birth`, `gender`, `address`, `phone_number`, `email`) VALUES

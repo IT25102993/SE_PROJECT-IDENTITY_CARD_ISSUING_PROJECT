@@ -49,10 +49,12 @@ export const OfficerDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const rawRole = (user?.role || role || 'Officer').toLowerCase();
+  const rawRole = (user?.role || role || 'Form-Officer').toLowerCase();
   const isAdmin = rawRole === 'admin';
   const isApproverUser = rawRole === 'approver';
-  const isOfficerUser = ['officer', 'form-officer', 'document-officer', 'verification officer'].includes(rawRole);
+  const isOfficerUser = ['form-officer', 'document-officer'].includes(rawRole);
+  const isFormOfficerUser = rawRole === 'form-officer';
+  const isDocumentOfficerUser = rawRole === 'document-officer';
   const isOperationalUser = rawRole === 'operational';
   const isCitizen = !isAdmin && !isApproverUser && !isOfficerUser;
 
@@ -81,7 +83,7 @@ export const OfficerDashboard = () => {
   const [reuploadDocType, setReuploadDocType] = useState('Birth Certificate');
   const [reuploadReason, setReuploadReason] = useState('');
 
-  const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Officer Wickramasinghe');
+  const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Form Handling Officer Perera');
   const currentOfficer = currentStaffName;
 
   const isPending = (s) => ['PENDING_VERIFICATION','Pending','Verification-Passed'].includes(s);
@@ -413,13 +415,15 @@ export const OfficerDashboard = () => {
                 <UserCheck size={32} color="var(--accent-emerald)" />
               )}
               <h1 style={{ fontSize: '2.1rem', fontWeight: 800 }}>
-                {isApproverMode ? 'Senior Approver Job Pool' : 'Verification Officer Job Pool'}
+                {isApproverMode ? 'Senior Approver Job Pool' : isDocumentOfficerUser ? 'Document Officer Job Pool' : 'Form Officer Job Pool'}
               </h1>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.2rem' }}>
               {isApproverMode
                 ? 'Executive Authorization, AI Cross-Verification Sign-Off & Official Card Issuance.'
-                : 'Central Verification Job Pool & Biometric Validation Workbench.'}
+                : isDocumentOfficerUser
+                  ? 'Document Handling Job Pool — uploaded proof verification & re-upload requests.'
+                  : 'Form Handling Job Pool — application form review & correction workbench.'}
             </p>
           </div>
 
@@ -614,13 +618,15 @@ export const OfficerDashboard = () => {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button
-                    className={`btn btn-sm ${isEditing ? 'btn-emerald' : 'btn-primary'}`}
-                    onClick={() => setIsEditing(!isEditing)}
-                    style={{ gap: '0.35rem' }}
-                  >
-                    {isEditing ? <><Eye size={13}/> View Mode</> : <><Edit3 size={13}/> Edit / Correct</>}
-                  </button>
+                  {!isDocumentOfficerUser && (
+                    <button
+                      className={`btn btn-sm ${isEditing ? 'btn-emerald' : 'btn-primary'}`}
+                      onClick={() => setIsEditing(!isEditing)}
+                      style={{ gap: '0.35rem' }}
+                    >
+                      {isEditing ? <><Eye size={13}/> View Mode</> : <><Edit3 size={13}/> Edit / Correct</>}
+                    </button>
+                  )}
                   <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedApp(null); setIsEditing(false); }} style={{ gap: '0.35rem' }}>
                     <X size={14} /> Close
                   </button>
@@ -920,7 +926,7 @@ export const OfficerDashboard = () => {
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {!isEditing && (
                     <>
-                      {/* Officer view: can check details/documents, save notes, and request document re-upload ONLY. Cannot approve! */}
+                      {/* Officer view (Form & Document Officers): check details/documents, save notes, and request document re-upload ONLY. Cannot approve! */}
                       {!isApproverMode && (
                         <>
                           <button
@@ -976,7 +982,9 @@ export const OfficerDashboard = () => {
                 <Info size={11} />
                 {isApproverMode
                   ? 'Senior Approvers have executive sign-off authority to inspect AI Bot verification, issue official NIC numbers, and submit records to the thermal Print Queue.'
-                  : 'Verification Officers can check application details & documents, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'}
+                  : isDocumentOfficerUser
+                    ? 'Document Officers can inspect uploaded proof documents, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'
+                    : 'Form Officers can check application details & documents, correct form records, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'}
               </div>
             </div>
           </div>

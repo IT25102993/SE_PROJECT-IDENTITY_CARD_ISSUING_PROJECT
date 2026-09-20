@@ -225,7 +225,7 @@ export const HomePage = () => {
             {[
               { step: '1', title: 'Fill Form Details', text: 'Enter personal details in Sinhala, Tamil, and English along with address.', icon: Users },
               { step: '2', title: 'Upload Photo & Docs', text: 'Attach digital ID photo, signature, and Grama Niladhari certificate.', icon: FilePlus },
-              { step: '3', title: 'Officer Verification', text: 'Assigned officer validates details against national registration database.', icon: ShieldCheck },
+              { step: '3', title: 'Officer Verification', text: 'Form and Document Officers validate your application and supporting documents against the national registration database.', icon: ShieldCheck },
               { step: '4', title: 'Receive Smart NIC', text: 'Card is batch printed on PVC and dispatched to your home address via post.', icon: CheckCircle2 }
             ].map((s, idx) => {
               const IconComp = s.icon;

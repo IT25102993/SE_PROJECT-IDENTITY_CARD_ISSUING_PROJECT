@@ -63,10 +63,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         .authorities("ROLE_" + user.getRole().name())
                         .build())) {
 
-                    // Attach role claim from token
+                    // Attach role claim from token (normalized so 'Form-Officer',
+                    // 'FORM_OFFICER', etc. all map to ROLE_FORM_OFFICER for @PreAuthorize)
                     String role = (String) claims.get("role");
                     List<SimpleGrantedAuthority> authorities = List.of(
-                            new SimpleGrantedAuthority("ROLE_" + role)
+                            new SimpleGrantedAuthority("ROLE_" + normalizeRole(role))
                     );
 
                     UsernamePasswordAuthenticationToken authToken =
@@ -81,5 +82,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    // 'Admin' -> ADMIN, 'Form-Officer' -> FORM_OFFICER, 'operational' -> OPERATIONAL, etc.
+    private static String normalizeRole(String role) {
+        return role == null ? "" : role.toUpperCase().replace('-', '_');
     }
 }

@@ -53,7 +53,7 @@ public class AdminService {
                 if (u != null) {
                     dto.setUser_id(u.getUserId());
                     dto.setUsername(u.getUsername());
-                    dto.setRole(u.getRole() != null ? u.getRole().name() : null);
+                    dto.setRole(u.getRole() != null ? u.getRole().dbValue() : null);
                 }
                 dto.setAction(log.getAction());
                 dto.setDetails(log.getDetails());

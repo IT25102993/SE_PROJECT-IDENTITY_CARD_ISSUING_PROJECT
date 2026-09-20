@@ -4,10 +4,18 @@
 ========================================
 
 
-Officer (Verification Officer Job Pool)
+Form Officer (Form Handling Job Pool)
 _______________________________________________
-Username : Officer_Thilina
-Email    : officer@nexusgov.lk
+Username : Form_Officer_Thilina
+Email    : form-officer@nexusgov.lk
+Password : #Thilina2005
+_______________________________________________
+
+
+Document Officer (Document Handling Job Pool)
+_______________________________________________
+Username : Document_Officer_Silva
+Email    : document-officer@nexusgov.lk
 Password : #Thilina2005
 _______________________________________________
 

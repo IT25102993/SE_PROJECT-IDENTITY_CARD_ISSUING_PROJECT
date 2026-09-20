@@ -52,7 +52,7 @@ export const LoginPage = () => {
             navigate('/print-queue');
           } else if (userRole === 'approver') {
             navigate('/officer?view=approver');
-          } else if (userRole === 'officer' || userRole === 'verification officer' || userRole === 'form-officer' || userRole === 'document-officer') {
+          } else if (userRole === 'form-officer' || userRole === 'document-officer') {
             navigate('/officer?view=officer');
           } else {
             navigate('/');

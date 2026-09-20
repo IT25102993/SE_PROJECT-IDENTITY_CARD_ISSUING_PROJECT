@@ -94,7 +94,7 @@ public class OperationController {
     // ── GET /api/operations/analytics ─────────────────────────────────────────
 
     @GetMapping("/analytics")
-    @PreAuthorize("hasAnyRole('ADMIN', 'OFFICER', 'APPROVER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FORM_OFFICER', 'DOCUMENT_OFFICER', 'APPROVER')")
     public ResponseEntity<Map<String, Object>> getAnalytics() {
         OperationDtos.Analytics a = operationService.getAnalytics();
         Map<String, Object> response = new HashMap<>();
