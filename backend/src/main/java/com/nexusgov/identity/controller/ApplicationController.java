@@ -49,6 +49,18 @@ public class ApplicationController {
         ));
     }
 
+    // ── GET /api/applications/:id (tracking status lookup) ───────────────────
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getApplication(@PathVariable String id) {
+        try {
+            ApplicationDtos.ApplicationDto app = applicationService.getApplication(id);
+            return ResponseEntity.ok(Map.of("success", true, "application", app));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error(e.getMessage()));
+        }
+    }
+
     // ── POST /api/applications ────────────────────────────────────────────────
 
     @PostMapping
