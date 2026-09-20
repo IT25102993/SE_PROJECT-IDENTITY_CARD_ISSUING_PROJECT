@@ -29,6 +29,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     List<Application> findAllByOrderBySubmittedAtDesc();
 
+    List<Application> findAllByApplicant_EmailIgnoreCaseOrderBySubmittedAtDesc(String email);
+
     List<Application> findByStatusInOrderByUpdatedAtDesc(Collection<ApplicationStatus> statuses);
 
     long countByStatus(ApplicationStatus status);
