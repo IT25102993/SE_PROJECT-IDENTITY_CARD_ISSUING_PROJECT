@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "last_updated": "2026-09-17T08:11:07.518Z",
+  "last_updated": "2026-09-20T11:42:04.958Z",
   "tables": {
     "users": [
       {
@@ -45,7 +45,7 @@
         "password_hash": "$2a$10$d7c4JYu9y3EDOZKTyxYnQe7tnvpbvFtAJxq4JT3txY6eE0K7gInza",
         "full_name": "Thilina new",
         "email": "sakaleyt@gmail.com",
-        "role": "Citizen",
+        "role": "Admin",
         "created_at": "2026-09-17T00:41:39.000Z"
       },
       {
@@ -74,6 +74,15 @@
         "email": "operational@nexusgov.lk",
         "role": "Operational",
         "created_at": "2026-09-17T07:22:28.000Z"
+      },
+      {
+        "user_id": 54,
+        "username": "officer_buddhima",
+        "password_hash": "$2a$10$XdSZNPayuOJB9Q2zO9shQu7cMiuvMaqQPCgZU9NgxQMw7NGpG0nBy",
+        "full_name": "operational officer",
+        "email": "operation@nexusgov.lk",
+        "role": "Operational",
+        "created_at": "2026-09-17T08:19:22.000Z"
       }
     ],
     "applicants": [
@@ -168,9 +177,9 @@
         "application_reason": "Wallet Got Stolen",
         "marital_status": "Single",
         "service_type": "1-Day",
-        "remarks": "[Action Required: Re-upload Birth Certificate] New citizen online submission.",
+        "remarks": "[Action Required: Re-upload Birth Certificate] [Action Required: Re-upload Birth Certificate] New citizen online submission.",
         "submitted_at": "2026-09-17T04:45:45.000Z",
-        "updated_at": "2026-09-17T07:59:20.000Z"
+        "updated_at": "2026-09-17T08:34:32.000Z"
       }
     ],
     "documents": [
@@ -291,8 +300,112 @@
         "created_at": "2026-09-17T05:16:03.000Z"
       }
     ],
-    "account_deletion_requests": [],
+    "account_deletion_requests": [
+      {
+        "request_id": 1,
+        "user_id": 23,
+        "username": "citizen_thilina",
+        "email": "sakaleyt@gmail.com",
+        "reason": "hi request",
+        "status": "Pending",
+        "admin_notes": null,
+        "requested_at": "2026-09-17T08:45:16.000Z",
+        "processed_at": null,
+        "processed_by": null
+      }
+    ],
     "audit_logs": [
+      {
+        "log_id": 71,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-20T11:42:04.000Z"
+      },
+      {
+        "log_id": 70,
+        "user_id": 38,
+        "action": "USER_LOGIN",
+        "details": "User operational logged in successfully.",
+        "timestamp": "2026-09-17T08:47:49.000Z"
+      },
+      {
+        "log_id": 69,
+        "user_id": 23,
+        "action": "USER_LOGIN",
+        "details": "User citizen_thilina logged in successfully.",
+        "timestamp": "2026-09-17T08:46:20.000Z"
+      },
+      {
+        "log_id": 68,
+        "user_id": 23,
+        "action": "ACCOUNT_DELETION_REQUESTED",
+        "details": "User citizen_thilina requested account deletion. Reason: hi request",
+        "timestamp": "2026-09-17T08:45:16.000Z"
+      },
+      {
+        "log_id": 67,
+        "user_id": 23,
+        "action": "USER_LOGIN",
+        "details": "User citizen_thilina logged in successfully.",
+        "timestamp": "2026-09-17T08:45:01.000Z"
+      },
+      {
+        "log_id": 66,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-17T08:43:01.000Z"
+      },
+      {
+        "log_id": 65,
+        "user_id": 18,
+        "action": "USER_LOGIN",
+        "details": "User approver logged in successfully.",
+        "timestamp": "2026-09-17T08:35:21.000Z"
+      },
+      {
+        "log_id": 64,
+        "user_id": 17,
+        "action": "APPLICATION_UPDATED",
+        "details": "Application #3 details updated by Officer Wickramasinghe",
+        "timestamp": "2026-09-17T08:34:32.000Z"
+      },
+      {
+        "log_id": 63,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T08:30:21.000Z"
+      },
+      {
+        "log_id": 62,
+        "user_id": 17,
+        "action": "USER_LOGIN",
+        "details": "User officer logged in successfully.",
+        "timestamp": "2026-09-17T08:29:02.000Z"
+      },
+      {
+        "log_id": 61,
+        "user_id": 23,
+        "action": "USER_LOGIN",
+        "details": "User citizen_thilina logged in successfully.",
+        "timestamp": "2026-09-17T08:22:54.000Z"
+      },
+      {
+        "log_id": 60,
+        "user_id": 2,
+        "action": "ADMIN_CREATE_USER",
+        "details": "Admin created staff user: officer_buddhima (Operational)",
+        "timestamp": "2026-09-17T08:19:22.000Z"
+      },
+      {
+        "log_id": 59,
+        "user_id": 38,
+        "action": "USER_LOGIN",
+        "details": "User operational logged in successfully.",
+        "timestamp": "2026-09-17T08:14:06.000Z"
+      },
       {
         "log_id": 58,
         "user_id": 17,
@@ -985,10 +1098,22 @@
     {
       "timestamp": "2026-09-17T08:11:07.518Z",
       "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-20T11:35:29.068Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-20T11:37:58.966Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-20T11:42:04.962Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
   "summary": {
-    "total_users": 8,
+    "total_users": 9,
     "total_applicants": 3,
     "total_applications": 3,
     "total_documents": 9,
