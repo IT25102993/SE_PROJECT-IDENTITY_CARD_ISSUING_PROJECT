@@ -49,7 +49,11 @@ public class SecurityConfig {
                     "/api/auth/send-otp",
                     "/api/auth/verify-otp",
                     "/api/applications",
-                    "/api/applications/**"
+                    "/api/applications/**",
+                    "/api/documents/application/*",
+                    "/api/documents/applications/*/documents",
+                    "/api/verification/applications/*/bot-verify",
+                    "/api/verification/*/bot-verify"
                 ).permitAll()
 
                 // ── All other routes require JWT ──────────────────────────────
