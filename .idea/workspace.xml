@@ -2,86 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/Node_Server_Dev.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Node_Server_Dev.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Vite_Client_Dev.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Vite_Client_Dev.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/dev_client.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/dev_server.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/nexusgov/identity/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/nexusgov/identity/controller/AdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/nexusgov/identity/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/nexusgov/identity/model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/NexusGovApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/NexusGovApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/CorsConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/CorsConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/DatabaseBackupService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/DatabaseBackupService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/DatabaseBootstrap.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/DatabaseBootstrap.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/config/WebConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/controller/AdminController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/controller/HealthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/controller/HealthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$DeletionRejectRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$DeletionRejectRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$DeletionRequestDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$DeletionRequestDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$LogDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos$LogDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AdminDtos.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApiResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApiResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApplicationDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApplicationDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApplicationRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApplicationRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApproveRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ApproveRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ClaimRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$ClaimRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$DocumentPayload.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$DocumentPayload.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$RejectRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$RejectRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$StatusUpdateRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$StatusUpdateRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$UpdateApplicationRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos$UpdateApplicationRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/ApplicationDtos.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$AuthResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$AuthResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$LoginRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$OtpRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$OtpRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$RegisterRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$RegisterRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$RegisterStaffRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$RegisterStaffRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$UpdateUserRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$UpdateUserRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$UserDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$UserDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$VerifyOtpRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos$VerifyOtpRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/AuthDtos.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentUploadRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentUploadRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentsResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos$DocumentsResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/DocumentDtos.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$Analytics.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$Analytics.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRecordDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRecordDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRecordsResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRecordsResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$DispatchRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$PrintQueueItemDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$PrintQueueItemDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$PrintQueueResponse.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$PrintQueueResponse.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$StatusUpdateRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos$StatusUpdateRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/dto/OperationDtos.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/exception/GlobalExceptionHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest$Builder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest$DeletionStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest$DeletionStatus.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/AccountDeletionRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant$Builder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant$Gender.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant$Gender.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/Applicant.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/ApplicationStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/ApplicationStatus.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/ApplicationStatusConverter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/ApplicationStatusConverter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord$Builder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord$DispatchMethod.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord$DispatchMethod.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/DispatchRecord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User$Builder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User$UserRoleConverter.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User$UserRoleConverter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/model/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/AccountDeletionRequestRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/AccountDeletionRequestRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/ApplicantRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/ApplicantRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/AuditLogRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/AuditLogRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/DispatchRecordRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/DispatchRecordRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/DocumentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/repository/DocumentRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/security/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/security/JwtUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$BotResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$BotResult.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$DocRef.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$DocRef.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$PdfDetails.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService$PdfDetails.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/BotVerificationService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/DocumentStorageService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/DocumentStorageService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/EmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/EmailService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService$OtpRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService$OtpRecord.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService$VerifyResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService$VerifyResult.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService.class" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/classes/com/nexusgov/identity/service/OtpService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/backend/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backup/database_backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backup/database_backup.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/start.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,32 +43,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Node.js.App.jsx.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.main.jsx.executor&quot;: &quot;Run&quot;,
-    &quot;Node.js.server.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.Node Server (Dev).executor&quot;: &quot;Run&quot;,
-    &quot;npm.Vite Client (Dev).executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev:client.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev:server.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Files\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.App.jsx.executor": "Run",
+    "Node.js.main.jsx.executor": "Run",
+    "Node.js.server.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "nodejs_package_manager_path": "npm",
+    "npm.NexusGov — Backend API (Node.js).executor": "Run",
+    "npm.NexusGov — Frontend Client (Vite).executor": "Run",
+    "npm.Node Server (Dev).executor": "Run",
+    "npm.Vite Client (Dev).executor": "Run",
+    "npm.dev:client.executor": "Run",
+    "npm.dev:server.executor": "Run",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "D:\\Files\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="npm.Vite Client (Dev)" />
+}]]></component>
+  <component name="RunManager" selected="npm.NexusGov — Frontend Client (Vite)" />
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -195,6 +125,7 @@
       <workItem from="1789612610776" duration="11107000" />
       <workItem from="1789630356950" duration="2212000" />
       <workItem from="1789916926503" duration="756000" />
+      <workItem from="1789970937662" duration="708000" />
     </task>
     <servers />
   </component>

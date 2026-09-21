@@ -4,15 +4,13 @@
   "description": "Sri Lanka National Identity Card Issuing & Digital Verification System - Full Stack Application",
   "private": true,
   "scripts": {
-    "dev:server": "cd backend && mvnw.cmd spring-boot:run",
-    "dev:node": "npm --prefix server run dev",
+    "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
-    "start:server": "cd backend && mvnw.cmd spring-boot:run",
-    "start:node": "npm --prefix server start",
-    "build:server": "cd backend && mvnw.cmd clean package -DskipTests",
+    "start:server": "npm --prefix server start",
+    "start:client": "npm --prefix client run dev",
     "build:client": "npm --prefix client run build",
     "clean:db": "npm --prefix server run clean:db",
-    "dev": "npm --prefix client run dev"
+    "install:all": "npm --prefix server install && npm --prefix client install"
   },
   "keywords": [
     "identity-card-issuing-system",

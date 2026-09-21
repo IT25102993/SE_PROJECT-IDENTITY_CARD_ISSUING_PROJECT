@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="NexusGov — Backend API (Node.js)" type="js.build_tools.npm" factoryName="npm" singleton="true">
+  <configuration default="false" name="NexusGov — Backend API (Node.js)" type="js.build_tools.npm" singleton="true">
     <package-json value="$PROJECT_DIR$/server/package.json" />
     <command value="run" />
     <scripts>
