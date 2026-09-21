@@ -285,7 +285,15 @@ public class AuthService {
         if (role == null) {
             throw new IllegalArgumentException("Role must not be null.");
         }
-        return User.UserRole.valueOf(role.toUpperCase().replace('-', '_'));
+        // Match DB values ("Form-Officer") and enum constant names case-insensitively,
+        // so Admin/Approver/Operational/Citizen (mixed-case names) resolve correctly.
+        String target = role.replace('_', '-');
+        for (User.UserRole r : User.UserRole.values()) {
+            if (r.dbValue().equalsIgnoreCase(target) || r.name().equalsIgnoreCase(role)) {
+                return r;
+            }
+        }
+        throw new IllegalArgumentException("Unknown role: " + role);
     }
 
     public AuthDtos.UserDto toDto(User user) {

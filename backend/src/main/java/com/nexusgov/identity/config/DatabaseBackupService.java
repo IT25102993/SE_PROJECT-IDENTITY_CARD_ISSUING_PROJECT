@@ -85,6 +85,12 @@ public class DatabaseBackupService implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (!isMySql()) {
+            log.info("Database Backup Service skipped — active database '{}' is not MySQL. "
+                + "Backup/restore only runs against MySQL.",
+                databaseProductName());
+            return;
+        }
         Path backupFile = resolveBackupFile();
         log.info("==========================================================");
         log.info("Database Backup Service");
@@ -127,6 +133,17 @@ public class DatabaseBackupService implements CommandLineRunner {
     }
 
     // ── Backup file location ───────────────────────────────────────────────────
+
+    private boolean isMySql() throws SQLException {
+        String product = databaseProductName();
+        return product != null && product.toLowerCase().contains("mysql");
+    }
+
+    private String databaseProductName() throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
+            return conn.getMetaData().getDatabaseProductName();
+        }
+    }
 
     /**
      * Looks for the backup file in {@code <cwd>/backup} first, then in

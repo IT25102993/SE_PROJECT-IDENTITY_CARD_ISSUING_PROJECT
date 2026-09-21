@@ -192,7 +192,6 @@ export const initDb = async () => {
       connectionLimit: 15,
       queueLimit: 0,
       connectTimeout: 10000,
-      acquireTimeout: 10000,
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
       idleTimeout: 300000

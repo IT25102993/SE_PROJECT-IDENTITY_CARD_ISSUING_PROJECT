@@ -4,10 +4,12 @@ color 0B
 
 echo ======================================================================
 echo    NEXUSGOV IDENTITY ISSUANCE SYSTEM — INSTANT LAUNCHER
-echo    Department of Registration of Persons • Democratic Socialist Republic of Sri Lanka
+echo    Department of Registration of Persons
+echo    Democratic Socialist Republic of Sri Lanka
 echo ======================================================================
 echo.
 
+:: Check for Node.js
 where node >nul 2>nul
 if %errorlevel% neq 0 (
     color 0C
@@ -18,31 +20,42 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+:: Ensure MySQL is reachable
+powershell -NoProfile -Command "$c = [System.Net.Sockets.TcpClient]::new(); $ok = $c.ConnectAsync('localhost',3306).Wait(1500); $c.Close(); if($ok){exit 0}else{exit 1}" >nul 2>nul
+if %errorlevel% neq 0 (
+    color 0E
+    echo [WARNING] MySQL is not running on localhost:3306.
+    echo The server will operate in In-Memory mode (no data persistence).
+    echo Start MySQL (XAMPP/WAMP or the MySQL service) for full functionality.
+    echo.
+)
+
 :: Ensure server dependencies exist
 if not exist "%~dp0server\node_modules" (
-    echo [1/3] Installing Server dependencies...
+    echo [1/2] Installing Server dependencies...
     cd /d "%~dp0server"
     call npm install --silent
 )
 
 :: Ensure client dependencies exist
 if not exist "%~dp0client\node_modules" (
-    echo [2/3] Installing Client dependencies...
+    echo [2/2] Installing Client dependencies...
     cd /d "%~dp0client"
     call npm install --silent
 )
 
-echo [1/2] Starting Node.js Backend API (Port 5000)...
+echo.
+echo [1/2] Starting Node.js Express Backend API (Port 5000)...
 start "NexusGov - Backend Server (Port 5000)" cmd /k "color 0A && cd /d "%~dp0server" && npm start"
 
-:: Quick 1.5-second warm-up before launching frontend
-timeout /t 2 /nobreak >nul
+:: Wait for backend to initialize
+timeout /t 3 /nobreak >nul
 
 echo [2/2] Starting React Vite Frontend (Port 5173)...
 start "NexusGov - Frontend Client (Port 5173)" cmd /k "color 0B && cd /d "%~dp0client" && npm run dev"
 
-:: Open default browser directly to application
-timeout /t 2 /nobreak >nul
+:: Open browser
+timeout /t 3 /nobreak >nul
 start http://localhost:5173
 
 echo.
@@ -63,13 +76,15 @@ echo   Backend REST API:     http://localhost:5000
 echo   API Health Check:     http://localhost:5000/api/health
 echo.
 echo ----------------------------------------------------------------------
-echo   DEFAULT CREDENTIALS (All passwords: password123 or #Thilina2005):
-echo     * Admin:    admin@nexusgov.lk  /  thilinasakalasooriya@gmail.com
+echo   DEFAULT CREDENTIALS (password: #Thilina2005):
+echo     * Admin:            admin@nexusgov.lk
+echo     * Admin (Dev):      thilinasakalasooriya@gmail.com
 echo     * Form Officer:     form-officer@nexusgov.lk
 echo     * Document Officer: document-officer@nexusgov.lk
-echo     * Approver: approver@nexusgov.lk
+echo     * Approver:         approver@nexusgov.lk
+echo     * Operational:      operational@nexusgov.lk
 echo ======================================================================
 echo.
-echo  Keep the server windows open. Close them when you want to stop the servers.
+echo  Keep the server windows open. Close them when you want to stop.
 echo.
 pause

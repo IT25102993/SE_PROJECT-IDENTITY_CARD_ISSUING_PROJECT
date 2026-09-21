@@ -77,19 +77,18 @@ public class User {
 
         @Override
         public UserRole convertToEntityAttribute(String dbValue) {
-            if (dbValue == null) {
+            if (dbValue == null || dbValue.isBlank()) {
                 return null;
             }
-            return switch (dbValue) {
-                case "Form-Officer" -> UserRole.FORM_OFFICER;
-                case "Document-Officer" -> UserRole.DOCUMENT_OFFICER;
-                default -> UserRole.valueOf(normalizeRole(dbValue));
-            };
-        }
-
-        // 'Admin' -> ADMIN, 'form-officer' -> FORM_OFFICER, 'APPROVER' -> APPROVER, etc.
-        private static String normalizeRole(String role) {
-            return role.toUpperCase().replace('-', '_');
+            // Match canonical DB values ("Form-Officer", "Admin", ...) and enum
+            // constant names case-insensitively so legacy/mixed-case values load.
+            String target = dbValue.replace('_', '-');
+            for (UserRole r : UserRole.values()) {
+                if (r.dbValue().equalsIgnoreCase(target) || r.name().equalsIgnoreCase(dbValue)) {
+                    return r;
+                }
+            }
+            throw new IllegalArgumentException("Unknown UserRole value: " + dbValue);
         }
     }
 
