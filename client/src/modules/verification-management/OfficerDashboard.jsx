@@ -42,6 +42,7 @@ export const OfficerDashboard = () => {
     claimNextJob,
     triggerLoading,
     runBotVerification,
+    getApplicationVerifications,
     addToast
   } = useApp();
 
@@ -82,6 +83,7 @@ export const OfficerDashboard = () => {
   const [showReuploadModal, setShowReuploadModal] = useState(false);
   const [reuploadDocType, setReuploadDocType] = useState('Birth Certificate');
   const [reuploadReason, setReuploadReason] = useState('');
+  const [verificationHistory, setVerificationHistory] = useState([]);
 
   const currentStaffName = user?.full_name || (isApproverMode ? 'Senior Approver Jayawardena' : 'Form Handling Officer Perera');
   const currentOfficer = currentStaffName;
@@ -152,6 +154,9 @@ export const OfficerDashboard = () => {
           bot_verified_at: new Date().toISOString(),
           status: res.status
         }));
+        // Refresh the Verification Management record table for this application
+        const history = await getApplicationVerifications(appId);
+        setVerificationHistory(history);
       }
     } catch (err) {
       addToast(err.message || 'Failed to trigger AI bot verification', 'error');
@@ -225,6 +230,7 @@ export const OfficerDashboard = () => {
         if (selectedApp && (selectedApp.id === appId || selectedApp.application_id === appId)) {
           setSelectedApp(null);
           setIsEditing(false);
+          setVerificationHistory([]);
         }
       }
     });
@@ -238,6 +244,12 @@ export const OfficerDashboard = () => {
     setSelectedApp(app);
     setIsEditing(false);
     setOfficerComment(app.officerNotes || app.remarks || '');
+    // Load the Verification Management record table (AI Bot history)
+    if (isApproverMode) {
+      getApplicationVerifications(appId).then(rows => setVerificationHistory(rows));
+    } else {
+      setVerificationHistory([]);
+    }
     setEditForm({
       first_name: app.first_name || '',
       last_name: app.last_name || '',
@@ -627,7 +639,7 @@ export const OfficerDashboard = () => {
                       {isEditing ? <><Eye size={13}/> View Mode</> : <><Edit3 size={13}/> Edit / Correct</>}
                     </button>
                   )}
-                  <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedApp(null); setIsEditing(false); }} style={{ gap: '0.35rem' }}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedApp(null); setIsEditing(false); setVerificationHistory([]); }} style={{ gap: '0.35rem' }}>
                     <X size={14} /> Close
                   </button>
                 </div>
@@ -897,6 +909,59 @@ export const OfficerDashboard = () => {
                             <strong style={{ color: 'var(--accent-cyan)' }}>AI Bot Summary:</strong> {selectedApp.bot_notes}
                           </div>
                         )}
+
+                        {/* Verification Management — records table (AI Bot history) */}
+                        <div style={{ marginTop: '0.25rem', background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(6,182,212,0.25)', borderRadius: '10px', overflow: 'hidden' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.9rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <ShieldCheck size={13} color="var(--accent-cyan)" /> Verification Records (Verification Management Table)
+                            </div>
+                            <span style={{ fontSize: '0.66rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                              {verificationHistory.length} record(s)
+                            </span>
+                          </div>
+                          {verificationHistory.length > 0 ? (
+                            <div style={{ overflowX: 'auto' }}>
+                              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.72rem' }}>
+                                <thead>
+                                  <tr style={{ color: 'var(--text-muted)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>#</th>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>Method</th>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>Result</th>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>Score</th>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>Verified At</th>
+                                    <th style={{ padding: '0.45rem 0.7rem', textAlign: 'left' }}>Output</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {verificationHistory.map((v, vIdx) => (
+                                    <tr key={vIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                      <td style={{ padding: '0.45rem 0.7rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{v.verification_id}</td>
+                                      <td style={{ padding: '0.45rem 0.7rem' }}>{v.method}</td>
+                                      <td style={{ padding: '0.45rem 0.7rem' }}>
+                                        <span style={{
+                                          fontSize: '0.66rem', fontWeight: 700, padding: '0.08rem 0.5rem', borderRadius: '12px',
+                                          background: (v.passed === 1 || v.passed === true) ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)',
+                                          color: (v.passed === 1 || v.passed === true) ? 'var(--accent-emerald)' : 'var(--accent-amber)',
+                                          border: `1px solid ${(v.passed === 1 || v.passed === true) ? 'rgba(16,185,129,0.4)' : 'rgba(245,158,11,0.4)'}`
+                                        }}>
+                                          {v.result || ((v.passed === 1 || v.passed === true) ? 'Verified' : 'Flagged')}
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '0.45rem 0.7rem', fontFamily: 'var(--font-mono)' }}>{v.score}%</td>
+                                      <td style={{ padding: '0.45rem 0.7rem', color: 'var(--text-muted)' }}>{v.verified_at}</td>
+                                      <td style={{ padding: '0.45rem 0.7rem', color: 'var(--text-muted)', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={v.notes || ''}>{v.notes || '—'}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          ) : (
+                            <div style={{ padding: '0.7rem 0.9rem', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                              No verification records on file yet — run the AI Bot to create a record.
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
 

@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backup/database_backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backup/database_backup.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/context/AppContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/context/AppContext.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity_card_system.sql" beforeDir="false" afterPath="$PROJECT_DIR$/identity_card_system.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/config/backupService.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/config/backupService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/config/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/config/db.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/admin-management/adminController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/admin-management/adminController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/application-form-management/applicationRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/operation-management/operationController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/operation-management/operationController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/verification-management/verificationController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/verification-management/verificationController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/modules/verification-management/verificationRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/modules/verification-management/verificationRoutes.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -61,7 +77,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="npm.NexusGov — Frontend Client (Vite)" />
+  <component name="RunManager" selected="npm.NexusGov — Backend API (Node.js)" />
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -118,6 +134,7 @@
       <workItem from="1789916926503" duration="756000" />
       <workItem from="1789970937662" duration="708000" />
       <workItem from="1790007518698" duration="597000" />
+      <workItem from="1790181796745" duration="1763000" />
     </task>
     <servers />
   </component>

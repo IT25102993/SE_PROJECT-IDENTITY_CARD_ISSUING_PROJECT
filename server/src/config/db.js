@@ -150,6 +150,32 @@ export const inMemoryDb = {
       uploaded_at: '2026-08-01 09:33:00'
     }
   ],
+  verifications: [
+    {
+      verification_id: 1,
+      application_id: 1,
+      applicant_id: 1,
+      method: 'AI-BOT',
+      result: 'Verified',
+      passed: 1,
+      score: 96,
+      notes: 'Automated Bot Check: PASSED (Match Score: 96%). Official Birth Certificate confirmed for Thilina Sakalasooriya. Demographic data and registration format validated with official registrar criteria.',
+      verified_by: 1,
+      verified_at: '2026-08-01 09:35:00'
+    },
+    {
+      verification_id: 2,
+      application_id: 2,
+      applicant_id: 2,
+      method: 'AI-BOT',
+      result: 'Verified',
+      passed: 1,
+      score: 92,
+      notes: 'Automated Bot Check: PASSED (Match Score: 92%). Official Birth Certificate confirmed for Kavindu Perera. Specimen Document validated against Sri Lanka civil registration criteria.',
+      verified_by: 1,
+      verified_at: '2026-08-02 10:15:00'
+    }
+  ],
   identity_cards: [
     {
       card_id: 1,
@@ -237,16 +263,28 @@ export const initDb = async () => {
         \`applicant_id\` INT NOT NULL,
         \`application_type\` ENUM('New', 'Renewal', 'Replacement') NOT NULL DEFAULT 'New',
         \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending',
-        \`bot_verified\` TINYINT(1) NOT NULL DEFAULT 0,
-        \`bot_score\` INT NOT NULL DEFAULT 0,
-        \`bot_notes\` TEXT NULL,
-        \`bot_verified_at\` DATETIME NULL,
         \`processed_by\` INT NULL,
         \`assigned_officer\` VARCHAR(100) NULL,
         \`remarks\` TEXT NULL,
         \`submitted_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         \`updated_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (\`application_id\`)
+      ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+      CREATE TABLE IF NOT EXISTS \`verifications\` (
+        \`verification_id\` INT NOT NULL AUTO_INCREMENT,
+        \`application_id\` INT NOT NULL,
+        \`applicant_id\` INT NULL,
+        \`method\` ENUM('AI-BOT', 'MANUAL') NOT NULL DEFAULT 'AI-BOT',
+        \`result\` ENUM('Verified', 'Flagged', 'Inconclusive') NOT NULL DEFAULT 'Inconclusive',
+        \`passed\` TINYINT(1) NOT NULL DEFAULT 0,
+        \`score\` INT NOT NULL DEFAULT 0,
+        \`notes\` TEXT NULL,
+        \`verified_by\` INT NULL,
+        \`verified_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (\`verification_id\`),
+        INDEX \`idx_ver_application_id\` (\`application_id\`),
+        INDEX \`idx_ver_applicant_id\` (\`applicant_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
 
       CREATE TABLE IF NOT EXISTS \`documents\` (
@@ -342,22 +380,40 @@ export const initDb = async () => {
       await pool.query(`ALTER TABLE applicants ADD COLUMN photo_path VARCHAR(255) NULL;`);
     } catch (e) { /* ignore if already exists */ }
 
-    // Add bot columns if missing in applications table
+    // Migration: move bot verification data out of `applications` into the
+    // dedicated `verifications` table owned by Verification Management
     const [cols] = await pool.query(`SHOW COLUMNS FROM applications;`);
     const colNames = cols.map(c => c.Field);
 
-    if (!colNames.includes('bot_verified')) {
-      await pool.query(`ALTER TABLE applications ADD COLUMN bot_verified TINYINT(1) NOT NULL DEFAULT 0;`);
+    if (colNames.includes('bot_verified') || colNames.includes('bot_score') ||
+        colNames.includes('bot_notes') || colNames.includes('bot_verified_at')) {
+      try {
+        // Copy any leftover bot verification records into the verifications table
+        await pool.query(`
+          INSERT INTO verifications (application_id, applicant_id, method, result, passed, score, notes, verified_at)
+          SELECT application_id, applicant_id, 'AI-BOT',
+                 CASE WHEN bot_score >= 80 THEN 'Verified' WHEN bot_score > 0 THEN 'Flagged' ELSE 'Inconclusive' END,
+                 COALESCE(bot_verified, 0), COALESCE(bot_score, 0), bot_notes, bot_verified_at
+          FROM applications
+          WHERE (bot_verified IS NOT NULL OR bot_score IS NOT NULL OR bot_notes IS NOT NULL OR bot_verified_at IS NOT NULL)
+            AND application_id NOT IN (SELECT DISTINCT application_id FROM verifications);
+        `);
+      } catch (e) { /* ignore if migration already done */ }
+
+      try {
+        await pool.query(`ALTER TABLE applications DROP COLUMN bot_verified;`);
+      } catch (e) { /* ignore if already dropped */ }
+      try {
+        await pool.query(`ALTER TABLE applications DROP COLUMN bot_score;`);
+      } catch (e) { /* ignore if already dropped */ }
+      try {
+        await pool.query(`ALTER TABLE applications DROP COLUMN bot_notes;`);
+      } catch (e) { /* ignore if already dropped */ }
+      try {
+        await pool.query(`ALTER TABLE applications DROP COLUMN bot_verified_at;`);
+      } catch (e) { /* ignore if already dropped */ }
     }
-    if (!colNames.includes('bot_score')) {
-      await pool.query(`ALTER TABLE applications ADD COLUMN bot_score INT NOT NULL DEFAULT 0;`);
-    }
-    if (!colNames.includes('bot_notes')) {
-      await pool.query(`ALTER TABLE applications ADD COLUMN bot_notes TEXT NULL;`);
-    }
-    if (!colNames.includes('bot_verified_at')) {
-      await pool.query(`ALTER TABLE applications ADD COLUMN bot_verified_at DATETIME NULL;`);
-    }
+
     if (!colNames.includes('assigned_officer')) {
       await pool.query(`ALTER TABLE applications ADD COLUMN assigned_officer VARCHAR(100) NULL;`);
     }

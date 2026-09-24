@@ -19,10 +19,10 @@ export const getApplications = async (req, res) => {
           app.service_type,
           app.status,
           app.assigned_officer,
-          app.bot_verified,
-          app.bot_score,
-          app.bot_notes,
-          app.bot_verified_at,
+          COALESCE(bot.passed, 0) AS bot_verified,
+          bot.score AS bot_score,
+          bot.notes AS bot_notes,
+          bot.verified_at AS bot_verified_at,
           app.remarks,
           app.submitted_at,
           app.updated_at,
@@ -40,6 +40,11 @@ export const getApplications = async (req, res) => {
         FROM applications app
         JOIN applicants a ON app.applicant_id = a.applicant_id
         LEFT JOIN users u ON app.processed_by = u.user_id
+        LEFT JOIN verifications bot ON bot.verification_id = (
+          SELECT verification_id FROM verifications
+          WHERE application_id = app.application_id
+          ORDER BY verification_id DESC LIMIT 1
+        )
       `;
 
       const params = [];
@@ -191,12 +196,25 @@ export const createApplication = async (req, res) => {
         documents
       );
 
-      // Update application record with bot evaluation
+      // Bot outcome stored in the verifications table (owned by Verification Management)
       await queryDb(
-        `UPDATE applications 
-         SET status = ?, bot_verified = ?, bot_score = ?, bot_notes = ?, bot_verified_at = NOW() 
-         WHERE application_id = ?`,
-        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, newApplicationId]
+        `INSERT INTO verifications (application_id, applicant_id, method, result, passed, score, notes, verified_by, verified_at)
+         VALUES (?, ?, 'AI-BOT', ?, ?, ?, ?, ?, NOW())`,
+        [
+          newApplicationId,
+          applicantId,
+          botResult.passed ? 'Verified' : 'Flagged',
+          botResult.passed ? 1 : 0,
+          botResult.score,
+          botResult.notes,
+          req.user ? req.user.user_id : null
+        ]
+      );
+
+      // Update application record with bot evaluation status
+      await queryDb(
+        `UPDATE applications SET status = ? WHERE application_id = ?`,
+        [botResult.status, newApplicationId]
       );
 
       // Audit Log
@@ -253,6 +271,20 @@ export const createApplication = async (req, res) => {
         { first_name, last_name, fullNameEn: `${first_name} ${last_name}`, dob, gender, address },
         savedDocs
       );
+
+      if (!inMemoryDb.verifications) inMemoryDb.verifications = [];
+      inMemoryDb.verifications.unshift({
+        verification_id: inMemoryDb.verifications.length + 1,
+        application_id: newAppId,
+        applicant_id: newAppId,
+        method: 'AI-BOT',
+        result: botResult.passed ? 'Verified' : 'Flagged',
+        passed: botResult.passed ? 1 : 0,
+        score: botResult.score,
+        notes: botResult.notes,
+        verified_by: req.user ? req.user.user_id : null,
+        verified_at: new Date().toISOString()
+      });
 
       const newApp = {
         application_id: newAppId,

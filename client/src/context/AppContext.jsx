@@ -558,7 +558,7 @@ export const AppProvider = ({ children }) => {
     const token = localStorage.getItem('nexusgov-token');
 
     try {
-      const res = await fetch(`/api/applications/${numericId}/bot-verify`, {
+      const res = await fetch(`/api/verification/applications/${numericId}/bot-verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -617,6 +617,26 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Verification Management: fetch the verification history table for an application
+  const getApplicationVerifications = async (appId) => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+    const token = localStorage.getItem('nexusgov-token');
+    try {
+      const res = await fetch(`/api/verification/applications/${numericId}/verifications`, {
+        method: 'GET',
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.verifications)) {
+        return data.verifications;
+      }
+      throw new Error(data.message || 'Failed to fetch verification records');
+    } catch (err) {
+      console.warn('Verification history fetch note:', err.message);
+      return [];
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -641,7 +661,8 @@ export const AppProvider = ({ children }) => {
         claimJob,
         unclaimJob,
         claimNextJob,
-        runBotVerification
+        runBotVerification,
+        getApplicationVerifications
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 {
-  "version": "2.0",
-  "last_updated": "2026-09-21T06:18:24.079Z",
+  "version": "2.1",
+  "last_updated": "2026-09-23T16:49:20.892Z",
   "tables": {
     "users": [
       {
@@ -9,7 +9,7 @@
         "password_hash": "$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6",
         "full_name": "Thilina Sakalasooriya",
         "email": "thilinasakalasooriya@gmail.com",
-        "role": "Admin",
+        "role": "Form-Officer",
         "created_at": "2026-09-14T18:26:11.000Z"
       },
       {
@@ -105,28 +105,20 @@
         "applicant_id": 1,
         "application_type": "New",
         "status": "",
-        "bot_verified": 1,
-        "bot_score": 95,
-        "bot_notes": "Automated Bot Check: PASSED (Match Score: 95%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).",
-        "bot_verified_at": "2026-09-15T10:14:24.000Z",
         "processed_by": 29,
-        "assigned_officer": null,
+        "assigned_officer": "Thilina new",
         "application_reason": "G.C.E O/L",
         "marital_status": "Single",
         "service_type": "Normal",
         "remarks": "Fast-Track Approved by thilinapak. Validated by AI Bot Verification Engine (Score: 95%).",
         "submitted_at": "2026-09-15T10:14:24.000Z",
-        "updated_at": "2026-09-15T15:51:52.000Z"
+        "updated_at": "2026-09-23T16:46:38.000Z"
       },
       {
         "application_id": 2,
         "applicant_id": 2,
         "application_type": "New",
         "status": "Printed",
-        "bot_verified": 0,
-        "bot_score": 62,
-        "bot_notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 62%). Below 80% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
-        "bot_verified_at": "2026-09-15T13:00:50.000Z",
         "processed_by": 18,
         "assigned_officer": "thilinapak",
         "application_reason": "G.C.E O/L",
@@ -141,10 +133,6 @@
         "applicant_id": 3,
         "application_type": "New",
         "status": "Documents-Required",
-        "bot_verified": 0,
-        "bot_score": 63,
-        "bot_notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 63%). Below 80% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
-        "bot_verified_at": "2026-09-15T14:15:45.000Z",
         "processed_by": 18,
         "assigned_officer": "Officer Wickramasinghe",
         "application_reason": "Wallet Got Stolen",
@@ -153,6 +141,44 @@
         "remarks": "[Action Required: Re-upload Birth Certificate] [Action Required: Re-upload Birth Certificate] New citizen online submission.",
         "submitted_at": "2026-09-15T14:15:45.000Z",
         "updated_at": "2026-09-15T18:04:32.000Z"
+      }
+    ],
+    "verifications": [
+      {
+        "verification_id": 1,
+        "application_id": 1,
+        "applicant_id": 1,
+        "method": "AI-BOT",
+        "result": "Verified",
+        "passed": 1,
+        "score": 95,
+        "notes": "Automated Bot Check: PASSED (Match Score: 95%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).",
+        "verified_by": null,
+        "verified_at": "2026-09-15T10:14:24.000Z"
+      },
+      {
+        "verification_id": 2,
+        "application_id": 2,
+        "applicant_id": 2,
+        "method": "AI-BOT",
+        "result": "Flagged",
+        "passed": 0,
+        "score": 62,
+        "notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 62%). Below 80% threshold.\n• Specimen Document: birth_certificate.pdf\n• Discrepancies detected between submitted data (\"KULASINGHA GAMAGE NADUN NIMESH\", DOB: \"2002-01-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+        "verified_by": null,
+        "verified_at": "2026-09-15T13:00:50.000Z"
+      },
+      {
+        "verification_id": 3,
+        "application_id": 3,
+        "applicant_id": 3,
+        "method": "AI-BOT",
+        "result": "Flagged",
+        "passed": 0,
+        "score": 63,
+        "notes": "Automated Bot Check: INCONCLUSIVE (Match Score: 63%). Below 80% threshold.\n• Specimen Document: birthcerificate.pdf\n• Discrepancies detected between submitted data (\"Nimesh namnugama\", DOB: \"2004-02-03\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+        "verified_by": null,
+        "verified_at": "2026-09-15T14:15:45.000Z"
       }
     ],
     "documents": [
@@ -288,6 +314,34 @@
       }
     ],
     "audit_logs": [
+      {
+        "log_id": 76,
+        "user_id": 1,
+        "action": "USER_LOGIN",
+        "details": "User thilina_admin logged in successfully.",
+        "timestamp": "2026-09-23T16:49:20.000Z"
+      },
+      {
+        "log_id": 75,
+        "user_id": 1,
+        "action": "USER_LOGIN",
+        "details": "User thilina_admin logged in successfully.",
+        "timestamp": "2026-09-23T16:48:10.000Z"
+      },
+      {
+        "log_id": 74,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-09-23T16:47:01.000Z"
+      },
+      {
+        "log_id": 73,
+        "user_id": 23,
+        "action": "JOB_CLAIMED",
+        "details": "Application #1 claimed into active pool by Thilina new",
+        "timestamp": "2026-09-23T16:46:38.000Z"
+      },
       {
         "log_id": 72,
         "user_id": 2,
@@ -818,12 +872,41 @@
     {
       "timestamp": "2026-09-21T06:18:24.080Z",
       "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-23T16:43:57.773Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-09-23T16:46:38.676Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-23T16:47:01.425Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-23T16:47:57.655Z",
+      "action": "UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, "
+    },
+    {
+      "timestamp": "2026-09-23T16:48:10.941Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-09-23T16:49:10.867Z",
+      "action": "UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, "
+    },
+    {
+      "timestamp": "2026-09-23T16:49:20.893Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
   "summary": {
     "total_users": 6,
     "total_applicants": 3,
     "total_applications": 3,
+    "total_verifications": 3,
     "total_documents": 9,
     "total_cards": 3
   }

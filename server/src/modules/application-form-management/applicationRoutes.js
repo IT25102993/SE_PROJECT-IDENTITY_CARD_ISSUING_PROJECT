@@ -9,7 +9,6 @@ import {
   updateApplicationStatus
 } from './applicationController.js';
 import {
-  triggerBotVerification,
   approveApplication,
   rejectApplication
 } from '../verification-management/verificationController.js';
@@ -28,9 +27,6 @@ router.post('/', createApplication);
 // Attached documents routes
 router.get('/:id/documents', getApplicationDocuments);
 router.post('/:id/documents', uploadDocument);
-
-// Bot verification route
-router.post('/:id/bot-verify', triggerBotVerification);
 
 // Form & Document Officer Application Management: View, Update, Pool Management
 router.put('/:id', verifyToken, requireRole('Form-Officer', 'Admin', 'Approver'), updateApplication);

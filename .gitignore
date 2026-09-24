@@ -44,3 +44,4 @@ tmp/
 server/uploads/documents/sample_grama_cert.jpg
 crud-validations-architecture.html
 MANAGEMENT_CRUD_AND_VALIDATIONS.html
+*.puml

@@ -31,15 +31,22 @@ export const generateSriLankan12DigitNIC = (dobString, gender = 'Male', serialNu
   return `${yyyy}${ddd}${ssss}${c}`;
 };
 
+// Normalise an AI Bot outcome into a stored verifications.result label
+const mapBotResult = (botResult) => {
+  if (botResult && botResult.passed) return 'Verified';
+  return 'Flagged';
+};
+
 // Re-run automated bot verification on demand
 export const triggerBotVerification = async (req, res) => {
   try {
     const { id } = req.params;
     const cleanId = String(id).replace(/^NEX-2026-/, '');
+    const performedBy = req.user ? req.user.user_id : null;
 
     if (getDbStatus()) {
       const rows = await queryDb(
-        `SELECT app.application_id, a.first_name, a.last_name, a.date_of_birth AS dob, a.gender, a.address, app.status
+        `SELECT app.application_id, a.applicant_id, a.first_name, a.last_name, a.date_of_birth AS dob, a.gender, a.address, app.status
          FROM applications app
          JOIN applicants a ON app.applicant_id = a.applicant_id
          WHERE app.application_id = ? OR CONCAT('NEX-2026-', app.application_id) = ?`,
@@ -68,11 +75,16 @@ export const triggerBotVerification = async (req, res) => {
         docs || []
       );
 
+      // Bot verification record is owned by the verifications table (Verification Management)
       await queryDb(
-        `UPDATE applications 
-         SET status = ?, bot_verified = ?, bot_score = ?, bot_notes = ?, bot_verified_at = NOW() 
-         WHERE application_id = ?`,
-        [botResult.status, botResult.passed ? 1 : 0, botResult.score, botResult.notes, appData.application_id]
+        `INSERT INTO verifications (application_id, applicant_id, method, result, passed, score, notes, verified_by, verified_at)
+         VALUES (?, ?, 'AI-BOT', ?, ?, ?, ?, ?, NOW())`,
+        [appData.application_id, appData.applicant_id, mapBotResult(botResult), botResult.passed ? 1 : 0, botResult.score, botResult.notes, performedBy]
+      );
+
+      await queryDb(
+        `UPDATE applications SET status = ? WHERE application_id = ?`,
+        [botResult.status, appData.application_id]
       );
 
       return res.status(200).json({
@@ -99,6 +111,20 @@ export const triggerBotVerification = async (req, res) => {
         docs
       );
 
+      if (!inMemoryDb.verifications) inMemoryDb.verifications = [];
+      inMemoryDb.verifications.unshift({
+        verification_id: inMemoryDb.verifications.length + 1,
+        application_id: app.application_id,
+        applicant_id: app.applicant_id || app.application_id,
+        method: 'AI-BOT',
+        result: mapBotResult(botResult),
+        passed: botResult.passed ? 1 : 0,
+        score: botResult.score,
+        notes: botResult.notes,
+        verified_by: performedBy,
+        verified_at: new Date().toISOString()
+      });
+
       app.status = botResult.status;
       app.bot_verified = botResult.passed;
       app.bot_score = botResult.score;
@@ -111,6 +137,49 @@ export const triggerBotVerification = async (req, res) => {
         botResult,
         application: app
       });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Return the verification history table for an application (Verification Management)
+export const getApplicationVerifications = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cleanId = String(id).replace(/^NEX-2026-/, '');
+
+    if (getDbStatus()) {
+      const rows = await queryDb(
+        `SELECT v.verification_id, v.application_id, CONCAT('NEX-2026-', v.application_id) AS tracking_id,
+                v.method, v.result, v.passed, v.score, v.notes, v.verified_by, v.verified_at,
+                CONCAT(a.first_name, ' ', a.last_name) AS applicant_name,
+                u.full_name AS verified_by_name
+         FROM verifications v
+         JOIN applications app ON v.application_id = app.application_id
+         JOIN applicants a ON app.applicant_id = a.applicant_id
+         LEFT JOIN users u ON v.verified_by = u.user_id
+         WHERE v.application_id = ? OR CONCAT('NEX-2026-', v.application_id) = ?
+         ORDER BY v.verification_id DESC`,
+        [cleanId, id]
+      );
+      return res.status(200).json({ success: true, count: rows ? rows.length : 0, verifications: rows || [] });
+    } else {
+      let appId = cleanId;
+      const app = (inMemoryDb.applications || []).find(a => String(a.application_id) === String(cleanId) || a.tracking_id === id);
+      if (app) appId = app.application_id;
+
+      const rows = (inMemoryDb.verifications || [])
+        .filter(v => String(v.application_id) === String(appId))
+        .map(v => ({
+          ...v,
+          tracking_id: `NEX-2026-${v.application_id}`,
+          applicant_name: app ? (app.fullNameEn || `${app.first_name || ''} ${app.last_name || ''}`) : 'Unknown',
+          verified_by_name: ''
+        }))
+        .sort((x, y) => y.verification_id - x.verification_id);
+
+      return res.status(200).json({ success: true, count: rows.length, verifications: rows });
     }
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

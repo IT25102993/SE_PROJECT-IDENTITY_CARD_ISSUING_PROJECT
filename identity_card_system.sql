@@ -65,6 +65,31 @@ CREATE TABLE IF NOT EXISTS `applications` (
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- -----------------------------------------------------
+-- Table `verifications`
+-- Belongs to Verification Management (AI Bot + manual checks)
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `verifications` (
+  `verification_id` INT NOT NULL AUTO_INCREMENT,
+  `application_id` INT NOT NULL,
+  `applicant_id` INT NULL,
+  `method` ENUM('AI-BOT', 'MANUAL') NOT NULL DEFAULT 'AI-BOT',
+  `result` ENUM('Verified', 'Flagged', 'Inconclusive') NOT NULL DEFAULT 'Inconclusive',
+  `passed` TINYINT(1) NOT NULL DEFAULT 0,
+  `score` INT NOT NULL DEFAULT 0,
+  `notes` TEXT NULL,
+  `verified_by` INT NULL,
+  `verified_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`verification_id`),
+  INDEX `idx_ver_application_id` (`application_id`),
+  INDEX `idx_ver_applicant_id` (`applicant_id`),
+  CONSTRAINT `fk_verifications_applications`
+    FOREIGN KEY (`application_id`)
+    REFERENCES `applications` (`application_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- -----------------------------------------------------
 -- Table `documents`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `documents` (
@@ -173,6 +198,12 @@ INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`
 (1, 1, 'New', 'Issued', 2, 'Biometrics and Grama Niladhari verification approved.', '2026-08-01 09:30:00'),
 (2, 2, 'New', 'Pending', NULL, 'Awaiting document review', '2026-08-06 11:45:00'),
 (3, 3, 'Renewal', 'Approved', 2, 'Renewal document verified', '2026-08-08 08:15:00');
+
+-- Seed Verifications (Verification Management — AI Bot records)
+INSERT INTO `verifications` (`verification_id`, `application_id`, `applicant_id`, `method`, `result`, `passed`, `score`, `notes`, `verified_by`, `verified_at`) VALUES
+(1, 1, 1, 'AI-BOT', 'Verified', 1, 96, 'Automated Bot Check: PASSED (Match Score: 96%). Birth Certificate cross-validated against the official civil registry.', 2, '2026-08-01 09:32:00'),
+(2, 2, 2, 'AI-BOT', 'Flagged', 0, 63, 'Automated Bot Check: INCONCLUSIVE (Match Score: 63%). Discrepancies detected — forwarded for human officer review.', NULL, '2026-08-06 12:00:00'),
+(3, 3, 3, 'AI-BOT', 'Verified', 1, 91, 'Renewal document verified by AI Bot against registrar criteria.', 2, '2026-08-08 08:16:00');
 
 -- Seed Identity Cards
 INSERT INTO `identity_cards` (`card_id`, `application_id`, `applicant_id`, `card_number`, `issue_date`, `expiry_date`, `status`, `issued_by`) VALUES

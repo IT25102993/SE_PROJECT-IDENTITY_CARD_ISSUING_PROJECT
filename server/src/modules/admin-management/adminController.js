@@ -170,8 +170,8 @@ export const getDeletionRequests = async (req, res) => {
                  CONCAT('NEX-2026-', app.application_id) AS tracking_id,
                  app.application_type, 
                  app.status AS application_status, 
-                 app.bot_verified,
-                 app.bot_score,
+                 COALESCE(v.passed, 0) AS bot_verified,
+                 v.score AS bot_score,
                  app.submitted_at, 
                  app.remarks,
                  a.first_name, 
@@ -184,6 +184,11 @@ export const getDeletionRequests = async (req, res) => {
                  a.address
           FROM applications app
           JOIN applicants a ON app.applicant_id = a.applicant_id
+          LEFT JOIN verifications v ON v.verification_id = (
+            SELECT verification_id FROM verifications
+            WHERE application_id = app.application_id
+            ORDER BY verification_id DESC LIMIT 1
+          )
           WHERE a.email = ?
           ORDER BY app.submitted_at DESC
         `, [reqItem.email]);

@@ -185,7 +185,7 @@ export const getAnalytics = async (req, res) => {
       const [pendingApps] = await queryDb("SELECT COUNT(*) AS count FROM applications WHERE status = 'Pending'");
       const [approvedApps] = await queryDb("SELECT COUNT(*) AS count FROM applications WHERE status = 'Approved'");
       const [rejectedApps] = await queryDb("SELECT COUNT(*) AS count FROM applications WHERE status = 'Rejected'");
-      const [botVerified] = await queryDb("SELECT COUNT(*) AS count FROM applications WHERE bot_verified = 1");
+      const [botVerified] = await queryDb("SELECT COUNT(*) AS count FROM verifications WHERE passed = 1");
       const [totalUsers] = await queryDb('SELECT COUNT(*) AS count FROM users');
 
       return res.status(200).json({
@@ -201,6 +201,7 @@ export const getAnalytics = async (req, res) => {
       });
     } else {
       const apps = inMemoryDb.applications || [];
+      const verifs = inMemoryDb.verifications || [];
       return res.status(200).json({
         success: true,
         analytics: {
@@ -208,7 +209,7 @@ export const getAnalytics = async (req, res) => {
           pending: apps.filter(a => a.status === 'Pending').length,
           approved: apps.filter(a => a.status === 'Approved').length,
           rejected: apps.filter(a => a.status === 'Rejected').length,
-          botVerified: apps.filter(a => a.bot_verified).length,
+          botVerified: verifs.filter(v => v.passed === 1 || v.passed === true).length,
           totalUsers: (inMemoryDb.users || []).length
         }
       });

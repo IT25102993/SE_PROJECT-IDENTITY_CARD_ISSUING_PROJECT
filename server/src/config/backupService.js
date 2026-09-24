@@ -39,12 +39,13 @@ export const performBackup = async (pool, inMemoryDb, actionDescription = 'Datab
 
   try {
     let backupData = {
-      version: '2.0',
+      version: '2.1',
       last_updated: new Date().toISOString(),
       tables: {
         users: [],
         applicants: [],
         applications: [],
+        verifications: [],
         documents: [],
         identity_cards: [],
         account_deletion_requests: [],
@@ -81,7 +82,8 @@ export const performBackup = async (pool, inMemoryDb, actionDescription = 'Datab
       // ── Backup from MySQL Server ──
       const [users] = await pool.query('SELECT user_id, username, password_hash, full_name, email, role, created_at FROM users ORDER BY user_id ASC');
       const [applicants] = await pool.query('SELECT applicant_id, national_id_number, first_name, last_name, date_of_birth, gender, address, phone_number, email, photo_path, registered_at FROM applicants ORDER BY applicant_id ASC');
-      const [applications] = await pool.query('SELECT application_id, applicant_id, application_type, status, bot_verified, bot_score, bot_notes, bot_verified_at, processed_by, assigned_officer, application_reason, marital_status, service_type, remarks, submitted_at, updated_at FROM applications ORDER BY application_id ASC');
+      const [applications] = await pool.query('SELECT application_id, applicant_id, application_type, status, processed_by, assigned_officer, application_reason, marital_status, service_type, remarks, submitted_at, updated_at FROM applications ORDER BY application_id ASC');
+      const [verifications] = await pool.query('SELECT verification_id, application_id, applicant_id, method, result, passed, score, notes, verified_by, verified_at FROM verifications ORDER BY verification_id ASC');
       const [documents] = await pool.query('SELECT document_id, application_id, document_type, file_name, file_path, file_size, uploaded_at FROM documents ORDER BY document_id ASC');
       const [cards] = await pool.query('SELECT card_id, card_number, application_id, applicant_id, issue_date, expiry_date, status, issued_by, created_at FROM identity_cards ORDER BY card_id ASC');
       const [deletionRequests] = await pool.query('SELECT request_id, user_id, username, email, reason, status, admin_notes, requested_at, processed_at, processed_by FROM account_deletion_requests ORDER BY request_id ASC');
@@ -91,6 +93,7 @@ export const performBackup = async (pool, inMemoryDb, actionDescription = 'Datab
         users: users || [],
         applicants: applicants || [],
         applications: applications || [],
+        verifications: verifications || [],
         documents: documents || [],
         identity_cards: cards || [],
         account_deletion_requests: deletionRequests || [],
@@ -102,6 +105,7 @@ export const performBackup = async (pool, inMemoryDb, actionDescription = 'Datab
         users: inMemoryDb.users || [],
         applicants: inMemoryDb.applicants || [],
         applications: inMemoryDb.applications || [],
+        verifications: inMemoryDb.verifications || [],
         documents: inMemoryDb.documents || [],
         identity_cards: inMemoryDb.identity_cards || [],
         account_deletion_requests: inMemoryDb.account_deletion_requests || [],
@@ -113,6 +117,7 @@ export const performBackup = async (pool, inMemoryDb, actionDescription = 'Datab
       total_users: backupData.tables.users.length,
       total_applicants: backupData.tables.applicants.length,
       total_applications: backupData.tables.applications.length,
+      total_verifications: (backupData.tables.verifications || []).length,
       total_documents: backupData.tables.documents.length,
       total_cards: backupData.tables.identity_cards.length
     };
@@ -187,7 +192,16 @@ const generateSqlBackupFile = (backupData) => {
     if (backupData.tables.applications.length > 0) {
       sql += `-- Table: applications (${backupData.tables.applications.length} records)\n`;
       for (const app of backupData.tables.applications) {
-        sql += `INSERT INTO \`applications\` (\`application_id\`, \`applicant_id\`, \`application_type\`, \`status\`, \`bot_verified\`, \`bot_score\`, \`bot_notes\`, \`assigned_officer\`, \`application_reason\`, \`marital_status\`, \`service_type\`, \`remarks\`, \`submitted_at\`) VALUES (${escapeSql(app.application_id)}, ${escapeSql(app.applicant_id)}, ${escapeSql(app.application_type || 'New')}, ${escapeSql(app.status || 'Pending')}, ${escapeSql(app.bot_verified ? 1 : 0)}, ${escapeSql(app.bot_score || 0)}, ${escapeSql(app.bot_notes || '')}, ${escapeSql(app.assigned_officer)}, ${escapeSql(app.application_reason || 'G.C.E O/L')}, ${escapeSql(app.marital_status || 'Single')}, ${escapeSql(app.service_type || 'Normal')}, ${escapeSql(app.remarks || '')}, ${escapeSql(formatSqlDate(app.submitted_at))}) ON DUPLICATE KEY UPDATE \`status\`=VALUES(\`status\`);\n`;
+        sql += `INSERT INTO \`applications\` (\`application_id\`, \`applicant_id\`, \`application_type\`, \`status\`, \`assigned_officer\`, \`application_reason\`, \`marital_status\`, \`service_type\`, \`remarks\`, \`submitted_at\`) VALUES (${escapeSql(app.application_id)}, ${escapeSql(app.applicant_id)}, ${escapeSql(app.application_type || 'New')}, ${escapeSql(app.status || 'Pending')}, ${escapeSql(app.assigned_officer)}, ${escapeSql(app.application_reason || 'G.C.E O/L')}, ${escapeSql(app.marital_status || 'Single')}, ${escapeSql(app.service_type || 'Normal')}, ${escapeSql(app.remarks || '')}, ${escapeSql(formatSqlDate(app.submitted_at))}) ON DUPLICATE KEY UPDATE \`status\`=VALUES(\`status\`);\n`;
+      }
+      sql += `\n`;
+    }
+
+    // Insert Verifications
+    if (backupData.tables.verifications.length > 0) {
+      sql += `-- Table: verifications (${backupData.tables.verifications.length} records)\n`;
+      for (const v of backupData.tables.verifications) {
+        sql += `INSERT INTO \`verifications\` (\`verification_id\`, \`application_id\`, \`applicant_id\`, \`method\`, \`result\`, \`passed\`, \`score\`, \`notes\`, \`verified_by\`, \`verified_at\`) VALUES (${escapeSql(v.verification_id)}, ${escapeSql(v.application_id)}, ${escapeSql(v.applicant_id)}, ${escapeSql(v.method || 'AI-BOT')}, ${escapeSql(v.result || (v.passed ? 'Verified' : 'Flagged'))}, ${escapeSql(v.passed ? 1 : 0)}, ${escapeSql(v.score || 0)}, ${escapeSql(v.notes || '')}, ${escapeSql(v.verified_by)}, ${escapeSql(formatSqlDate(v.verified_at))}) ON DUPLICATE KEY UPDATE \`passed\`=VALUES(\`passed\`);\n`;
       }
       sql += `\n`;
     }
@@ -313,23 +327,43 @@ export const restoreFromBackupIfEmpty = async (pool, inMemoryDb) => {
       if (Array.isArray(backup.tables.applications) && backup.tables.applications.length > 0) {
         for (const app of backup.tables.applications) {
           await pool.query(
-            `INSERT INTO applications (application_id, applicant_id, application_type, status, bot_verified, bot_score, bot_notes, assigned_officer, application_reason, marital_status, service_type, remarks, submitted_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, NOW()))
+            `INSERT INTO applications (application_id, applicant_id, application_type, status, assigned_officer, application_reason, marital_status, service_type, remarks, submitted_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, NOW()))
              ON DUPLICATE KEY UPDATE status = VALUES(status)`,
             [
               app.application_id,
               app.applicant_id,
               app.application_type || 'New',
               app.status || 'Pending',
-              app.bot_verified ? 1 : 0,
-              app.bot_score || 0,
-              app.bot_notes || '',
               app.assigned_officer || null,
               app.application_reason || 'G.C.E O/L',
               app.marital_status || 'Single',
               app.service_type || 'Normal',
               app.remarks || '',
               formatSqlDate(app.submitted_at)
+            ]
+          );
+        }
+      }
+
+      // 3b. Restore Verifications (Verification Management records)
+      if (Array.isArray(backup.tables.verifications) && backup.tables.verifications.length > 0) {
+        for (const v of backup.tables.verifications) {
+          await pool.query(
+            `INSERT INTO verifications (verification_id, application_id, applicant_id, method, result, passed, score, notes, verified_by, verified_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, NOW()))
+             ON DUPLICATE KEY UPDATE passed = VALUES(passed)`,
+            [
+              v.verification_id,
+              v.application_id,
+              v.applicant_id || null,
+              v.method || 'AI-BOT',
+              v.result || (v.passed ? 'Verified' : 'Flagged'),
+              v.passed ? 1 : 0,
+              v.score || 0,
+              v.notes || '',
+              v.verified_by || null,
+              formatSqlDate(v.verified_at)
             ]
           );
         }
@@ -400,6 +434,7 @@ export const restoreFromBackupIfEmpty = async (pool, inMemoryDb) => {
         if (backup.tables.users) inMemoryDb.users = backup.tables.users;
         if (backup.tables.applicants) inMemoryDb.applicants = backup.tables.applicants;
         if (backup.tables.applications) inMemoryDb.applications = backup.tables.applications;
+        if (backup.tables.verifications) inMemoryDb.verifications = backup.tables.verifications;
         if (backup.tables.documents) inMemoryDb.documents = backup.tables.documents;
         if (backup.tables.identity_cards) inMemoryDb.identity_cards = backup.tables.identity_cards;
         if (backup.tables.account_deletion_requests) inMemoryDb.account_deletion_requests = backup.tables.account_deletion_requests;
