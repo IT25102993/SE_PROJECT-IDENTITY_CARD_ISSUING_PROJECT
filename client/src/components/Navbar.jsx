@@ -40,7 +40,6 @@ export const Navbar = () => {
   // Role flags
   const isStaffMember = ['admin', 'approver', 'operational', 'form-officer', 'document-officer'].includes(userRoleName);
   const isAdminRole       = userRoleName === 'admin';
-  const isOfficerRole     = userRoleName === 'form-officer' || userRoleName === 'document-officer';
   const isFormOfficerRole     = userRoleName === 'form-officer';
   const isDocumentOfficerRole = userRoleName === 'document-officer';
   const isApproverRole    = userRoleName === 'approver';
@@ -148,14 +147,27 @@ export const Navbar = () => {
             )}
 
             {/* ── STAFF LINKS — strictly role-isolated job pool ── */}
-            {isOfficerRole && (
+            {isFormOfficerRole && (
               <li>
                 <NavLink
-                  to="/officer?view=officer"
+                  to="/officer-jobpool"
                   style={({ isActive }) => navStyle(isActive, 'var(--accent-emerald)')}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                    <LayoutDashboard size={14} /> {isFormOfficerRole ? 'Form Officer Job Pool' : 'Document Officer Job Pool'}
+                    <LayoutDashboard size={14} /> Form Officer Job Pool
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
+            {isDocumentOfficerRole && (
+              <li>
+                <NavLink
+                  to="/document-jobpool"
+                  style={({ isActive }) => navStyle(isActive, 'var(--accent-cyan)')}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <LayoutDashboard size={14} /> Document Officer Job Pool
                   </span>
                 </NavLink>
               </li>
@@ -164,7 +176,7 @@ export const Navbar = () => {
             {isApproverRole && (
               <li>
                 <NavLink
-                  to="/officer?view=approver"
+                  to="/approver-jobpool"
                   style={({ isActive }) => navStyle(isActive, 'var(--accent-cyan)')}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -323,11 +335,14 @@ export const Navbar = () => {
           )}
 
           {/* Staff links — strictly role-isolated job pool */}
-          {isOfficerRole && (
-            <NavLink to="/officer?view=officer" onClick={() => setMobileOpen(false)}>{isFormOfficerRole ? 'Form Officer Job Pool' : 'Document Officer Job Pool'}</NavLink>
+          {isFormOfficerRole && (
+            <NavLink to="/officer-jobpool" onClick={() => setMobileOpen(false)}>Form Officer Job Pool</NavLink>
+          )}
+          {isDocumentOfficerRole && (
+            <NavLink to="/document-jobpool" onClick={() => setMobileOpen(false)}>Document Officer Job Pool</NavLink>
           )}
           {isApproverRole && (
-            <NavLink to="/officer?view=approver" onClick={() => setMobileOpen(false)}>Approver Job Pool</NavLink>
+            <NavLink to="/approver-jobpool" onClick={() => setMobileOpen(false)}>Approver Job Pool</NavLink>
           )}
           {isOperationalRole && (
             <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
@@ -381,9 +396,11 @@ export const Navbar = () => {
 // Helper: get the default dashboard path for a staff role
 function getDashboardPath(roleName) {
   switch (roleName) {
-    case 'operational': return '/print-queue';
-    case 'admin':       return '/admin';
-    case 'approver':    return '/officer?view=approver';
-    default:            return '/officer?view=officer'; // form-officer, document-officer
+    case 'operational':       return '/print-queue';
+    case 'admin':             return '/admin';
+    case 'approver':          return '/approver-jobpool';
+    case 'form-officer':      return '/officer-jobpool';
+    case 'document-officer':  return '/document-jobpool';
+    default:                  return '/officer-jobpool';
   }
 }
