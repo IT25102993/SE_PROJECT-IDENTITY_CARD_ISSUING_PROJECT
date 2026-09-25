@@ -526,7 +526,7 @@ export const AdminDashboard = () => {
           </div>
 
           <NavLink
-            to="/officer?view=officer"
+            to="/officer-jobpool"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -547,7 +547,28 @@ export const AdminDashboard = () => {
           </NavLink>
 
           <NavLink
-            to="/officer?view=approver"
+            to="/document-jobpool"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.85rem',
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              color: 'var(--accent-emerald)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <FileCheck size={18} /> Document Officer Pool
+          </NavLink>
+
+          <NavLink
+            to="/approver-jobpool"
             style={{
               display: 'flex',
               alignItems: 'center',
