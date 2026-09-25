@@ -3,6 +3,7 @@ import { useSearchParams, NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { IDCard3D } from '../../components/IDCard3D';
+import { AdminPanelLayout } from '../../components/AdminPanelLayout';
 import {
   UserCheck,
   Search,
@@ -27,10 +28,12 @@ import {
   Bot,
   RefreshCw,
   Lock,
-  AlertCircle
+  AlertCircle,
+  ShieldAlert,
+  BarChart3
 } from 'lucide-react';
 
-export const OfficerDashboard = () => {
+export const OfficerDashboard = ({ mode }) => {
   const {
     role,
     applications,
@@ -47,28 +50,33 @@ export const OfficerDashboard = () => {
   } = useApp();
 
   const { user } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const rawRole = (user?.role || role || 'Form-Officer').toLowerCase();
-  const isAdmin = rawRole === 'admin';
-  const isApproverUser = rawRole === 'approver';
-  const isOfficerUser = ['form-officer', 'document-officer'].includes(rawRole);
-  const isFormOfficerUser = rawRole === 'form-officer';
-  const isDocumentOfficerUser = rawRole === 'document-officer';
-  const isOperationalUser = rawRole === 'operational';
-  const isCitizen = !isAdmin && !isApproverUser && !isOfficerUser;
+  const realRole = (user?.role || role || 'Form-Officer').toLowerCase();
+  const isAdmin = realRole === 'admin';
+  const isOperationalUser = realRole === 'operational';
+
+  // Determine workflow: an explicit `mode` prop wins (individual job pool pages);
+  // otherwise fall back to auto-detecting from the signed-in role.
+  let workflow = mode || '';
+  if (!workflow) {
+    if (realRole === 'approver') workflow = 'approver';
+    else if (realRole === 'document-officer') workflow = 'document';
+    else if (realRole === 'form-officer') workflow = 'form';
+    else if (realRole === 'admin') workflow = searchParams.get('view') === 'approver' ? 'approver' : 'form';
+    else workflow = 'form';
+  }
+  const isApproverMode = workflow === 'approver';
+  const isFormOfficerUser = workflow === 'form';
+  const isDocumentOfficerUser = workflow === 'document';
+  const isOfficerUser = isFormOfficerUser || isDocumentOfficerUser;
+  const isApproverUser = isApproverMode;
+  const isStaffRole = ['admin', 'approver', 'form-officer', 'document-officer'].includes(realRole);
+  const isCitizen = !isStaffRole;
 
   // Strict role lock: Officer is locked to 'officer' mode; Approver is locked to 'approver' mode
-  let currentView = 'officer';
-  if (isApproverUser) {
-    currentView = 'approver';
-  } else if (isOfficerUser) {
-    currentView = 'officer';
-  } else if (isAdmin) {
-    currentView = searchParams.get('view') || 'approver';
-  }
-  const isApproverMode = currentView === 'approver';
+  const currentView = workflow;
 
   const [activeTab, setActiveTab] = useState('POOL'); // 'POOL' | 'WORKBENCH' | 'ALL'
   const [filterStatus, setFilterStatus] = useState('ALL');
@@ -124,6 +132,82 @@ export const OfficerDashboard = () => {
   };
 
   const displayedApps = getDisplayedApplications();
+
+  // ── Sidebar navigation (admin-panel style) ──────────────────────────────
+  const activePoolLabel = () => {
+    if (isApproverMode) return 'Approver Job Pool';
+    if (isDocumentOfficerUser) return 'Document Officer Job Pool';
+    return 'Form Officer Job Pool';
+  };
+
+  const navItems = [
+    {
+      key: 'form',
+      label: 'Form Officer Pool',
+      icon: UserCheck,
+      to: '/officer-jobpool',
+      color: '#10b981',
+      active: currentView === 'form' && (isAdmin || mode === 'form' || isFormOfficerUser)
+    },
+    {
+      key: 'document',
+      label: 'Document Officer Pool',
+      icon: FileText,
+      to: '/document-jobpool',
+      color: '#06b6d4',
+      active: currentView === 'document' && (isAdmin || mode === 'document' || isDocumentOfficerUser)
+    },
+    {
+      key: 'approver',
+      label: 'Approver Job Pool',
+      icon: ShieldCheck,
+      to: '/approver-jobpool',
+      color: '#8b5cf6',
+      active: currentView === 'approver' && (isAdmin || mode === 'approver' || isApproverUser)
+    },
+    {
+      key: 'analytics',
+      label: 'National Analytics',
+      icon: BarChart3,
+      to: '/analytics',
+      color: '#f59e0b',
+      active: false
+    }
+  ].filter(item => {
+    if (item.key === 'analytics') return true;
+    if (isAdmin) return true;
+    if (item.key === 'form') return isFormOfficerUser;
+    if (item.key === 'document') return isDocumentOfficerUser;
+    if (item.key === 'approver') return isApproverUser;
+    return false;
+  });
+
+  if (isAdmin) {
+    navItems.push({
+      key: 'admin',
+      label: 'Admin Portal',
+      icon: ShieldAlert,
+      to: '/admin',
+      color: '#8b5cf6',
+      active: false
+    });
+  }
+
+  const poolPageTitle = () => {
+    if (isApproverMode) return 'Senior Approver Job Pool';
+    if (isDocumentOfficerUser) return 'Document Officer Job Pool';
+    return 'Form Officer Job Pool';
+  };
+
+  const poolPageSubtitle = () => {
+    if (isApproverMode) {
+      return 'Executive Authorization, AI Cross-Verification Sign-Off & Official Card Issuance.';
+    }
+    if (isDocumentOfficerUser) {
+      return 'Document Handling Job Pool — uploaded proof verification & re-upload requests.';
+    }
+    return 'Form Handling Job Pool — application form review & correction workbench.';
+  };
 
   // Officer: save notes without approving
   const handleSaveNotes = () => {
@@ -356,8 +440,15 @@ export const OfficerDashboard = () => {
   }
 
   return (
-    <div style={{ position: 'relative', padding: '2rem 0 4rem 0' }}>
-      <div className="container">
+    <AdminPanelLayout
+      brandTitle={isApproverMode ? 'NexusApprover' : 'NexusOfficer'}
+      brandIcon={isApproverMode ? ShieldCheck : UserCheck}
+      accent={isApproverMode ? '#06b6d4' : '#10b981'}
+      pageTitle={poolPageTitle()}
+      pageSubtitle={poolPageSubtitle()}
+      roleTag={isAdmin ? 'ADMIN' : isApproverMode ? 'APPROVER' : isDocumentOfficerUser ? 'DOC OFFICER' : 'FORM OFFICER'}
+      navItems={navItems}
+    >
         {/* Admin Multi-Panel Oversight Switcher */}
         {isAdmin && (
           <div style={{
@@ -394,14 +485,14 @@ export const OfficerDashboard = () => {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button
-                onClick={() => setSearchParams({ view: 'officer' })}
+                onClick={() => navigate('/officer-jobpool')}
                 className={`btn btn-sm ${!isApproverMode ? 'btn-emerald' : 'btn-secondary'}`}
                 style={{ borderRadius: '8px', fontSize: '0.82rem', gap: '0.4rem' }}
               >
                 <UserCheck size={15} /> Officer View
               </button>
               <button
-                onClick={() => setSearchParams({ view: 'approver' })}
+                onClick={() => navigate('/approver-jobpool')}
                 className={`btn btn-sm ${isApproverMode ? 'btn-primary' : 'btn-secondary'}`}
                 style={{ borderRadius: '8px', fontSize: '0.82rem', gap: '0.4rem' }}
               >
@@ -418,24 +509,20 @@ export const OfficerDashboard = () => {
           </div>
         )}
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', gap: '1.25rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               {isApproverMode ? (
-                <ShieldCheck size={32} color="var(--accent-cyan)" />
+                <ShieldCheck size={28} color="var(--accent-cyan)" />
               ) : (
-                <UserCheck size={32} color="var(--accent-emerald)" />
+                <UserCheck size={28} color="var(--accent-emerald)" />
               )}
-              <h1 style={{ fontSize: '2.1rem', fontWeight: 800 }}>
-                {isApproverMode ? 'Senior Approver Job Pool' : isDocumentOfficerUser ? 'Document Officer Job Pool' : 'Form Officer Job Pool'}
-              </h1>
+              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0 }}>
+                {activePoolLabel()}
+              </h2>
             </div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.2rem' }}>
-              {isApproverMode
-                ? 'Executive Authorization, AI Cross-Verification Sign-Off & Official Card Issuance.'
-                : isDocumentOfficerUser
-                  ? 'Document Handling Job Pool — uploaded proof verification & re-upload requests.'
-                  : 'Form Handling Job Pool — application form review & correction workbench.'}
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.15rem' }}>
+              {poolPageSubtitle()}
             </p>
           </div>
 
@@ -1129,8 +1216,7 @@ export const OfficerDashboard = () => {
             </div>
           </div>
         )}
-      </div>
-    </div>
+    </AdminPanelLayout>
   );
 };
 
