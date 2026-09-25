@@ -94,8 +94,9 @@ echo.
 echo   Citizen Portal:       http://localhost:5173
 echo   Online Application:   http://localhost:5173/apply
 echo   Live Card Tracking:   http://localhost:5173/track
-echo   Officer Dashboard:    http://localhost:5173/officer
-echo   Senior Approver:      http://localhost:5173/officer?view=approver
+echo   Form Officer Pool:     http://localhost:5173/officer-jobpool
+echo   Document Officer Pool: http://localhost:5173/document-jobpool
+echo   Senior Approver Pool:  http://localhost:5173/approver-jobpool
 echo   Print Queue:          http://localhost:5173/print-queue
 echo   Admin Dashboard:      http://localhost:5173/admin
 echo.
