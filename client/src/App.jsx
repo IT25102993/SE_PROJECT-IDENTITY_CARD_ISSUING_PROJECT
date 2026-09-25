@@ -17,7 +17,9 @@ import { LoginPage } from './modules/user-management/LoginPage';
 import { RegisterPage } from './modules/user-management/RegisterPage';
 import { ApplyPage } from './modules/application-form-management/ApplyPage';
 import { TrackingPage } from './modules/application-form-management/TrackingPage';
-import { OfficerDashboard } from './modules/verification-management/OfficerDashboard';
+import { FormOfficerPool } from './modules/verification-management/FormOfficerPool';
+import { DocumentOfficerPool } from './modules/verification-management/DocumentOfficerPool';
+import { ApproverPool } from './modules/verification-management/ApproverPool';
 import { PrintQueuePage } from './modules/operation-management/PrintQueuePage';
 import { AnalyticsPage } from './modules/operation-management/AnalyticsPage';
 import { AdminDashboard } from './modules/admin-managemnt/AdminDashboard';
@@ -29,9 +31,40 @@ const PublicRoute = ({ children }) => {
     const r = (user.role || '').toLowerCase();
     if (r === 'operational')   return <Navigate to="/print-queue" replace />;
     if (r === 'admin')         return <Navigate to="/admin" replace />;
-    if (r === 'approver')      return <Navigate to="/officer?view=approver" replace />;
-    if (r === 'form-officer' || r === 'document-officer')
-      return <Navigate to="/officer?view=officer" replace />;
+    if (r === 'approver')      return <Navigate to="/approver-jobpool" replace />;
+    if (r === 'form-officer')  return <Navigate to="/officer-jobpool" replace />;
+    if (r === 'document-officer') return <Navigate to="/document-jobpool" replace />;
+  }
+  return children;
+};
+
+// ── Role-specific zone guards for the individual Job Pool pages ─────────────
+const FormOfficerRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (!['admin', 'form-officer'].includes(r)) {
+    return <Navigate to={r === 'document-officer' ? '/document-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
+  }
+  return children;
+};
+
+const DocumentOfficerRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (!['admin', 'document-officer'].includes(r)) {
+    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
+  }
+  return children;
+};
+
+const ApproverRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (!['admin', 'approver'].includes(r)) {
+    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'document-officer' ? '/document-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
   }
   return children;
 };
@@ -102,7 +135,8 @@ function AppContent() {
   const { loadingState } = useApp();
   const location = useLocation();
 
-  const isAdminPath = location.pathname === '/admin';
+  // Admin-panel style pages hide the public Navbar / Footer / background
+  const isPanelPath = ['/admin', '/officer-jobpool', '/document-jobpool', '/approver-jobpool', '/print-queue', '/analytics'].includes(location.pathname);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
@@ -113,9 +147,9 @@ function AppContent() {
           duration={loadingState.duration}
         />
       )}
-      {!isAdminPath && <BackgroundCanvas />}
-      {!isAdminPath && <Navbar />}
-      <main style={{ flex: 1, paddingTop: isAdminPath ? '0' : '72px' }}>
+      {!isPanelPath && <BackgroundCanvas />}
+      {!isPanelPath && <Navbar />}
+      <main style={{ flex: 1, paddingTop: isPanelPath ? '0' : '72px' }}>
         <Routes>
           {/* Public / citizen routes — logged-in staff are redirected to their own job pool */}
           <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
@@ -126,8 +160,11 @@ function AppContent() {
           <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
-          {/* Staff-only routes */}
-          <Route path="/officer" element={<StaffRoute><OfficerDashboard /></StaffRoute>} />
+          {/* Individual staff Job Pool pages — admin-panel style */}
+          <Route path="/officer" element={<Navigate to="/officer-jobpool" replace />} />
+          <Route path="/officer-jobpool" element={<FormOfficerRoute><FormOfficerPool /></FormOfficerRoute>} />
+          <Route path="/document-jobpool" element={<DocumentOfficerRoute><DocumentOfficerPool /></DocumentOfficerRoute>} />
+          <Route path="/approver-jobpool" element={<ApproverRoute><ApproverPool /></ApproverRoute>} />
           <Route path="/analytics" element={<StaffRoute><AnalyticsPage /></StaffRoute>} />
 
           {/* Strictly Operational only */}
@@ -137,7 +174,7 @@ function AppContent() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         </Routes>
       </main>
-      {!isAdminPath && <Footer />}
+      {!isPanelPath && <Footer />}
       <ToastContainer />
     </div>
   );
