@@ -51,9 +51,11 @@ export const LoginPage = () => {
           } else if (userRole === 'operational') {
             navigate('/print-queue');
           } else if (userRole === 'approver') {
-            navigate('/officer?view=approver');
-          } else if (userRole === 'form-officer' || userRole === 'document-officer') {
-            navigate('/officer?view=officer');
+            navigate('/approver-jobpool');
+          } else if (userRole === 'form-officer') {
+            navigate('/officer-jobpool');
+          } else if (userRole === 'document-officer') {
+            navigate('/document-jobpool');
           } else {
             navigate('/');
           }
