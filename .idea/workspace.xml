@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CREDENTIALS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CREDENTIALS.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/dist/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/admin-managemnt/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/admin-managemnt/AdminDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/operation-management/AnalyticsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/operation-management/AnalyticsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/operation-management/PrintQueuePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/operation-management/PrintQueuePage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/user-management/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/user-management/LoginPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/verification-management/OfficerDashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/start.cmd" afterDir="false" />
-    </list>
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -132,7 +120,7 @@
       <workItem from="1789970937662" duration="708000" />
       <workItem from="1790007518698" duration="597000" />
       <workItem from="1790181796745" duration="1763000" />
-      <workItem from="1790311703570" duration="1900000" />
+      <workItem from="1790311703570" duration="2628000" />
     </task>
     <servers />
   </component>
