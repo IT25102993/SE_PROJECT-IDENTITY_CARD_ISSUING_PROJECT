@@ -6,6 +6,45 @@
   <component name="ChangeListManager">
     <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/NexusGovApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/NexusGovApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/AuthInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/AuthInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/BackupService.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/BackupService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DataInitializer.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DataInitializer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DatabaseConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DatabaseConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/EmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/EmailService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/JwtUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/WebConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/ApplicationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/ApplicationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController$OtpRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController$OtpRecord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/DocumentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/DocumentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/HealthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/HealthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/OperationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/OperationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/VerificationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/VerificationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AccountDeletionRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AccountDeletionRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Applicant.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Applicant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Application.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Application.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AuditLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AuditLog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/DispatchRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/DispatchRecord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Document.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/IdentityCard.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/IdentityCard.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Verification.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Verification.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AccountDeletionRequestRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AccountDeletionRequestRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicantRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicantRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AuditLogRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AuditLogRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DocumentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DocumentRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/IdentityCardRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/IdentityCardRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/VerificationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/VerificationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine$BotResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine$BotResult.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/DocumentStorageUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/DocumentStorageUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/NicGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/NicGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/UserContext.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/UserContext.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,16 +96,17 @@
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/SLIIT/COURSES/2nd Year/1st Semester/SE/PROJECT/CODE/GITHUB/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT",
+    "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "npm",
     "npm.NexusGov — Frontend Client (Vite).executor": "Run",
     "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Compound.NexusGov — Full Stack (Spring Boot + Vite)" />
+  <component name="RunManager" selected="npm.NexusGov — Frontend Client (Vite)" />
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -85,6 +125,7 @@
       <workItem from="1790392677285" duration="486000" />
       <workItem from="1790393179200" duration="703000" />
       <workItem from="1790393898202" duration="4606000" />
+      <workItem from="1790407955081" duration="900000" />
     </task>
     <servers />
   </component>
