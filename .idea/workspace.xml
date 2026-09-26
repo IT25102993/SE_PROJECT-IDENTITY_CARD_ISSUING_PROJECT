@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
+    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789605864308_download__26_.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789615850424_download__3_.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789615850431_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789620345735_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789620345739_5.png" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,6 +63,9 @@
     "npm.Vite Client (Dev).executor": "Run",
     "npm.dev:client.executor": "Run",
     "npm.dev:server.executor": "Run",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "ts.external.directory.path": "D:\\Files\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
@@ -121,6 +130,7 @@
       <workItem from="1790007518698" duration="597000" />
       <workItem from="1790181796745" duration="1763000" />
       <workItem from="1790311703570" duration="3224000" />
+      <workItem from="1790391565527" duration="175000" />
     </task>
     <servers />
   </component>
