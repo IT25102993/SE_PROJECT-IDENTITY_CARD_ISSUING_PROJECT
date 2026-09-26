@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="NexusGov — Full Stack (Spring Boot + Vite)" type="CompoundRunConfigurationType">
-    <toRun name="NexusGov — Spring Boot API" type="SpringBootApplicationConfigurationType" />
-    <toRun name="NexusGov — Frontend Client (Vite)" type="js.build_tools.npm" />
-    <method v="2" />
-  </configuration>
-</component>
