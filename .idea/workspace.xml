@@ -1,12 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789605864308_download__26_.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789615850424_download__3_.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789615850431_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789620345735_light_cyan_apple_inc__lines_abstraction_4k_5k_hd_abstract-3840x2160.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/uploads/documents/1789620345739_5.png" beforeDir="false" />
+    <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/NexusGov_Frontend_Vite.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/NexusGov_Full_Stack.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/NexusGov_Spring_Boot.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/NexusGovApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/NexusGovApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/AuthInterceptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/AuthInterceptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/BackupService.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/BackupService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DataInitializer.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DataInitializer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DatabaseConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/DatabaseConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/EmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/EmailService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/JwtUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/config/WebConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/ApplicationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/ApplicationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController$OtpRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController$OtpRecord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/DocumentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/DocumentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/HealthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/HealthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/OperationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/OperationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/VerificationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/controller/VerificationController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AccountDeletionRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AccountDeletionRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Applicant.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Applicant.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Application.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Application.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AuditLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/AuditLog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/DispatchRecord.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/DispatchRecord.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Document.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/IdentityCard.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/IdentityCard.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Verification.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/entity/Verification.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AccountDeletionRequestRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AccountDeletionRequestRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicantRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicantRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/ApplicationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AuditLogRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/AuditLogRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DocumentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DocumentRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/IdentityCardRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/IdentityCardRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/VerificationRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/VerificationRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine$BotResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine$BotResult.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/BotVerificationEngine.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/DocumentStorageUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/DocumentStorageUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/NicGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/NicGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/UserContext.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/util/UserContext.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,62 +61,64 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;IT25102993&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "IT25102993"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.git&quot;,
-    &quot;accountId&quot;: &quot;6a40b234-2ce1-4089-a682-2a9495a7b2a9&quot;
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/IT25102993/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.git",
+    "accountId": "6a40b234-2ce1-4089-a682-2a9495a7b2a9"
   }
-}</component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 5
-}</component>
-  <component name="ProjectId" id="3HqFppn7mFGI6XpUnM5Xm7EE4gi" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
+}]]></component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="3JqdkW1t2j6hd4Tywh12zYL28e7" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Node.js.App.jsx.executor": "Run",
-    "Node.js.main.jsx.executor": "Run",
-    "Node.js.server.js.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.NexusGov — Spring Boot API.executor": "Run",
+    "Spring Boot.NexusGovApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/SLIIT/COURSES/2nd Year/1st Semester/SE/PROJECT/CODE/GITHUB/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT",
     "nodejs_package_manager_path": "npm",
-    "npm.NexusGov — Backend API (Node.js).executor": "Run",
-    "npm.NexusGov — Frontend Client (Vite).executor": "Run",
-    "npm.Node Server (Dev).executor": "Run",
-    "npm.Vite Client (Dev).executor": "Run",
-    "npm.dev:client.executor": "Run",
-    "npm.dev:server.executor": "Run",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "D:\\Files\\IntelliJ IDEA 2025.3.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Compound.NexusGov — Full Stack (Spring Boot + Vite)" />
+  <component name="RunManager">
+    <configuration name="NexusGovApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="nexusgov-identity-card-system" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="lk.gov.nexus.NexusGovApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -82,55 +129,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f3bb19f4-c720-4e7d-a449-fb7e9328127c" name="Changes" comment="" />
-      <created>1786587882429</created>
+      <changelist id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="" />
+      <created>1790392676194</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1786587882429</updated>
-      <workItem from="1786587883471" duration="3224000" />
-      <workItem from="1786591218432" duration="3263000" />
-      <workItem from="1786605094634" duration="5821000" />
-      <workItem from="1786635681028" duration="1278000" />
-      <workItem from="1786679086134" duration="2927000" />
-      <workItem from="1786682331335" duration="142000" />
-      <workItem from="1786682489414" duration="604000" />
-      <workItem from="1786691796697" duration="1348000" />
-      <workItem from="1786848498847" duration="2676000" />
-      <workItem from="1787025670614" duration="1537000" />
-      <workItem from="1787033653719" duration="585000" />
-      <workItem from="1787034282210" duration="66000" />
-      <workItem from="1787042954190" duration="3061000" />
-      <workItem from="1787710145025" duration="596000" />
-      <workItem from="1787732375726" duration="1196000" />
-      <workItem from="1787798891552" duration="626000" />
-      <workItem from="1787884616600" duration="35000" />
-      <workItem from="1787895062430" duration="1028000" />
-      <workItem from="1787975294490" duration="1907000" />
-      <workItem from="1788092754942" duration="1479000" />
-      <workItem from="1788099372292" duration="866000" />
-      <workItem from="1788100261973" duration="1775000" />
-      <workItem from="1788610532575" duration="741000" />
-      <workItem from="1789008252661" duration="618000" />
-      <workItem from="1789183047519" duration="6341000" />
-      <workItem from="1789358725793" duration="2673000" />
-      <workItem from="1789444701805" duration="2614000" />
-      <workItem from="1789456160374" duration="428000" />
-      <workItem from="1789457399361" duration="1590000" />
-      <workItem from="1789464782543" duration="890000" />
-      <workItem from="1789466123901" duration="729000" />
-      <workItem from="1789487813271" duration="832000" />
-      <workItem from="1789530555239" duration="6907000" />
-      <workItem from="1789546814916" duration="3145000" />
-      <workItem from="1789572132094" duration="8546000" />
-      <workItem from="1789601694118" duration="2755000" />
-      <workItem from="1789612610776" duration="11107000" />
-      <workItem from="1789630356950" duration="2212000" />
-      <workItem from="1789916926503" duration="756000" />
-      <workItem from="1789970937662" duration="708000" />
-      <workItem from="1790007518698" duration="597000" />
-      <workItem from="1790181796745" duration="1763000" />
-      <workItem from="1790311703570" duration="3224000" />
-      <workItem from="1790391565527" duration="175000" />
+      <updated>1790392676194</updated>
+      <workItem from="1790392677285" duration="486000" />
     </task>
     <servers />
   </component>
