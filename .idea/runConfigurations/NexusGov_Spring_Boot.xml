@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="NexusGov — Spring Boot API" type="SpringBootApplicationConfigurationType" nameIsGenerated="false">
+    <module name="nexusgov-identity-card-system" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="lk.gov.nexus.NexusGovApplication" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
