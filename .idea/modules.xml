@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.iml" filepath="$PROJECT_DIR$/.idea/SE_PROJECT-IDENTITY_CARD_ISSUING_PROJECT.iml" />
-      <module fileurl="file://$PROJECT_DIR$/server/nexusgov-identity-card-system.iml" filepath="$PROJECT_DIR$/server/nexusgov-identity-card-system.iml" />
     </modules>
   </component>
 </project>
