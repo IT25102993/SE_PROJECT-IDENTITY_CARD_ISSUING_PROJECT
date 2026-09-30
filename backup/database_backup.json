@@ -1,6 +1,6 @@
 {
   "version" : "2.1",
-  "last_updated" : "2026-09-30T10:46:14.136587500",
+  "last_updated" : "2026-09-30T14:52:47.843939700",
   "tables" : {
     "users" : [ {
       "user_id" : 1,
@@ -93,6 +93,18 @@
       "email" : "kgnadunnimesh@gmail.com",
       "photo_path" : "/uploads/documents/1790744784664_passport_photo_1790744784664.jpg",
       "registered_at" : "2026-09-30T10:36:24"
+    }, {
+      "applicant_id" : 9003,
+      "national_id_number" : "200006464699",
+      "first_name" : "Thilina",
+      "last_name" : "Sakalasooriya",
+      "date_of_birth" : "2000-03-04",
+      "gender" : "Other",
+      "address" : "test",
+      "phone_number" : "0713535 366",
+      "email" : "kgnadunnimesh@gmail.com",
+      "photo_path" : "/uploads/documents/1790759654637_passport_photo_1790759654637.jpg",
+      "registered_at" : "2026-09-30T14:44:14"
     } ],
     "applications" : [ {
       "application_id" : 1,
@@ -218,6 +230,37 @@
       "bot_notes" : null,
       "bot_verified_at" : null,
       "documents" : [ ]
+    }, {
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "application_type" : "New",
+      "status" : "Dispatched",
+      "processed_by" : 69,
+      "assigned_officer" : "Document Handling Officer Silva",
+      "application_reason" : "G.C.E O/L",
+      "marital_status" : "Divorced",
+      "service_type" : "Normal",
+      "remarks" : "New citizen online submission.",
+      "submitted_at" : "2026-09-30T14:44:14",
+      "updated_at" : "2026-09-30T14:52:47",
+      "tracking_id" : "NEX-2026-9004",
+      "first_name" : null,
+      "last_name" : null,
+      "fullNameEn" : null,
+      "national_id_number" : null,
+      "dob" : null,
+      "gender" : null,
+      "address" : null,
+      "phone" : null,
+      "phone_number" : null,
+      "email" : null,
+      "photo_path" : null,
+      "processed_by_name" : null,
+      "bot_verified" : 0,
+      "bot_score" : 0,
+      "bot_notes" : null,
+      "bot_verified_at" : null,
+      "documents" : [ ]
     } ],
     "verifications" : [ {
       "verification_id" : 1,
@@ -273,6 +316,76 @@
       "verified_by" : 1,
       "verified_at" : "2026-09-30T10:36:25",
       "tracking_id" : "NEX-2026-9003",
+      "applicant_name" : null,
+      "verified_by_name" : null
+    }, {
+      "verification_id" : 93,
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "method" : "AI-BOT",
+      "result" : "Flagged",
+      "passed" : 0,
+      "score" : 54,
+      "notes" : "Automated Bot Check: INCONCLUSIVE (Match Score: 54%). Below 80% threshold.\n• Specimen Document: FreshMart_UML_HighQuality.png\n• Discrepancies detected between submitted data (\"Nadun Nimesh\", DOB: \"1900-03-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+      "verified_by" : 1,
+      "verified_at" : "2026-09-30T14:44:16",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "verified_by_name" : null
+    }, {
+      "verification_id" : 94,
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "method" : "AI-BOT",
+      "result" : "Flagged",
+      "passed" : 0,
+      "score" : 54,
+      "notes" : "Automated Bot Check: INCONCLUSIVE (Match Score: 54%). Below 80% threshold.\n• Specimen Document: FreshMart_UML_HighQuality.png\n• Discrepancies detected between submitted data (\"Nadun Nimesh\", DOB: \"1900-03-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+      "verified_by" : 69,
+      "verified_at" : "2026-09-30T14:49:50",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "verified_by_name" : null
+    }, {
+      "verification_id" : 95,
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "method" : "AI-BOT",
+      "result" : "Flagged",
+      "passed" : 0,
+      "score" : 54,
+      "notes" : "Automated Bot Check: INCONCLUSIVE (Match Score: 54%). Below 80% threshold.\n• Specimen Document: FreshMart_UML_HighQuality.png\n• Discrepancies detected between submitted data (\"Nadun Nimesh\", DOB: \"1900-03-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+      "verified_by" : 69,
+      "verified_at" : "2026-09-30T14:49:52",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "verified_by_name" : null
+    }, {
+      "verification_id" : 96,
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "method" : "AI-BOT",
+      "result" : "Flagged",
+      "passed" : 0,
+      "score" : 54,
+      "notes" : "Automated Bot Check: INCONCLUSIVE (Match Score: 54%). Below 80% threshold.\n• Specimen Document: FreshMart_UML_HighQuality.png\n• Discrepancies detected between submitted data (\"Nadun Nimesh\", DOB: \"1900-03-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+      "verified_by" : 69,
+      "verified_at" : "2026-09-30T14:49:53",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "verified_by_name" : null
+    }, {
+      "verification_id" : 97,
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "method" : "AI-BOT",
+      "result" : "Flagged",
+      "passed" : 0,
+      "score" : 75,
+      "notes" : "Automated Bot Check: INCONCLUSIVE (Match Score: 75%). Below 80% threshold.\n• Specimen Document: FreshMart_UML_HighQuality.png\n• Discrepancies detected between submitted data (\"Thilina Sakalasooriya\", DOB: \"2000-03-04\") and official register details (\"Thilina Srimal Sakalasooriya\", DOB: \"2005 May 31\"). Forwarded for human officer review.",
+      "verified_by" : 69,
+      "verified_at" : "2026-09-30T14:50:36",
+      "tracking_id" : "NEX-2026-9004",
       "applicant_name" : null,
       "verified_by_name" : null
     } ],
@@ -408,6 +521,30 @@
       "applicant_name" : null,
       "national_id_number" : null,
       "application_status" : null
+    }, {
+      "document_id" : 12,
+      "application_id" : 9004,
+      "document_type" : "Birth Certificate (Original Scan)",
+      "file_name" : "FreshMart_UML_HighQuality.png",
+      "file_path" : "/uploads/documents/1790759654677_FreshMart_UML_HighQuality.png",
+      "file_size" : "8.48 MB",
+      "uploaded_at" : "2026-09-30T14:44:14",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "national_id_number" : null,
+      "application_status" : null
+    }, {
+      "document_id" : 13,
+      "application_id" : 9004,
+      "document_type" : "Bank Deposit / CDM Teller Slip",
+      "file_name" : "logo.png",
+      "file_path" : "/uploads/documents/1790759654764_logo.png",
+      "file_size" : "3.93 MB",
+      "uploaded_at" : "2026-09-30T14:44:14",
+      "tracking_id" : "NEX-2026-9004",
+      "applicant_name" : null,
+      "national_id_number" : null,
+      "application_status" : null
     } ],
     "identity_cards" : [ {
       "card_id" : 1,
@@ -439,6 +576,16 @@
       "status" : "Active",
       "issued_by" : 17,
       "created_at" : "2026-09-16T01:46:03"
+    }, {
+      "card_id" : 5,
+      "card_number" : "200006464699",
+      "application_id" : 9004,
+      "applicant_id" : 9003,
+      "issue_date" : "2026-09-30",
+      "expiry_date" : "2036-09-30",
+      "status" : "Active",
+      "issued_by" : 69,
+      "created_at" : "2026-09-30T14:52:12"
     } ],
     "account_deletion_requests" : [ {
       "request_id" : 1,
@@ -457,6 +604,30 @@
       "application_count" : 0
     } ],
     "audit_logs" : [ {
+      "log_id" : 108,
+      "user_id" : 69,
+      "action" : "STATUS_CHANGE",
+      "details" : "Application #9004 changed from Printed to Dispatched",
+      "timestamp" : "2026-09-30T20:22:47",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 106,
+      "user_id" : 69,
+      "action" : "STATUS_CHANGE",
+      "details" : "Application #9004 changed from Approved to Printed",
+      "timestamp" : "2026-09-30T20:22:43",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 103,
+      "user_id" : 69,
+      "action" : "STATUS_CHANGE",
+      "details" : "Application #9004 changed from Pending to Approved",
+      "timestamp" : "2026-09-30T20:22:12",
+      "username" : null,
+      "role" : null
+    }, {
       "log_id" : 93,
       "user_id" : null,
       "action" : "STATUS_CHANGE",
@@ -470,6 +641,102 @@
       "action" : "STATUS_CHANGE",
       "details" : "Application #9003 changed from Pending to Verification-Passed",
       "timestamp" : "2026-09-30T16:06:25",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 109,
+      "user_id" : 70,
+      "action" : "STATUS_UPDATED",
+      "details" : "Application #9004 status set to 'Dispatched'",
+      "timestamp" : "2026-09-30T14:52:47",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 107,
+      "user_id" : 70,
+      "action" : "STATUS_UPDATED",
+      "details" : "Application #9004 status set to 'Printed'",
+      "timestamp" : "2026-09-30T14:52:43",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 105,
+      "user_id" : 70,
+      "action" : "USER_LOGIN",
+      "details" : "User operational logged in successfully.",
+      "timestamp" : "2026-09-30T14:52:35",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 104,
+      "user_id" : 69,
+      "action" : "APPLICATION_APPROVED",
+      "details" : "Application #9004 approved. Official 12-digit NIC 200006464699 generated.",
+      "timestamp" : "2026-09-30T14:52:12",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 102,
+      "user_id" : 69,
+      "action" : "APPLICATION_UPDATED",
+      "details" : "Application #9004 details updated by Senior Approver Jayawardena",
+      "timestamp" : "2026-09-30T14:50:32",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 101,
+      "user_id" : 68,
+      "action" : "JOB_CLAIMED",
+      "details" : "Application #9004 claimed into active pool by Document Handling Officer Silva",
+      "timestamp" : "2026-09-30T14:48:59",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 100,
+      "user_id" : 68,
+      "action" : "JOB_REMOVED_FROM_POOL",
+      "details" : "Application #9004 removed from job pool by Document Handling Officer Silva and returned to unassigned queue",
+      "timestamp" : "2026-09-30T14:48:53",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 99,
+      "user_id" : 68,
+      "action" : "JOB_CLAIMED",
+      "details" : "Application #9004 claimed into active pool by Document Handling Officer Silva",
+      "timestamp" : "2026-09-30T14:48:47",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 98,
+      "user_id" : 69,
+      "action" : "USER_LOGIN",
+      "details" : "User approver logged in successfully.",
+      "timestamp" : "2026-09-30T14:48:26",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 97,
+      "user_id" : 68,
+      "action" : "USER_LOGIN",
+      "details" : "User document_officer logged in successfully.",
+      "timestamp" : "2026-09-30T14:47:18",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 96,
+      "user_id" : 1,
+      "action" : "APPLICATION_CREATED",
+      "details" : "Application #9004 created for Nadun Nimesh. Bot Verification: Pending (Score: 54%)",
+      "timestamp" : "2026-09-30T14:44:16",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 95,
+      "user_id" : 69,
+      "action" : "USER_LOGIN",
+      "details" : "User approver logged in successfully.",
+      "timestamp" : "2026-09-30T14:39:55",
       "username" : null,
       "role" : null
     }, {
@@ -1136,78 +1403,6 @@
       "timestamp" : "2026-09-15T21:18:31",
       "username" : null,
       "role" : null
-    }, {
-      "log_id" : 9,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Printed",
-      "timestamp" : "2026-09-15T21:18:15",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 8,
-      "user_id" : 2,
-      "action" : "APPLICATION_APPROVED",
-      "details" : "Application #1 approved. Official 12-digit NIC 200509084440 generated.",
-      "timestamp" : "2026-09-15T21:17:05",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 7,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Rejected",
-      "timestamp" : "2026-09-15T21:16:24",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 6,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Approved",
-      "timestamp" : "2026-09-15T21:16:20",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 5,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Rejected",
-      "timestamp" : "2026-09-15T21:16:19",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 4,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Approved",
-      "timestamp" : "2026-09-15T21:16:17",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 3,
-      "user_id" : null,
-      "action" : "APPLICATION_CREATED",
-      "details" : "Application #1 created for Thilina Sakalasooriya. Bot Verification: Verification-Passed (Score: 95%)",
-      "timestamp" : "2026-09-15T21:14:24",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 2,
-      "user_id" : 23,
-      "action" : "USER_REGISTER",
-      "details" : "New citizen registered: citizen_thilina (Citizen)",
-      "timestamp" : "2026-09-15T21:11:39",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 1,
-      "user_id" : 1,
-      "action" : "DATABASE_PURGED",
-      "details" : "Database cleaned: all citizen applications, documents, and citizen users purged. All staff accounts preserved.",
-      "timestamp" : "2026-09-15T20:52:49",
-      "username" : null,
-      "role" : null
     } ]
   },
   "update_history" : [ {
@@ -1258,13 +1453,49 @@
   }, {
     "action" : "Application #9003 updated",
     "timestamp" : "2026-09-30T10:46:14.172803400"
+  }, {
+    "action" : "Application #9004 created",
+    "timestamp" : "2026-09-30T14:44:16.509238900"
+  }, {
+    "action" : "Application #9004 claimed by Document Handling Officer Silva",
+    "timestamp" : "2026-09-30T14:48:47.673344700"
+  }, {
+    "action" : "Application #9004 unclaimed",
+    "timestamp" : "2026-09-30T14:48:53.937089600"
+  }, {
+    "action" : "Application #9004 claimed by Document Handling Officer Silva",
+    "timestamp" : "2026-09-30T14:49:00.117753600"
+  }, {
+    "action" : "Bot verification run for Application #9004",
+    "timestamp" : "2026-09-30T14:49:50.432939600"
+  }, {
+    "action" : "Bot verification run for Application #9004",
+    "timestamp" : "2026-09-30T14:49:52.425067100"
+  }, {
+    "action" : "Bot verification run for Application #9004",
+    "timestamp" : "2026-09-30T14:49:53.731526900"
+  }, {
+    "action" : "Application #9004 updated",
+    "timestamp" : "2026-09-30T14:50:32.658359100"
+  }, {
+    "action" : "Bot verification run for Application #9004",
+    "timestamp" : "2026-09-30T14:50:36.561473700"
+  }, {
+    "action" : "Application #9004 approved",
+    "timestamp" : "2026-09-30T14:52:12.986838500"
+  }, {
+    "action" : "Application #9004 status set to Printed",
+    "timestamp" : "2026-09-30T14:52:43.636298100"
+  }, {
+    "action" : "Application #9004 status set to Dispatched",
+    "timestamp" : "2026-09-30T14:52:47.879834700"
   } ],
   "summary" : {
     "total_users" : 6,
-    "total_applicants" : 4,
-    "total_applications" : 4,
-    "total_verifications" : 4,
-    "total_documents" : 11,
-    "total_cards" : 3
+    "total_applicants" : 5,
+    "total_applications" : 5,
+    "total_verifications" : 9,
+    "total_documents" : 13,
+    "total_cards" : 4
   }
 }
