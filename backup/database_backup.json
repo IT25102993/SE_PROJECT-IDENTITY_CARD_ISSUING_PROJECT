@@ -1,6 +1,6 @@
 {
   "version" : "2.1",
-  "last_updated" : "2026-09-30T14:52:47.843939700",
+  "last_updated" : "2026-10-01T12:32:25.394825500",
   "tables" : {
     "users" : [ {
       "user_id" : 1,
@@ -593,17 +593,33 @@
       "username" : "citizen_thilina",
       "email" : "sakaleyt@gmail.com",
       "reason" : "hi request",
-      "status" : "Pending",
+      "status" : "Approved",
       "admin_notes" : null,
       "requested_at" : "2026-09-16T05:15:16",
-      "processed_at" : null,
-      "processed_by" : null,
+      "processed_at" : "2026-10-01T12:32:25",
+      "processed_by" : 2,
       "current_user_fullname" : null,
       "processed_by_name" : null,
       "submitted_applications" : [ ],
       "application_count" : 0
     } ],
     "audit_logs" : [ {
+      "log_id" : 111,
+      "user_id" : 2,
+      "action" : "ADMIN_APPROVE_ACCOUNT_DELETION",
+      "details" : "Admin approved account deletion request #1 for user citizen_thilina (sakaleyt@gmail.com). User account removed.",
+      "timestamp" : "2026-10-01T12:32:25",
+      "username" : null,
+      "role" : null
+    }, {
+      "log_id" : 110,
+      "user_id" : 2,
+      "action" : "USER_LOGIN",
+      "details" : "User admin logged in successfully.",
+      "timestamp" : "2026-10-01T12:32:18",
+      "username" : null,
+      "role" : null
+    }, {
       "log_id" : 108,
       "user_id" : 69,
       "action" : "STATUS_CHANGE",
@@ -1387,22 +1403,6 @@
       "timestamp" : "2026-09-15T23:47:10",
       "username" : null,
       "role" : null
-    }, {
-      "log_id" : 11,
-      "user_id" : 2,
-      "action" : "USER_LOGIN",
-      "details" : "User admin logged in successfully.",
-      "timestamp" : "2026-09-15T23:25:07",
-      "username" : null,
-      "role" : null
-    }, {
-      "log_id" : 10,
-      "user_id" : 2,
-      "action" : "STATUS_UPDATE",
-      "details" : "Application #1 status updated to Dispatched",
-      "timestamp" : "2026-09-15T21:18:31",
-      "username" : null,
-      "role" : null
     } ]
   },
   "update_history" : [ {
@@ -1489,6 +1489,9 @@
   }, {
     "action" : "Application #9004 status set to Dispatched",
     "timestamp" : "2026-09-30T14:52:47.879834700"
+  }, {
+    "action" : "Account deletion approved #1",
+    "timestamp" : "2026-10-01T12:32:25.449971800"
   } ],
   "summary" : {
     "total_users" : 6,
