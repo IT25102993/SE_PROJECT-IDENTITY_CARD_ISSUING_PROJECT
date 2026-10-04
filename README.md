@@ -527,7 +527,7 @@ These are current, known gaps in the implementation rather than intended design:
 
 - **IT25102040** — Nimesh K. G. N. — Identity Approval & Issuance Workflow
 - **IT25102993** — Sakalasooriya S. A. T. S. — Admin & Audit Management
-- **IT25200818** — Ranathunga K. A. L. D. — User and Applicant Management
+- **IT25200818** — Ranathunga K. A. L. D. — User & Delivery Management
 - **IT25102186** — Weerasena K. W. D. — Document Upload & Verification
 - **IT25300026** — Thilakarathna K. K. R. V. — Identity Application Management
 - **IT25101186** — Sulakshana N. V. B. U. — Operational & Delivery Management
