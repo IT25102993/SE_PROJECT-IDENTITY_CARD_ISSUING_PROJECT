@@ -54,9 +54,11 @@ export const LoginPage = () => {
             navigate('/approver-jobpool');
           } else if (userRole === 'form-officer') {
             navigate('/officer-jobpool');
-          } else if (userRole === 'document-officer') {
-            navigate('/document-jobpool');
-          } else {
+} else if (userRole === 'document-officer') {
+      navigate('/document-jobpool');
+    } else if (userRole === 'delivery-manager') {
+      navigate('/delivery-jobpool');
+    } else {
             navigate('/');
           }
         }
