@@ -110,6 +110,40 @@ const INITIAL_FALLBACK_APPLICATIONS = [
       { status: 'Submitted', date: '2026-08-02 10:00 AM', note: 'Application filed online via citizen portal.' },
       { status: 'AI Bot Verification', date: '2026-08-02 10:15 AM', note: 'AI bot validated official birth certificate (Score 96%). Passed to Officer Workbench.' }
     ]
+  },
+  {
+    id: 'NEX-2026-90420',
+    application_id: 3,
+    fullNameEn: 'Sanduni Wijesinghe',
+    fullNameSi: 'සන්දුනි විජේසිංහ',
+    fullNameTa: 'சந்துனி விஜயசிங்க',
+    first_name: 'Sanduni',
+    last_name: 'Wijesinghe',
+    nicNumber: '199923450781',
+    dob: '1999-08-14',
+    gender: 'Female',
+    civilStatus: 'Single',
+    address: 'No. 78, Temple Lane, Kandy',
+    district: 'Kandy',
+    divisionalSecretariat: 'Kandy',
+    gnDivision: 'Kandy Town (4611A)',
+    phone: '+94 70 456 7890',
+    email: 'sanduni.w@gmail.com',
+    photoUrl: '',
+    signature: 'Sanduni Wijesinghe',
+    status: 'Dispatched',
+    service_type: '1-Day',
+    submittedDate: '2026-08-03',
+    assignedOfficer: null,
+    officerNotes: 'PVC card printed and handed over to Sri Lanka Post for delivery.',
+    documents: [
+      { document_type: 'Birth Certificate (Original Scan)', file_name: 'birth_certificate.pdf', file_size: '1.10 MB' }
+    ],
+    trackingHistory: [
+      { status: 'Submitted', date: '2026-08-03 08:10 AM', note: 'Application filed online via citizen portal.' },
+      { status: 'AI Bot Verification', date: '2026-08-03 08:20 AM', note: 'AI bot validated official birth certificate (Score 94%).' },
+      { status: 'Printed & Dispatched', date: '2026-08-04 09:15 AM', note: 'PVC card printed and pushed to Delivery Management.' }
+    ]
   }
 ];
 
@@ -439,6 +473,61 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // ── Delivery Management ────────────────────────────────────────────────────
+  // Delivery-Manager only: Dispatched | Delivered | Not-Delivered | Canceled
+  const updateDeliveryStatus = async (appId, status, notes = '') => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+    const token = localStorage.getItem('nexusgov-token');
+
+    // Optimistic local state update
+    setApplications(prev => prev.map(app => {
+      if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+        return { ...app, status, remarks: notes || app.remarks, officerNotes: notes || app.officerNotes };
+      }
+      return app;
+    }));
+
+    try {
+      const res = await fetch(`/api/delivery/${numericId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ status, remarks: notes })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update delivery status');
+      }
+      scheduleRefresh(300);
+      addToast(`Order ${appId} delivery status set to ${status}.`, status === 'Delivered' ? 'success' : 'info');
+      return { success: true, message: data.message };
+    } catch (err) {
+      addToast(err.message || 'Error updating delivery status', 'error');
+      scheduleRefresh(300);
+      return { success: false, message: err.message };
+    }
+  };
+
+  // Delivery Job Pool: orders that Operation Management has pushed out for delivery
+  const getDeliveryJobs = async () => {
+    const token = localStorage.getItem('nexusgov-token');
+    try {
+      const res = await fetch('/api/delivery/job-pool', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.jobs)) {
+        return data.jobs;
+      }
+      throw new Error(data.message || 'Failed to fetch delivery job pool');
+    } catch (err) {
+      console.warn('Delivery job pool fetch note:', err.message);
+      return [];
+    }
+  };
+
   const claimJob = async (appId, officerName = 'Form Handling Officer Perera') => {
     const numericId = String(appId).replace(/^NEX-2026-/, '');
 
@@ -652,6 +741,8 @@ export const AppProvider = ({ children }) => {
         rejectApplication,
         markAsPrinted,
         markAsDispatched,
+        updateDeliveryStatus,
+        getDeliveryJobs,
         toasts,
         addToast,
         removeToast,
