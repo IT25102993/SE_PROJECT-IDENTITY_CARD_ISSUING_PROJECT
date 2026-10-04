@@ -123,7 +123,7 @@ export const PrintQueuePage = () => {
       label: 'Dispatched · In Transit',
       value: dispatchedList.length,
       color: 'var(--accent-emerald)',
-      sub: 'Cards en route to citizens',
+      sub: 'Pushed to Delivery Management',
       icon: PackageCheck,
       onClick: () => {}
     }
@@ -355,7 +355,7 @@ export const PrintQueuePage = () => {
               <h3 style={{ fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <PackageCheck size={18} color="var(--accent-emerald)" /> Dispatched &amp; In Transit
               </h3>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Cards en route to citizen address</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Handed over to Delivery Management · awaiting delivery outcome</div>
             </div>
             <span className="badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', fontWeight: 800 }}>
               {dispatchedList.length}
