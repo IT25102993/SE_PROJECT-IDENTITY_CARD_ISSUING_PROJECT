@@ -36,3 +36,5 @@ Thumbs.db
 .eslintcache
 .temp/
 tmp/
+*.jpg
+*.pdf
