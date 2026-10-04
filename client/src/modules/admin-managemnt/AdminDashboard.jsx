@@ -1696,6 +1696,7 @@ export const AdminDashboard = () => {
                                 u.role === 'Form-Officer' ? 'rgba(16, 185, 129, 0.15)' :
                                 u.role === 'Document-Officer' ? 'rgba(6, 182, 212, 0.15)' :
                                 u.role === 'Operational' ? 'rgba(59, 130, 246, 0.15)' :
+                                u.role === 'Delivery-Manager' ? 'rgba(249, 115, 22, 0.15)' :
                                 'rgba(245, 158, 11, 0.15)',
                               color:
                                 u.role === 'Admin' ? 'var(--accent-purple)' :
@@ -1703,6 +1704,7 @@ export const AdminDashboard = () => {
                                 u.role === 'Form-Officer' ? 'var(--accent-emerald)' :
                                 u.role === 'Document-Officer' ? 'var(--accent-cyan)' :
                                 u.role === 'Operational' ? 'var(--accent-primary)' :
+                                u.role === 'Delivery-Manager' ? 'var(--accent-amber)' :
                                 'var(--accent-amber)',
                               border: `1px solid ${
                                 u.role === 'Admin' ? 'rgba(139, 92, 246, 0.3)' :
@@ -1710,6 +1712,7 @@ export const AdminDashboard = () => {
                                 u.role === 'Form-Officer' ? 'rgba(16, 185, 129, 0.3)' :
                                 u.role === 'Document-Officer' ? 'rgba(6, 182, 212, 0.3)' :
                                 u.role === 'Operational' ? 'rgba(59, 130, 246, 0.3)' :
+                                u.role === 'Delivery-Manager' ? 'rgba(249, 115, 22, 0.3)' :
                                 'rgba(245, 158, 11, 0.3)'
                               }`
                             }}
@@ -2057,6 +2060,7 @@ export const AdminDashboard = () => {
                       <option value="Document-Officer">Document Officer (Document Handling)</option>
                       <option value="Approver">Approver (Senior Officer)</option>
                       <option value="Operational">Operational (Print & Dispatch Specialist)</option>
+                      <option value="Delivery-Manager">Delivery Manager (Last-Mile Delivery)</option>
                       <option value="Admin">Admin (System Administrator)</option>
                     </select>
                   </div>
@@ -2556,6 +2560,7 @@ export const AdminDashboard = () => {
               <option value="Document-Officer">Document Officer (Document Handling)</option>
               <option value="Approver">Approver (Senior Officer)</option>
               <option value="Operational">Operational (Print & Dispatch)</option>
+              <option value="Delivery-Manager">Delivery Manager (Last-Mile Delivery)</option>
               <option value="Admin">Admin (System Administrator)</option>
             </select>
 
