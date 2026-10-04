@@ -548,7 +548,7 @@ export const updateApplicationStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Status field is required.' });
     }
 
-    const allowedStatuses = ['Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required'];
+    const allowedStatuses = ['Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Dispatched', 'Delivered', 'Not-Delivered', 'Canceled', 'Verification-Passed', 'Documents-Required'];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
