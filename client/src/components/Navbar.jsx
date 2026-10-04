@@ -17,7 +17,8 @@ import {
   LogOut,
   Settings,
   LayoutDashboard,
-  ClipboardList
+  ClipboardList,
+  Truck
 } from 'lucide-react';
 import { AccountSettingsModal } from './AccountSettingsModal';
 
@@ -38,12 +39,13 @@ export const Navbar = () => {
   const userRoleName = (user?.role || role || '').toLowerCase();
 
   // Role flags
-  const isStaffMember = ['admin', 'approver', 'operational', 'form-officer', 'document-officer'].includes(userRoleName);
+  const isStaffMember = ['admin', 'approver', 'operational', 'form-officer', 'document-officer', 'delivery-manager'].includes(userRoleName);
   const isAdminRole       = userRoleName === 'admin';
   const isFormOfficerRole     = userRoleName === 'form-officer';
   const isDocumentOfficerRole = userRoleName === 'document-officer';
   const isApproverRole    = userRoleName === 'approver';
   const isOperationalRole = userRoleName === 'operational';
+  const isDeliveryManagerRole = userRoleName === 'delivery-manager';
 
   // Badge config
   const getRoleBadge = () => {
@@ -54,6 +56,8 @@ export const Navbar = () => {
         return { label: 'Document Officer', icon: ClipboardList, color: '#06b6d4' };
       case 'operational':
         return { label: 'Operational Staff', icon: Printer, color: '#3b82f6' };
+      case 'delivery-manager':
+        return { label: 'Delivery Manager', icon: Truck, color: '#f97316' };
       case 'admin':
         return { label: 'System Admin', icon: ShieldAlert, color: '#8b5cf6' };
       case 'approver':
@@ -194,6 +198,19 @@ export const Navbar = () => {
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Printer size={14} /> Print Queue
+                  </span>
+                </NavLink>
+              </li>
+            )}
+
+            {isDeliveryManagerRole && (
+              <li>
+                <NavLink
+                  to="/delivery-jobpool"
+                  style={({ isActive }) => navStyle(isActive, '#f97316')}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Truck size={14} /> Delivery Job Pool
                   </span>
                 </NavLink>
               </li>
@@ -347,6 +364,9 @@ export const Navbar = () => {
           {isOperationalRole && (
             <NavLink to="/print-queue" onClick={() => setMobileOpen(false)}>Print Queue</NavLink>
           )}
+          {isDeliveryManagerRole && (
+            <NavLink to="/delivery-jobpool" onClick={() => setMobileOpen(false)}>Delivery Job Pool</NavLink>
+          )}
           {isAdminRole && (
             <NavLink to="/admin" onClick={() => setMobileOpen(false)}>Admin Portal</NavLink>
           )}
@@ -397,6 +417,7 @@ export const Navbar = () => {
 function getDashboardPath(roleName) {
   switch (roleName) {
     case 'operational':       return '/print-queue';
+    case 'delivery-manager':   return '/delivery-jobpool';
     case 'admin':             return '/admin';
     case 'approver':          return '/approver-jobpool';
     case 'form-officer':      return '/officer-jobpool';
