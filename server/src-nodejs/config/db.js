@@ -67,6 +67,15 @@ export const inMemoryDb = {
       created_at: new Date().toISOString()
     },
     {
+      user_id: 8,
+      username: 'delivery_manager',
+      email: 'delivery-manager@nexusgov.lk',
+      password_hash: '$2a$10$UecDKcSyKVxjBpxp1Pb.EOH4DAaobdPjNp8BsugMpRkDd9HcFTWoy', // bcrypt for #Thilina2005
+      full_name: 'Delivery Manager Fernando',
+      role: 'Delivery-Manager',
+      created_at: new Date().toISOString()
+    },
+    {
       user_id: 5,
       username: 'Citizen_Thilina',
       email: 'spokenengadamin@gmail.com',
@@ -128,6 +137,32 @@ export const inMemoryDb = {
       bot_notes: 'Automated Bot Check: PASSED (Match Score: 96%). Official Birth Certificate confirmed for Kavindu Perera. Specimen Document validated against Sri Lanka civil registration criteria.',
       bot_verified_at: '2026-08-02 10:15:00',
       submitted_at: '2026-08-02'
+    },
+    {
+      application_id: 3,
+      tracking_id: 'NEX-2026-90420',
+      first_name: 'Sanduni',
+      last_name: 'Wijesinghe',
+      fullNameEn: 'Sanduni Wijesinghe',
+      national_id_number: '199923450781',
+      dob: '1999-08-14',
+      gender: 'Female',
+      address: 'No. 78, Temple Lane, Kandy',
+      phone_number: '+94 70 456 7890',
+      phone: '+94 70 456 7890',
+      email: 'sanduni.w@gmail.com',
+      status: 'Dispatched',
+      application_type: 'New',
+      remarks: 'PVC card printed and handed over to Sri Lanka Post for delivery.',
+      assigned_officer: null,
+      application_reason: 'G.C.E O/L',
+      marital_status: 'Single',
+      service_type: '1-Day',
+      bot_verified: true,
+      bot_score: 94,
+      bot_notes: 'Automated Bot Check: PASSED (Match Score: 94%). Official Birth Certificate confirmed for Sanduni Wijesinghe. Demographic data validated against registrar criteria.',
+      bot_verified_at: '2026-08-03 08:20:00',
+      submitted_at: '2026-08-03'
     }
   ],
   documents: [
@@ -190,7 +225,21 @@ export const inMemoryDb = {
   ],
   audit_logs: [],
   account_deletion_requests: [],
-  dispatch_records: []
+  dispatch_records: [
+    {
+      dispatch_id: 1,
+      application_id: 3,
+      tracking_id: 'NEX-2026-90420',
+      applicant_name: 'Sanduni Wijesinghe',
+      nic_number: '199923450781',
+      dispatch_method: 'Courier',
+      delivery_address: 'No. 78, Temple Lane, Kandy',
+      dispatched_by: 6,
+      dispatched_by_name: 'Operational Specialist Silva',
+      dispatched_at: '2026-08-04 09:15:00',
+      notes: 'Express courier handover for 1-Day priority service.'
+    }
+  ]
 };
 
 export const initDb = async () => {
@@ -238,7 +287,7 @@ export const initDb = async () => {
         \`password_hash\` VARCHAR(255) NOT NULL,
         \`full_name\` VARCHAR(100) NOT NULL,
         \`email\` VARCHAR(100) NOT NULL UNIQUE,
-        \`role\` ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen',
+        \`role\` ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager', 'Citizen') NOT NULL DEFAULT 'Citizen',
         \`created_at\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`user_id\`)
       ) ENGINE = InnoDB DEFAULT CHARSET=utf8mb4;
@@ -262,7 +311,7 @@ export const initDb = async () => {
         \`application_id\` INT NOT NULL AUTO_INCREMENT,
         \`applicant_id\` INT NOT NULL,
         \`application_type\` ENUM('New', 'Renewal', 'Replacement') NOT NULL DEFAULT 'New',
-        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending',
+        \`status\` ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Dispatched', 'Delivered', 'Not-Delivered', 'Canceled', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending',
         \`processed_by\` INT NULL,
         \`assigned_officer\` VARCHAR(100) NULL,
         \`remarks\` TEXT NULL,
@@ -343,15 +392,15 @@ export const initDb = async () => {
     // Apply incremental schema migrations for pre-existing databases
     try {
       // Step 1: Add the new roles while keeping legacy 'Officer' so existing rows can migrate
-      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Officer', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
       // Step 2: Convert legacy Officer accounts to the new Form-Officer role
       await pool.query(`UPDATE users SET role = 'Form-Officer' WHERE LOWER(role) = 'officer';`);
       // Step 3: Retire the generic 'Officer' role from the schema
-      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
+      await pool.query(`ALTER TABLE users MODIFY COLUMN role ENUM('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager', 'Citizen') NOT NULL DEFAULT 'Citizen';`);
     } catch (e) { /* ignore if already updated */ }
 
     try {
-      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Dispatched', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
+      await pool.query(`ALTER TABLE applications MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Processing', 'Printed', 'Issued', 'Dispatched', 'Delivered', 'Not-Delivered', 'Canceled', 'Verification-Passed', 'Documents-Required') NOT NULL DEFAULT 'Pending';`);
     } catch (e) { /* ignore */ }
 
     // Create dispatch_records table if it does not exist (migration for pre-existing DBs)
@@ -461,6 +510,12 @@ export const initDb = async () => {
     await pool.query(`
       INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
       VALUES ('operational', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Operational Specialist Silva', 'operational@nexusgov.lk', 'Operational');
+    `);
+
+    // Seed default delivery manager
+    await pool.query(`
+      INSERT IGNORE INTO users (username, password_hash, full_name, email, role)
+      VALUES ('delivery_manager', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Delivery Manager Fernando', 'delivery-manager@nexusgov.lk', 'Delivery-Manager');
     `);
 
     isConnected = true;
