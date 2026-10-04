@@ -13,6 +13,7 @@ import verificationRoutes from './modules/verification-management/verificationRo
 import documentRoutes from './modules/document-upload-management/documentRoutes.js';
 import adminRoutes from './modules/admin-management/adminRoutes.js';
 import operationRoutes from './modules/operation-management/operationRoutes.js';
+import deliveryRoutes from './modules/delivery-management/deliveryRoutes.js';
 
 import { initSampleDocuments } from './modules/document-upload-management/documentStorage.js';
 
@@ -75,6 +76,9 @@ app.use('/api/admin', adminRoutes);
 // 6. Operation Management
 app.use('/api/operations', operationRoutes);
 
+// 7. Delivery Management (downstream of Operation Management)
+app.use('/api/delivery', deliveryRoutes);
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -86,7 +90,8 @@ app.get('/api/health', (req, res) => {
       'verification-management',
       'document-upload-management',
       'admin-management',
-      'operation-management'
+      'operation-management',
+      'delivery-management'
     ],
     timestamp: new Date().toISOString()
   });
@@ -118,7 +123,7 @@ const start = async () => {
     console.log(`NexusGov Server running locally on:  http://localhost:${PORT}`);
     console.log(`NexusGov Server running on network:  http://0.0.0.0:${PORT}`);
     console.log(`Health Check: http://localhost:${PORT}/api/health`);
-    console.log('Modules Active: user, application, verification, document, admin, operation');
+    console.log('Modules Active: user, application, verification, document, admin, operation, delivery');
     console.log('====================================================');
   });
 
