@@ -21,6 +21,7 @@ import { FormOfficerPool } from './modules/verification-management/FormOfficerPo
 import { DocumentOfficerPool } from './modules/verification-management/DocumentOfficerPool';
 import { ApproverPool } from './modules/verification-management/ApproverPool';
 import { PrintQueuePage } from './modules/operation-management/PrintQueuePage';
+import { DeliveryPoolPage } from './modules/delivery-management/DeliveryPoolPage';
 import { AnalyticsPage } from './modules/operation-management/AnalyticsPage';
 import { AdminDashboard } from './modules/admin-managemnt/AdminDashboard';
 
@@ -34,6 +35,7 @@ const PublicRoute = ({ children }) => {
     if (r === 'approver')      return <Navigate to="/approver-jobpool" replace />;
     if (r === 'form-officer')  return <Navigate to="/officer-jobpool" replace />;
     if (r === 'document-officer') return <Navigate to="/document-jobpool" replace />;
+    if (r === 'delivery-manager') return <Navigate to="/delivery-jobpool" replace />;
   }
   return children;
 };
@@ -111,6 +113,27 @@ const StaffRoute = ({ children }) => {
   return children;
 };
 
+// ── Route guard: ONLY Delivery-Manager role can access the Delivery Job Pool ──
+const DeliveryManagerRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (r !== 'delivery-manager') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
+        <div style={{ fontSize: '3rem' }}>🔒</div>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
+          The <strong>Delivery Job Pool</strong> is exclusively accessible to <strong>Delivery-Manager</strong> staff.
+          Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
+        </p>
+        <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
+      </div>
+    );
+  }
+  return children;
+};
+
 // ── Route guard: Admin-only portal ───────────────────────────────────────────
 const AdminRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
@@ -136,7 +159,7 @@ function AppContent() {
   const location = useLocation();
 
   // Admin-panel style pages hide the public Navbar / Footer / background
-  const isPanelPath = ['/admin', '/officer-jobpool', '/document-jobpool', '/approver-jobpool', '/print-queue', '/analytics'].includes(location.pathname);
+  const isPanelPath = ['/admin', '/officer-jobpool', '/document-jobpool', '/approver-jobpool', '/print-queue', '/delivery-jobpool', '/analytics'].includes(location.pathname);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
@@ -169,6 +192,10 @@ function AppContent() {
 
           {/* Strictly Operational only */}
           <Route path="/print-queue" element={<OperationalRoute><PrintQueuePage /></OperationalRoute>} />
+
+          {/* Strictly Delivery-Manager only — downstream of Operation Management */}
+          <Route path="/delivery" element={<Navigate to="/delivery-jobpool" replace />} />
+          <Route path="/delivery-jobpool" element={<DeliveryManagerRoute><DeliveryPoolPage /></DeliveryManagerRoute>} />
 
           {/* Strictly Admin only */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
