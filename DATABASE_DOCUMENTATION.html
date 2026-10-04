@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NexusGov Smart Identity Card Issuing System &mdash; Database Design, Normalization &amp; Relational Schema</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2330; --line:#2b3441;
+    --fg:#e6edf3; --muted:#9aa7b4; --accent:#4f9cf9; --accent2:#2dd4a7;
+    --warn:#f0b429; --danger:#f4737d; --pink:#e879f9;
+    --mono:'Cascadia Mono','Consolas','SF Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:'Segoe UI',Inter,Roboto,system-ui,sans-serif;font-size:15px;line-height:1.65}
+  .wrap{display:flex;min-height:100vh}
+  nav{width:288px;flex:0 0 288px;background:var(--bg2);border-right:1px solid var(--line);
+    height:100vh;position:sticky;top:0;overflow-y:auto;padding:22px 0 60px}
+  nav h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);
+    margin:0 22px 14px;font-weight:700}
+  nav a{display:block;padding:6px 22px;color:var(--muted);text-decoration:none;font-size:13.5px;
+    border-left:3px solid transparent}
+  nav a:hover{color:var(--fg);background:rgba(79,156,249,.08);border-left-color:var(--accent)}
+  nav a.sub{padding-left:38px;font-size:12.5px;color:#7d8894}
+  nav .gap{height:14px}
+  main{flex:1;min-width:0;padding:0 0 120px}
+  .page{max-width:1180px;margin:0 auto;padding:0 44px}
+  header.hero{background:linear-gradient(135deg,#101a2b 0%,#0d1117 60%);
+    border-bottom:1px solid var(--line);padding:56px 0 44px;margin-bottom:40px}
+  .eyebrow{color:var(--accent2);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
+  h1{font-size:34px;margin:10px 0 8px;line-height:1.2;letter-spacing:-.4px}
+  .sub-title{color:var(--muted);font-size:16.5px;max-width:900px}
+  .badges{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+  .badge{background:var(--bg3);border:1px solid var(--line);color:var(--accent2);
+    padding:4px 11px;border-radius:20px;font-size:12px;font-family:var(--mono)}
+  h2.sec{font-size:25px;margin:56px 0 6px;padding-top:22px;border-top:1px solid var(--line);
+    letter-spacing:-.3px;scroll-margin-top:20px}
+  h3{font-size:19px;margin:32px 0 8px;color:#cfe3ff}
+  h4{font-size:15.5px;margin:22px 0 6px;color:var(--accent2);letter-spacing:.02em}
+  p{margin:10px 0}
+  ul,ol{padding-left:22px}
+  li{margin:4px 0}
+  code{font-family:var(--mono);font-size:13px;background:rgba(79,156,249,.12);
+    color:#a8d3ff;padding:1px 6px;border-radius:4px}
+  a{color:var(--accent)}
+  .lead{color:var(--muted)}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:16px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stat{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .stat .n{font-size:28px;font-weight:700;color:var(--accent);font-family:var(--mono)}
+  .stat .l{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;
+    background:var(--bg2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  th{background:var(--bg3);color:#cfe3ff;text-align:left;padding:10px 12px;font-size:12px;
+    letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line);font-weight:700}
+  td{padding:9px 12px;border-bottom:1px solid rgba(43,52,65,.6);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(79,156,249,.05)}
+  td.mono,th.mono{font-family:var(--mono);font-size:12.5px}
+  .tbl-name{font-family:var(--mono);color:var(--accent2);font-weight:700}
+  pre{background:#0b0f16;border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:8px;padding:16px 18px;overflow-x:auto;font-family:var(--mono);
+    font-size:12.4px;line-height:1.6;color:#c9d6e4;margin:14px 0}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit}
+  .p{display:inline-block;padding:1px 8px;border-radius:5px;font-size:11.5px;
+    font-family:var(--mono);font-weight:700;white-space:nowrap}
+  .p-pk{background:rgba(79,156,249,.18);color:#7cc0ff;border:1px solid rgba(79,156,249,.4)}
+  .p-fk{background:rgba(232,121,249,.16);color:#f0a9fb;border:1px solid rgba(232,121,249,.4)}
+  .p-uq{background:rgba(45,212,167,.16);color:#5ee7c0;border:1px solid rgba(45,212,167,.4)}
+  .p-nn{background:rgba(240,180,41,.14);color:#ffd166;border:1px solid rgba(240,180,41,.35)}
+  .p-n{background:rgba(154,167,180,.12);color:#9aa7b4;border:1px solid rgba(154,167,180,.3)}
+  .p-idx{background:rgba(232,121,249,.1);color:#d7a3f0;border:1px solid rgba(232,121,249,.3)}
+  .ok{color:var(--accent2);font-weight:700}
+  .warn{color:var(--warn);font-weight:700}
+  .bad{color:var(--danger);font-weight:700}
+  .note{border-radius:9px;padding:14px 18px;margin:16px 0;border-left:4px solid;font-size:14px}
+  .note .t{font-weight:700;display:block;margin-bottom:4px}
+  .n-info{background:rgba(79,156,249,.08);border-color:var(--accent)}
+  .n-good{background:rgba(45,212,167,.08);border-color:var(--accent2)}
+  .n-warn{background:rgba(240,180,41,.08);border-color:var(--warn)}
+  .nf-flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:16px 0}
+  .nf-step{background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:10px 14px;
+    font-family:var(--mono);font-size:12.5px}
+  .nf-step b{color:var(--accent2);display:block;font-size:13px}
+  .arrow{color:var(--muted);font-size:18px}
+  .rule{background:#0b0f16;border:1px dashed var(--line);border-radius:8px;padding:12px 16px;
+    font-family:var(--mono);font-size:12.4px;color:#c9d6e4;margin:10px 0;overflow-x:auto;white-space:pre}
+  .keyline{color:var(--accent2)}
+  .toc-inline{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:20px 0}
+  .toc-inline h4{margin-top:0}
+  .toc-inline ol{columns:2;column-gap:36px;font-size:14px}
+  @media(max-width:1000px){nav{display:none}.g2,.g3,.g4{grid-template-columns:1fr}.toc-inline ol{columns:1}}
+  .foot{color:var(--muted);font-size:12.5px;text-align:center;padding:40px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <h2>Contents</h2>
+  <a href="#overview">1. Overview &amp; Scope</a>
+  <a href="#stack">2. DBMS, Engine &amp; Configuration</a>
+  <a href="#er">3. Entity-Relationship Diagram</a>
+  <a href="#tables">4. Table Catalogue</a>
+  <a class="sub" href="#t-users">4.1 users</a>
+  <a class="sub" href="#t-applicants">4.2 applicants</a>
+  <a class="sub" href="#t-applications">4.3 applications</a>
+  <a class="sub" href="#t-verifications">4.4 verifications</a>
+  <a class="sub" href="#t-documents">4.5 documents</a>
+  <a class="sub" href="#t-cards">4.6 identity_cards</a>
+  <a class="sub" href="#t-dispatch">4.7 dispatch_records</a>
+  <a class="sub" href="#t-deletion">4.8 account_deletion_requests</a>
+  <a class="sub" href="#t-audit">4.9 audit_logs</a>
+  <a class="sub" href="#t-payments">4.10 payments</a>
+  <a href="#keys">5. Keys &amp; Constraints</a>
+  <a href="#indexes">6. Indexes &amp; Access Paths</a>
+  <a href="#norm">7. Normalization (UNF to 5NF)</a>
+  <a class="sub" href="#unf">7.1 Unnormalized Form</a>
+  <a class="sub" href="#1nf">7.2 First Normal Form</a>
+  <a class="sub" href="#2nf">7.3 Second Normal Form</a>
+  <a class="sub" href="#3nf">7.4 Third Normal Form</a>
+  <a class="sub" href="#bcnf">7.5 BCNF / 4NF / 5NF</a>
+  <a class="sub" href="#anomalies">7.6 Anomalies Eliminated</a>
+  <a href="#fds">8. Functional Dependencies</a>
+  <a href="#relational">9. Relational Schema (Formal)</a>
+  <a href="#integrity">10. Integrity &amp; Constraints</a>
+  <a href="#lifecycle">11. Data Lifecycle &amp; States</a>
+  <a href="#ddl">12. Full DDL Reference</a>
+  <a href="#migrations">13. Migrations &amp; Triggers</a>
+  <a href="#queries">14. Canonical Queries</a>
+  <a href="#security">15. Security in the Data Layer</a>
+  <a href="#backup">16. Backup, Recovery &amp; Retention</a>
+  <a href="#perf">17. Performance &amp; Concurrency</a>
+  <a href="#appendix">18. Appendix</a>
+  <div class="gap"></div>
+  <a href="#top">Back to top</a>
+</nav>
+
+<main id="top">
+<header class="hero">
+  <div class="page">
+    <div class="eyebrow">Software Engineering Project &middot; Database Design Document</div>
+    <h1>NexusGov &mdash; Smart Identity Card Issuing System</h1>
+    <p class="sub-title">
+      Complete database documentation: entity-relationship design, the full normalized relational schema,
+      a step-by-step normalization analysis (UNF &rarr; 1NF &rarr; 2NF &rarr; 3NF &rarr; BCNF &rarr; 4NF &rarr; 5NF),
+      a column-level data dictionary, the key and constraint catalogue, functional dependencies,
+      indexing strategy, migrations, backup policy and worked SQL examples.
+    </p>
+    <div class="badges">
+      <span class="badge">MySQL 8 / InnoDB</span>
+      <span class="badge">utf8mb4</span>
+      <span class="badge">Spring Boot + JPA</span>
+      <span class="badge">Node.js + mysql2</span>
+      <span class="badge">H2 In-Memory Fallback</span>
+      <span class="badge">identity_card_system.sql</span>
+      <span class="badge">Target NF: 3NF / BCNF</span>
+      <span class="badge">Schema v2.0.0</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<h2 class="sec" id="overview">1. Overview &amp; Scope</h2>
+
+<p>
+  The <b>NexusGov Smart Identity Card Issuing System</b> is a role-governed web platform that digitises the
+  complete lifecycle of a national identity card: citizen registration, document upload, AI-assisted
+  verification, officer approval, card generation, printing, dispatch and audit. The database is the
+  single source of truth for all of it.
+</p>
+
+<p>This document describes, in full:</p>
+<ul>
+  <li>The storage engine and its configuration (MySQL/InnoDB primary, H2 in-memory fallback).</li>
+  <li>The conceptual model (ER diagram) and the resulting <b>relational schema</b>.</li>
+  <li>A rigorous <b>normalization analysis</b> deriving every table from the raw business data, with the
+      functional dependencies, candidate keys, normal forms and the anomalies each step removes.</li>
+  <li>A column-level <b>data dictionary</b> for all ten tables (nine live in the MySQL runtime, one exists
+      only in the T-SQL/SSMS script).</li>
+  <li>Keys, constraints, indexes, referential actions, migrations, triggers, backup strategy, security and
+      performance notes.</li>
+</ul>
+
+<div class="grid g4">
+  <div class="stat"><div class="n">10</div><div class="l">Tables documented</div></div>
+  <div class="stat"><div class="n">9</div><div class="l">Live in MySQL runtime</div></div>
+  <div class="stat"><div class="n">14</div><div class="l">Foreign-key columns</div></div>
+  <div class="stat"><div class="n">5NF</div><div class="l">Highest normal form reached</div></div>
+</div>
+
+<div class="toc-inline">
+  <h4>Design principles applied</h4>
+  <ol>
+    <li>One real-world entity per table; no "god table" combining users, applications and cards.</li>
+    <li>Every non-key attribute depends on the whole key, and on the key alone (3NF / BCNF).</li>
+    <li>Repeating groups (documents, verifications, payments) decomposed into child relations.</li>
+    <li>Derived values are never stored; immutable snapshots are stored deliberately and labelled.</li>
+    <li>Business vocabulary constrained at the storage layer (ENUM / CHECK), not only in the UI.</li>
+    <li>Audit trail modelled as an append-only relation, never updated or deleted.</li>
+    <li>Passwords never stored in plaintext; bcrypt hashes only.</li>
+  </ol>
+</div>
+
+<h2 class="sec" id="stack">2. DBMS, Engine &amp; Configuration</h2>
+
+<h3>2.1 Storage architecture</h3>
+<p>
+  The system runs a <b>hybrid persistence model</b>. On boot the application always attempts to attach to a real
+  MySQL server; if the server is unreachable the process does not fail. It degrades to a fully functional
+  <i>hybrid SQL mode</i> backed by an in-memory object graph that mirrors the relational schema one-to-one.
+  An automatic JSON/SQL backup-and-restore service keeps the two representations in sync in both directions.
+</p>
+
+<table>
+  <thead><tr><th>Layer</th><th>Component</th><th>Technology</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Persistence</td><td class="tbl-name">MySQL database</td><td>MySQL 8, InnoDB engine, <code>utf8mb4</code> / <code>utf8mb4_unicode_ci</code></td><td>Primary durable store, ACID transactional</td></tr>
+    <tr><td class="mono">Persistence</td><td class="tbl-name">H2 in-memory DB</td><td>H2 in MySQL compatibility mode</td><td>Spring Boot test / fallback profile</td></tr>
+    <tr><td class="mono">ORM</td><td>Spring Data JPA / Hibernate</td><td><code>spring.jpa.hibernate.ddl-auto=update</code></td><td>Entity mapping, repositories, auto-DDL</td></tr>
+    <tr><td class="mono">Driver</td><td>Node.js API server</td><td><code>mysql2/promise</code> connection pool</td><td>Primary REST backend</td></tr>
+    <tr><td class="mono">Fallback</td><td>In-memory store</td><td>Plain JS objects mirroring the tables</td><td>Offline operation when MySQL is down</td></tr>
+    <tr><td class="mono">Recovery</td><td>Backup service</td><td>JSON plus SQL dump writers</td><td>Auto-backup on every data mutation</td></tr>
+  </tbody>
+</table>
+
+<h3>2.2 Connection configuration</h3>
+<p>Primary JDBC settings (<code>server/src/main/resources/application.properties</code>):</p>
+<div class="rule"><span class="keyline">url</span>     = jdbc:mysql://localhost:3306/identity_card_system?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC
+<span class="keyline">username</span> = root
+<span class="keyline">password</span> = (empty, local development only)
+<span class="keyline">driver</span>   = com.mysql.cj.jdbc.Driver
+<span class="keyline">ddl-auto</span> = update
+<span class="keyline">schema</span>   = identity_card_system
+<span class="keyline">engine</span>   = InnoDB      charset = utf8mb4
+
+<span class="keyline">h2.url</span>  = jdbc:h2:mem:identity_card_system;DB_CLOSE_DELAY=-1;MODE=MySQL
+<span class="keyline">h2.user</span> = sa</div>
+
+<p>Node.js pool settings (<code>server/src-nodejs/config/db.js</code>):</p>
+<div class="rule">host                = process.env.DB_HOST || 'localhost'
+port                = 3306
+database            = process.env.DB_NAME || 'identity_card_system'
+connectionLimit     = 15        <span style="color:#7d8894">// max concurrent pooled connections</span>
+waitForConnections  = true       <span style="color:#7d8894">// queue instead of throwing when saturated</span>
+queueLimit          = 0         <span style="color:#7d8894">// unbounded wait queue</span>
+connectTimeout      = 10000 ms
+enableKeepAlive     = true      <span style="color:#7d8894">// survive MySQL wait_timeout</span>
+idleTimeout         = 300000 ms <span style="color:#7d8894">// 5 minutes</span>
+multipleStatements  = true      <span style="color:#7d8894">// batched DDL executed at boot</span></div>
+
+<div class="note n-info">
+  <span class="t">Dialect portability</span>
+  The repository also ships <code>identity_card_system.sql</code>, a T-SQL (SQL Server Management Studio) script
+  mirroring the MySQL schema. Where the dialects differ &mdash; <code>IDENTITY(1,1)</code> vs
+  <code>AUTO_INCREMENT</code>, <code>DATETIME2</code> vs <code>DATETIME</code>, <code>NVARCHAR</code> vs
+  <code>VARCHAR</code>, <code>BIT</code> vs <code>TINYINT(1)</code> &mdash; both variants appear in the
+  <a href="#ddl">DDL reference</a>. The authoritative runtime schema is the MySQL one.
+</div>
+
+<h3>2.3 Naming &amp; design conventions</h3>
+<table>
+  <thead><tr><th>Convention</th><th>Rule applied</th></tr></thead>
+  <tbody>
+    <tr><td>Table names</td><td>Lower-case, plural, <code>snake_case</code>: <code>users</code>, <code>identity_cards</code>, <code>account_deletion_requests</code></td></tr>
+    <tr><td>Column names</td><td>Lower-case <code>snake_case</code>, singular noun: <code>first_name</code>, <code>national_id_number</code></td></tr>
+    <tr><td>Primary keys</td><td>Surrogate integer named <code>&lt;entity&gt;_id</code>: <code>user_id</code>, <code>card_id</code>, <code>request_id</code></td></tr>
+    <tr><td>Foreign keys</td><td>Named <code>fk_&lt;child&gt;_&lt;parent&gt;</code>: <code>fk_applications_applicants</code></td></tr>
+    <tr><td>Unique keys</td><td>Named <code>uq_&lt;table&gt;_&lt;column&gt;</code>: <code>uq_users_email</code></td></tr>
+    <tr><td>Check constraints</td><td>Named <code>chk_&lt;table&gt;_&lt;attribute&gt;</code>: <code>chk_users_role</code></td></tr>
+    <tr><td>Indexes</td><td>Named <code>idx_&lt;abbr&gt;_&lt;column&gt;</code>: <code>idx_ver_application_id</code></td></tr>
+    <tr><td>Timestamps</td><td><code>&lt;event&gt;_at</code>, type <code>DATETIME</code>, default <code>CURRENT_TIMESTAMP</code></td></tr>
+    <tr><td>Booleans</td><td>Stored as <code>TINYINT(1)</code> / <code>BIT</code>, named <code>passed</code></td></tr>
+    <tr><td>Money</td><td><code>DECIMAL(10,2)</code>, never <code>FLOAT</code> or <code>DOUBLE</code></td></tr>
+    <tr><td>Text</td><td><code>VARCHAR(n)</code> for bounded values; <code>TEXT</code> / <code>NVARCHAR(MAX)</code> for free narrative</td></tr>
+    <tr><td>Narrative</td><td><code>remarks</code>, <code>notes</code>, <code>details</code> naming an explanatory blob, never a computed figure</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="er">3. Entity-Relationship Diagram</h2>
+
+<p>
+  The conceptual model is built around a single aggregate root, the <b>application</b>. Every citizen-facing
+  record hangs off it. Actors (<code>users</code>) participate as processors rather than owning data.
+</p>
+
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 1180 760" width="100%" xmlns="http://www.w3.org/2000/svg" style="min-width:900px;height:auto">
+  <defs>
+    <marker id="arw" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 z" fill="#9aa7b4"/>
+    </marker>
+    <style>
+      .ent{fill:#161b22;stroke:#2b3441;stroke-width:1.5}
+      .entname{fill:#2dd4a7;font:700 14px 'Cascadia Mono',Consolas,monospace}
+      .entcols{fill:#c9d6e4;font:11.5px 'Cascadia Mono',Consolas,monospace}
+      .rel{stroke:#9aa7b4;stroke-width:1.4;fill:none;marker-end:url(#arw)}
+      .cardlbl{fill:#9aa7b4;font:italic 11.5px 'Segoe UI',sans-serif}
+    </style>
+  </defs>
+
+  <rect class="ent" x="40" y="40" width="235" height="190"/>
+  <text class="entname" x="54" y="62">USERS</text>
+  <text class="entcols" x="54" y="86">PK  user_id       INT AI</text>
+  <text class="entcols" x="54" y="104">UQ  username      VARCHAR(50)</text>
+  <text class="entcols" x="54" y="122">    password_hash  VARCHAR(255)</text>
+  <text class="entcols" x="54" y="140">    full_name      VARCHAR(100)</text>
+  <text class="entcols" x="54" y="158">UQ  email         VARCHAR(100)</text>
+  <text class="entcols" x="54" y="176">    role           ENUM(6)</text>
+  <text class="entcols" x="54" y="194">    created_at     DATETIME</text>
+  <text class="entcols" x="54" y="218" style="fill:#f0b429">RBAC pivot column</text>
+
+  <rect class="ent" x="40" y="500" width="235" height="210"/>
+  <text class="entname" x="54" y="522">APPLICANTS</text>
+  <text class="entcols" x="54" y="546">PK  applicant_id     INT AI</text>
+  <text class="entcols" x="54" y="564">UQ  national_id_num  VARCHAR(20)</text>
+  <text class="entcols" x="54" y="582">    first_name        VARCHAR(50)</text>
+  <text class="entcols" x="54" y="600">    last_name         VARCHAR(50)</text>
+  <text class="entcols" x="54" y="618">    date_of_birth     DATE</text>
+  <text class="entcols" x="54" y="636">    gender            ENUM(3)</text>
+  <text class="entcols" x="54" y="654">    address           TEXT</text>
+  <text class="entcols" x="54" y="672">    phone_number      VARCHAR(20)</text>
+  <text class="entcols" x="54" y="690">    email / photo_path / registered_at</text>
+
+  <rect class="ent" x="440" y="300" width="305" height="230" style="stroke:#4f9cf9;stroke-width:2.5"/>
+  <text class="entname" x="454" y="322" style="fill:#4f9cf9;font-size:15px">APPLICATIONS  (aggregate root)</text>
+  <text class="entcols" x="454" y="346">PK  application_id     INT AI</text>
+  <text class="entcols" x="454" y="364">FK  applicant_id   -&gt; applicants</text>
+  <text class="entcols" x="454" y="382">    application_type    ENUM(3)</text>
+  <text class="entcols" x="454" y="400">    status             ENUM(9)</text>
+  <text class="entcols" x="454" y="418">FK  processed_by   -&gt; users</text>
+  <text class="entcols" x="454" y="436">    assigned_officer   VARCHAR(100)</text>
+  <text class="entcols" x="454" y="454">    application_reason VARCHAR(100)</text>
+  <text class="entcols" x="454" y="472">    marital_status / service_type</text>
+  <text class="entcols" x="454" y="490">    remarks            TEXT</text>
+  <text class="entcols" x="454" y="508">    submitted_at / updated_at</text>
+  <text class="entcols" x="454" y="526" style="fill:#f0b429">DERIVED: tracking_id = NEX-2026- + id</text>
+
+  <rect class="ent" x="900" y="40" width="245" height="175"/>
+  <text class="entname" x="914" y="62">VERIFICATIONS</text>
+  <text class="entcols" x="914" y="86">PK  verification_id  INT AI</text>
+  <text class="entcols" x="914" y="104">FK  application_id  -&gt; applications</text>
+  <text class="entcols" x="914" y="122">FK  applicant_id    -&gt; applicants</text>
+  <text class="entcols" x="914" y="140">    method           ENUM(2)</text>
+  <text class="entcols" x="914" y="158">    result           ENUM(3)</text>
+  <text class="entcols" x="914" y="176">    passed / score</text>
+  <text class="entcols" x="914" y="194">    notes / verified_by</text>
+  <text class="entcols" x="914" y="212">    verified_at</text>
+
+  <rect class="ent" x="900" y="285" width="245" height="165"/>
+  <text class="entname" x="914" y="307">DOCUMENTS</text>
+  <text class="entcols" x="914" y="331">PK  document_id     INT AI</text>
+  <text class="entcols" x="914" y="349">FK  application_id  -&gt; applications</text>
+  <text class="entcols" x="914" y="367">    document_type    VARCHAR(100)</text>
+  <text class="entcols" x="914" y="385">    file_name        VARCHAR(255)</text>
+  <text class="entcols" x="914" y="403">    file_path        LONGTEXT</text>
+  <text class="entcols" x="914" y="421">    file_size / uploaded_at</text>
+
+  <rect class="ent" x="900" y="530" width="245" height="185"/>
+  <text class="entname" x="914" y="552">IDENTITY_CARDS</text>
+  <text class="entcols" x="914" y="576">PK  card_id         INT AI</text>
+  <text class="entcols" x="914" y="594">UQ  card_number     VARCHAR(50)</text>
+  <text class="entcols" x="914" y="612">UQ  application_id  INT  (1:1)</text>
+  <text class="entcols" x="914" y="630">FK  applicant_id    -&gt; applicants</text>
+  <text class="entcols" x="914" y="648">    issue_date / expiry_date</text>
+  <text class="entcols" x="914" y="666">    status           ENUM(4)</text>
+  <text class="entcols" x="914" y="684">FK  issued_by       -&gt; users</text>
+  <text class="entcols" x="914" y="702">    created_at</text>
+
+  <rect class="ent" x="440" y="600" width="305" height="150"/>
+  <text class="entname" x="454" y="622">DISPATCH_RECORDS</text>
+  <text class="entcols" x="454" y="646">PK  dispatch_id     INT AI</text>
+  <text class="entcols" x="454" y="664">FK  application_id  -&gt; applications</text>
+  <text class="entcols" x="454" y="682">    tracking_id / applicant_name</text>
+  <text class="entcols" x="454" y="700">    nic_number / dispatch_method</text>
+  <text class="entcols" x="454" y="718">    delivery_address / dispatched_by</text>
+  <text class="entcols" x="454" y="736">    dispatched_at / notes</text>
+
+  <rect class="ent" x="40" y="280" width="235" height="195"/>
+  <text class="entname" x="54" y="302">ACCOUNT_DELETION_REQUESTS</text>
+  <text class="entcols" x="54" y="326">PK  request_id     INT AI</text>
+  <text class="entcols" x="54" y="344">FK  user_id        -&gt; users</text>
+  <text class="entcols" x="54" y="362">    username       VARCHAR(50)</text>
+  <text class="entcols" x="54" y="380">    email          VARCHAR(100)</text>
+  <text class="entcols" x="54" y="398">    reason         TEXT</text>
+  <text class="entcols" x="54" y="416">    status         ENUM(3)</text>
+  <text class="entcols" x="54" y="434">    admin_notes    TEXT</text>
+  <text class="entcols" x="54" y="452">    requested_at</text>
+  <text class="entcols" x="54" y="470">    processed_at / processed_by</text>
+
+  <rect class="ent" x="440" y="40" width="305" height="160"/>
+  <text class="entname" x="454" y="62">AUDIT_LOGS  (append-only)</text>
+  <text class="entcols" x="454" y="86">PK  log_id     INT AI</text>
+  <text class="entcols" x="454" y="104">FK  user_id    -&gt; users</text>
+  <text class="entcols" x="454" y="122">    action     VARCHAR(100)</text>
+  <text class="entcols" x="454" y="140">    details    TEXT</text>
+  <text class="entcols" x="454" y="158">    timestamp  DATETIME</text>
+  <text class="entcols" x="454" y="186" style="fill:#f0b429">never UPDATE / DELETE</text>
+
+  <path class="rel" d="M275 300 L275 240 L160 240 L160 230"/>
+  <text class="cardlbl" x="180" y="236">1 : N submits</text>
+  <path class="rel" d="M275 150 L330 150 L330 400 L440 400"/>
+  <text class="cardlbl" x="286" y="316">1 : N processes</text>
+  <path class="rel" d="M745 360 L830 360 L830 120 L900 120"/>
+  <text class="cardlbl" x="790" y="112">1 : N verifies</text>
+  <path class="rel" d="M745 395 L865 395 L865 360 L900 360"/>
+  <text class="cardlbl" x="800" y="440">1 : N has documents</text>
+  <path class="rel" d="M745 430 L830 430 L830 620 L900 620"/>
+  <text class="cardlbl" x="778" y="614">1 : 1 produces</text>
+  <path class="rel" d="M590 530 L590 600"/>
+  <text class="cardlbl" x="600" y="572">1 : N dispatched</text>
+  <path class="rel" d="M275 340 L400 340 L400 120 L440 120"/>
+  <text class="cardlbl" x="292" y="128">1 : N writes</text>
+  <path class="rel" d="M275 300 L400 300 L400 180 L440 180"/>
+  <text class="cardlbl" x="290" y="176">1 : N requests</text>
+</svg>
+</div>
+
+<h3>3.1 Relationship summary</h3>
+<table>
+  <thead><tr><th>Parent</th><th>Child</th><th>Cardinality</th><th>Participation</th><th>Delete rule</th></tr></thead>
+  <tbody>
+    <tr><td class="tbl-name">applicants</td><td class="tbl-name">applications</td><td>1 : N</td><td>Child total (mandatory)</td><td><code>ON DELETE CASCADE</code></td></tr>
+    <tr><td class="tbl-name">users</td><td class="tbl-name">applications</td><td>1 : N</td><td>Child partial (optional processor)</td><td><code>ON DELETE SET NULL</code></td></tr>
+    <tr><td class="tbl-name">applications</td><td class="tbl-name">verifications</td><td>1 : N</td><td>Child total</td><td><code>ON DELETE CASCADE</code></td></tr>
+    <tr><td class="tbl-name">applications</td><td class="tbl-name">documents</td><td>1 : N</td><td>Child total</td><td><code>ON DELETE CASCADE</code></td></tr>
+    <tr><td class="tbl-name">applications</td><td class="tbl-name">identity_cards</td><td>1 : 1</td><td>Child partial (card optional)</td><td>CASCADE plus <code>UNIQUE(application_id)</code></td></tr>
+    <tr><td class="tbl-name">applicants</td><td class="tbl-name">identity_cards</td><td>1 : N</td><td>Child total</td><td><code>ON DELETE NO ACTION</code> (protects the legal record)</td></tr>
+    <tr><td class="tbl-name">users</td><td class="tbl-name">identity_cards</td><td>1 : N</td><td>Child partial</td><td><code>ON DELETE SET NULL</code></td></tr>
+    <tr><td class="tbl-name">applications</td><td class="tbl-name">dispatch_records</td><td>1 : N</td><td>Child total</td><td>Cascade (implicit)</td></tr>
+    <tr><td class="tbl-name">users</td><td class="tbl-name">dispatch_records</td><td>1 : N</td><td>Child partial</td><td>Set null (implicit)</td></tr>
+    <tr><td class="tbl-name">users</td><td class="tbl-name">account_deletion_requests</td><td>1 : N</td><td>Child total</td><td>Cascade (implicit)</td></tr>
+    <tr><td class="tbl-name">users</td><td class="tbl-name">audit_logs</td><td>1 : N</td><td>Child partial</td><td><code>SET NULL</code> &mdash; the log outlives the user</td></tr>
+  </tbody>
+</table>
+
+<div class="note n-good">
+  <span class="t">Rationale behind the delete rules</span>
+  <b>CASCADE</b> is used only where the child has no independent existence (a document without an application is
+  meaningless). <b>SET NULL</b> is used for <i>actor</i> references so historical records survive staff departure:
+  a card must still show that it was issued even after the issuing officer's account is removed. <b>NO ACTION</b> is
+  used deliberately on <code>identity_cards.applicant_id</code> to block deletion of a citizen holding a
+  legally-issued card; account closure instead runs through the <code>account_deletion_requests</code> workflow.
+</div>
+<h2 class="sec" id="tables">4. Table Catalogue</h2>
+
+<p>
+  Nine tables are created by the running application; a tenth (<code>payments</code>) exists only in the
+  SSMS/T-SQL script. Creation order respects foreign-key dependency:
+</p>
+<div class="rule">users  -&gt;  applicants  -&gt;  applications  -&gt;  { verifications | documents | dispatch_records }
+identity_cards  -&gt;  { account_deletion_requests | audit_logs }</div>
+
+<h3 id="t-users">4.1 &nbsp;<span class="tbl-name">users</span></h3>
+<p class="lead">Registered system actors: administrators, officers and citizens who can authenticate. One row per human identity. This is the <i>authentication</i> relation and is deliberately disjoint from <code>applicants</code>, which holds <i>civil identity</i> data.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type (MySQL / T-SQL)</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">user_id</td><td class="mono">INT AUTO_INCREMENT / IDENTITY(1,1)</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key for the account.</td></tr>
+    <tr><td>2</td><td class="mono">username</td><td class="mono">VARCHAR(50)</td><td><span class="p p-uq">UQ</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Login handle; unique under the case-insensitive collation.</td></tr>
+    <tr><td>3</td><td class="mono">password_hash</td><td class="mono">VARCHAR(255)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>bcrypt hash (cost factor 10). 255 chars reserved for algorithm agility. Never serialised by the API.</td></tr>
+    <tr><td>4</td><td class="mono">full_name</td><td class="mono">VARCHAR(100) / NVARCHAR(100)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Display name of the account holder.</td></tr>
+    <tr><td>5</td><td class="mono">email</td><td class="mono">VARCHAR(100)</td><td><span class="p p-uq">UQ</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Unique contact address; also the OTP notification channel.</td></tr>
+    <tr><td>6</td><td class="mono">role</td><td class="mono">ENUM(6) / VARCHAR(20) + CHECK</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Citizen'</code></td><td>Authorisation role. Domain: <code>Admin</code>, <code>Form-Officer</code>, <code>Document-Officer</code>, <code>Approver</code>, <code>Operational</code>, <code>Citizen</code>.</td></tr>
+    <tr><td>7</td><td class="mono">created_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>CURRENT_TIMESTAMP</code></td><td>Account creation instant (UTC).</td></tr>
+  </tbody>
+</table>
+<p class="lead"><b>Constraints:</b> <code>PK_users</code>, <code>UQ_users_username</code>, <code>UQ_users_email</code>, <code>CHK_users_role</code>.
+<code>role</code> is the pivot of the RBAC matrix: <code>Citizen</code> may submit and read only their own
+applications; each officer role acts within its module; <code>Admin</code> has unrestricted scope including user
+management and audit review.</p>
+
+<h3 id="t-applicants">4.2 &nbsp;<span class="tbl-name">applicants</span></h3>
+<p class="lead">The civil-registry identity of a person applying for a card. Separated from <code>users</code> so that one person may hold several applications over time and so that identity data is never mixed with authentication data.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">applicant_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">national_id_number</td><td class="mono">VARCHAR(20)</td><td><span class="p p-uq">UQ</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Official 12-digit NID. Natural business key; the rule "one citizen &harr; one NID" is enforced here.</td></tr>
+    <tr><td>3</td><td class="mono">first_name</td><td class="mono">VARCHAR(50) / NVARCHAR(50)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Given name, atomised out of the original <code>full_name</code>.</td></tr>
+    <tr><td>4</td><td class="mono">last_name</td><td class="mono">VARCHAR(50) / NVARCHAR(50)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Family name.</td></tr>
+    <tr><td>5</td><td class="mono">date_of_birth</td><td class="mono">DATE</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Used for age eligibility and expiry arithmetic. <code>DATE</code>, not <code>DATETIME</code>: the time component carries no meaning.</td></tr>
+    <tr><td>6</td><td class="mono">gender</td><td class="mono">ENUM('Male','Female','Other')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Constrained domain (ENUM / CHECK).</td></tr>
+    <tr><td>7</td><td class="mono">address</td><td class="mono">TEXT / NVARCHAR(MAX)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Free-form residential mailing block. See the documented 3NF deviation in section 7.6.</td></tr>
+    <tr><td>8</td><td class="mono">phone_number</td><td class="mono">VARCHAR(15)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>E.164 format, e.g. <code>+94771234567</code>.</td></tr>
+    <tr><td>9</td><td class="mono">email</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Optional and deliberately <b>not</b> unique: one mailbox may serve a family.</td></tr>
+    <tr><td>10</td><td class="mono">photo_path</td><td class="mono">VARCHAR(255)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Server-relative path to the uploaded passport photograph.</td></tr>
+    <tr><td>11</td><td class="mono">registered_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Registration timestamp.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-applications">4.3 &nbsp;<span class="tbl-name">applications</span></h3>
+<p class="lead">The <b>central fact table</b>: one row per card request. This is where the original single &ldquo;Application Form&rdquo; record was decomposed. Applicant demographics were pushed down into <code>applicants</code>, supporting documents into <code>documents</code>, and bot-verification outcomes into <code>verifications</code>.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">application_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key; also the source of the derived tracking ID.</td></tr>
+    <tr><td>2</td><td class="mono">applicant_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applicants.applicant_id</code>. Total participation, CASCADE.</td></tr>
+    <tr><td>3</td><td class="mono">application_type</td><td class="mono">ENUM('New','Renewal','Replacement')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'New'</code></td><td>Request category; drives fee and required-document rules.</td></tr>
+    <tr><td>4</td><td class="mono">status</td><td class="mono">ENUM(9)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Pending'</code></td><td>Workflow state. Domain: <code>Pending</code>, <code>Verification-Passed</code>, <code>Documents-Required</code>, <code>Processing</code>, <code>Approved</code>, <code>Rejected</code>, <code>Printed</code>, <code>Dispatched</code>, <code>Issued</code>.</td></tr>
+    <tr><td>5</td><td class="mono">processed_by</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>; the officer who last acted. Partial participation.</td></tr>
+    <tr><td>6</td><td class="mono">assigned_officer</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Display name of the assigned officer. Documented 3NF deviation, see 7.6.</td></tr>
+    <tr><td>7</td><td class="mono">application_reason</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td><code>'G.C.E O/L'</code></td><td>Purpose of the application, e.g. school admission.</td></tr>
+    <tr><td>8</td><td class="mono">marital_status</td><td class="mono">VARCHAR(50)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td><code>'Single'</code></td><td>Printed on the card face; optional.</td></tr>
+    <tr><td>9</td><td class="mono">service_type</td><td class="mono">ENUM('Normal','1-Day')</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td><code>'Normal'</code></td><td>Service tier; controls the turnaround SLA.</td></tr>
+    <tr><td>10</td><td class="mono">remarks</td><td class="mono">TEXT / NVARCHAR(MAX)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Free-text officer notes.</td></tr>
+    <tr><td>11</td><td class="mono">submitted_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>CURRENT_TIMESTAMP</code></td><td>Submission instant.</td></tr>
+    <tr><td>12</td><td class="mono">updated_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>CURRENT_TIMESTAMP</code> on update</td><td>Last mutation instant, auto-maintained by the column definition in MySQL and by trigger <code>trg_applications_updated_at</code> in T-SQL.</td></tr>
+  </tbody>
+</table>
+
+<div class="note n-warn">
+  <span class="t">Removed by migration, and why it mattered</span>
+  This table originally carried <code>bot_verified</code>, <code>bot_score</code>, <code>bot_notes</code> and
+  <code>bot_verified_at</code>. Those four columns formed a <i>repeating group</i> (an application could be
+  re-verified after a rejection) and were dependent on application ID alone, so they violated 2NF and created a
+  delete anomaly. They were migrated into <code>verifications</code> and dropped. See
+  <a href="#2nf">section 7.3</a>.
+</div>
+
+<h3 id="t-verifications">4.4 &nbsp;<span class="tbl-name">verifications</span></h3>
+<p class="lead">Append-only log of verification attempts (AI bot and/or human) against an application. Multiple rows per application are expected and legitimate.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">verification_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">application_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span> <span class="p p-idx">IDX</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applications</code>. CASCADE.</td></tr>
+    <tr><td>3</td><td class="mono">applicant_id</td><td class="mono">INT</td><td><span class="p p-fk">FK*</span> <span class="p p-idx">IDX</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Denormalised pointer to the applicant, used to serve history queries with one index lookup.</td></tr>
+    <tr><td>4</td><td class="mono">method</td><td class="mono">ENUM('AI-BOT','MANUAL')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'AI-BOT'</code></td><td>Which engine evaluated the application.</td></tr>
+    <tr><td>5</td><td class="mono">result</td><td class="mono">ENUM('Verified','Flagged','Inconclusive')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Inconclusive'</code></td><td>Tri-state outcome classification.</td></tr>
+    <tr><td>6</td><td class="mono">passed</td><td class="mono">TINYINT(1) / BIT</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>0</code></td><td>Boolean gate the workflow uses to advance the status.</td></tr>
+    <tr><td>7</td><td class="mono">score</td><td class="mono">INT</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>0</code></td><td>Confidence percentage; the migration rule treats <code>score &ge; 80</code> as Verified.</td></tr>
+    <tr><td>8</td><td class="mono">notes</td><td class="mono">TEXT / NVARCHAR(MAX)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Human-readable explanation of the decision.</td></tr>
+    <tr><td>9</td><td class="mono">verified_by</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>; NULL for fully automated passes.</td></tr>
+    <tr><td>10</td><td class="mono">verified_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Evaluation instant.</td></tr>
+  </tbody>
+</table>
+<p class="lead"><b>Indexes:</b> <code>idx_ver_application_id</code>, <code>idx_ver_applicant_id</code>.
+&ast; <code>applicant_id</code> is intentionally <i>not</i> a declared foreign key: it is a denormalised
+performance key that always equals <code>applications.applicant_id</code>. See section 7.6.</p>
+
+<h3 id="t-documents">4.5 &nbsp;<span class="tbl-name">documents</span></h3>
+<p class="lead">Supporting evidence uploaded against an application: birth certificate, Grama Niladhari certificate, photographs. A classic repeating group promoted to its own relation.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">document_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">application_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span> <span class="p p-idx">IDX</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applications</code>. CASCADE. <code>idx_doc_application_id</code>.</td></tr>
+    <tr><td>3</td><td class="mono">document_type</td><td class="mono">VARCHAR(100) / NVARCHAR(100)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Document category, e.g. <i>Birth Certificate (Original Scan)</i>.</td></tr>
+    <tr><td>4</td><td class="mono">file_name</td><td class="mono">VARCHAR(255)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Original client-side file name, used for display and the download attribute.</td></tr>
+    <tr><td>5</td><td class="mono">file_path</td><td class="mono">LONGTEXT / VARCHAR(255)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Server-relative storage pointer, e.g. <code>/uploads/documents/birth_certificate.pdf</code>. The T-SQL variant uses <code>VARCHAR(255)</code>; the MySQL/JPA variant uses <code>LONGTEXT</code> to tolerate long cloud-style keys.</td></tr>
+    <tr><td>6</td><td class="mono">file_size</td><td class="mono">VARCHAR(50)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td><code>'Unknown'</code></td><td>Human-readable size such as <code>1.42 MB</code>; stored as text because it is display-only, never computed on.</td></tr>
+    <tr><td>7</td><td class="mono">uploaded_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Upload instant.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-cards">4.6 &nbsp;<span class="tbl-name">identity_cards</span></h3>
+<p class="lead">The physical artefact. At most one card may be issued per application, enforced by a UNIQUE constraint rather than by convention alone.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">card_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">card_number</td><td class="mono">VARCHAR(50)</td><td><span class="p p-uq">UQ</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Printed card number, generated from the applicant's NID; unique system-wide.</td></tr>
+    <tr><td>3</td><td class="mono">application_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span> <span class="p p-uq">UQ</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applications</code>. The UNIQUE constraint <b>implements the 1:1 cardinality</b> shown in the ER diagram.</td></tr>
+    <tr><td>4</td><td class="mono">applicant_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applicants</code>, <code>NO ACTION</code> on delete to protect the legal record.</td></tr>
+    <tr><td>5</td><td class="mono">issue_date</td><td class="mono">DATE</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Print / issue date.</td></tr>
+    <tr><td>6</td><td class="mono">expiry_date</td><td class="mono">DATE</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Validity end; seed data shows a ten-year term.</td></tr>
+    <tr><td>7</td><td class="mono">status</td><td class="mono">ENUM('Active','Expired','Revoked','Lost')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Active'</code></td><td>Card lifecycle state.</td></tr>
+    <tr><td>8</td><td class="mono">issued_by</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>; <code>SET NULL</code> so the card survives staff deletion.</td></tr>
+    <tr><td>9</td><td class="mono">created_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Row creation instant.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-dispatch">4.7 &nbsp;<span class="tbl-name">dispatch_records</span></h3>
+<p class="lead">Physical delivery of a printed card to the citizen, recorded by the Operational module. Created by the <code>dispatch_records</code> migration for pre-existing databases.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">dispatch_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">application_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span> <span class="p p-idx">IDX</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applications</code>. <code>idx_dispatch_app_id</code>.</td></tr>
+    <tr><td>3</td><td class="mono">tracking_id</td><td class="mono">VARCHAR(30)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Human-facing tracking string such as <code>NEX-2026-90412</code>. Persisted because it must survive application deletion for courier reconciliation.</td></tr>
+    <tr><td>4</td><td class="mono">applicant_name</td><td class="mono">VARCHAR(150)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Recipient-name snapshot for the courier label.</td></tr>
+    <tr><td>5</td><td class="mono">nic_number</td><td class="mono">VARCHAR(20)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>NID snapshot for the courier manifest.</td></tr>
+    <tr><td>6</td><td class="mono">dispatch_method</td><td class="mono">ENUM('Courier','Postal')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Postal'</code></td><td>Delivery channel.</td></tr>
+    <tr><td>7</td><td class="mono">delivery_address</td><td class="mono">TEXT</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Address the parcel was actually sent to.</td></tr>
+    <tr><td>8</td><td class="mono">dispatched_by</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>.</td></tr>
+    <tr><td>9</td><td class="mono">dispatched_by_name</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Officer-name snapshot taken at handover.</td></tr>
+    <tr><td>10</td><td class="mono">dispatched_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Handover instant. Pairs with <code>application_id</code> to form a candidate key for re-dispatches.</td></tr>
+    <tr><td>11</td><td class="mono">notes</td><td class="mono">TEXT</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Courier remarks or courier tracking number.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-deletion">4.8 &nbsp;<span class="tbl-name">account_deletion_requests</span></h3>
+<p class="lead">Right-to-erasure workflow. A citizen requests account closure; an administrator approves or rejects it. The request deliberately survives the user record so the decision remains auditable.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">request_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">user_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span> <span class="p p-idx">IDX</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>. <code>idx_del_user_id</code>.</td></tr>
+    <tr><td>3</td><td class="mono">username</td><td class="mono">VARCHAR(50)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Snapshot of the identifier at request time.</td></tr>
+    <tr><td>4</td><td class="mono">email</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Snapshot of the contact address.</td></tr>
+    <tr><td>5</td><td class="mono">reason</td><td class="mono">TEXT</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Citizen's stated reason.</td></tr>
+    <tr><td>6</td><td class="mono">status</td><td class="mono">ENUM('Pending','Approved','Rejected')</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Pending'</code></td><td>Decision state. <code>idx_del_status</code> supports the admin queue.</td></tr>
+    <tr><td>7</td><td class="mono">admin_notes</td><td class="mono">TEXT</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Administrator's justification.</td></tr>
+    <tr><td>8</td><td class="mono">requested_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Raised-at.</td></tr>
+    <tr><td>9</td><td class="mono">processed_at</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>NULL until decided. Together with <code>requested_at</code> it encodes processing turnaround time.</td></tr>
+    <tr><td>10</td><td class="mono">processed_by</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code> for the deciding administrator.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-audit">4.9 &nbsp;<span class="tbl-name">audit_logs</span></h3>
+<p class="lead">Append-only security and business trail. Never updated, never deleted. This is the relation that makes the whole workflow non-repudiable.</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">log_id</td><td class="mono">INT AUTO_INCREMENT</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Monotonic sequence; also the natural chronological ordering.</td></tr>
+    <tr><td>2</td><td class="mono">user_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>References <code>users.user_id</code>; <code>SET NULL</code> so the trail outlives the account.</td></tr>
+    <tr><td>3</td><td class="mono">action</td><td class="mono">VARCHAR(100)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Machine-readable event code: <code>SYSTEM_INIT</code>, <code>APPLICATION_APPROVED</code>, <code>LOGIN_SUCCESS</code>, and similar.</td></tr>
+    <tr><td>4</td><td class="mono">details</td><td class="mono">TEXT / NVARCHAR(MAX)</td><td>&mdash;</td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Human-readable narrative of the event.</td></tr>
+    <tr><td>5</td><td class="mono">timestamp</td><td class="mono">DATETIME / DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Event instant (UTC). Named <code>timestamp</code> for API compatibility; always back-quoted in SQL because it is a reserved word in several dialects.</td></tr>
+  </tbody>
+</table>
+
+<h3 id="t-payments">4.10 &nbsp;<span class="tbl-name">payments</span> &nbsp;<span class="p p-idx">T-SQL script only</span></h3>
+<p class="lead">
+  Fee collection for card issuance. Present in <code>identity_card_system.sql</code> (T-SQL) and documented here for
+  completeness; the MySQL schema created at boot omits it, and card fees are currently noted in
+  <code>applications.remarks</code>. It is modelled exactly like every other child of <code>applications</code>.
+</p>
+<table>
+  <thead><tr><th>#</th><th>Column</th><th>Type</th><th>Key</th><th>Null</th><th>Default</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="mono">payment_id</td><td class="mono">INT IDENTITY(1,1)</td><td><span class="p p-pk">PK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>auto</td><td>Surrogate key.</td></tr>
+    <tr><td>2</td><td class="mono">application_id</td><td class="mono">INT</td><td><span class="p p-fk">FK</span></td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>References <code>applications</code>, CASCADE.</td></tr>
+    <tr><td>3</td><td class="mono">amount</td><td class="mono">DECIMAL(10,2)</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Exact monetary amount in LKR. <b>DECIMAL, never FLOAT</b>, to avoid binary floating-point rounding in financial reconciliation.</td></tr>
+    <tr><td>4</td><td class="mono">payment_method</td><td class="mono">VARCHAR(10) + CHECK</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td>&mdash;</td><td>Domain: <code>Cash</code>, <code>Card</code>, <code>Online</code>.</td></tr>
+    <tr><td>5</td><td class="mono">payment_status</td><td class="mono">VARCHAR(10) + CHECK</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>'Pending'</code></td><td>Domain: <code>Pending</code>, <code>Completed</code>, <code>Failed</code>.</td></tr>
+    <tr><td>6</td><td class="mono">transaction_ref</td><td class="mono">VARCHAR(100)</td><td><span class="p p-uq">UQ</span></td><td><span class="p p-n">NULL</span></td><td>&mdash;</td><td>Gateway reference such as <code>TXN-2026-001</code>. UNIQUE means the database itself rejects double-processing of one gateway reference. SQL permits multiple NULLs, so cash payments may omit it.</td></tr>
+    <tr><td>7</td><td class="mono">paid_at</td><td class="mono">DATETIME2</td><td>&mdash;</td><td><span class="p p-nn">NOT NULL</span></td><td><code>GETDATE()</code></td><td>Payment instant.</td></tr>
+  </tbody>
+</table>
+<h2 class="sec" id="keys">5. Keys &amp; Constraints</h2>
+
+<h3>5.1 Primary and candidate keys</h3>
+<table>
+  <thead><tr><th>Relation</th><th>Primary key</th><th>Other candidate keys</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td class="tbl-name">users</td><td class="mono">{user_id}</td><td class="mono">{username}, {email}</td><td>A surrogate PK keeps the key immutable if a user renames themselves; the two natural keys are also declared UNIQUE to enforce one account per identity.</td></tr>
+    <tr><td class="tbl-name">applicants</td><td class="mono">{applicant_id}</td><td class="mono">{national_id_number}</td><td>The NID is the true business key, but a surrogate is still used so foreign-key targets never change and so a person without a registered NID can still exist.</td></tr>
+    <tr><td class="tbl-name">applications</td><td class="mono">{application_id}</td><td class="mono">derived <code>NEX-2026-...</code></td><td>The tracking ID is <i>derived</i>, never stored, to avoid a transitive dependency.</td></tr>
+    <tr><td class="tbl-name">verifications</td><td class="mono">{verification_id}</td><td class="mono">none</td><td>Each attempt is a distinct fact; there is deliberately no "exactly one verification per application" constraint.</td></tr>
+    <tr><td class="tbl-name">documents</td><td class="mono">{document_id}</td><td class="mono">none</td><td>Same rationale: many documents per application, no natural key.</td></tr>
+    <tr><td class="tbl-name">identity_cards</td><td class="mono">{card_id}</td><td class="mono">{card_number}, {application_id}</td><td><code>application_id</code> being UNIQUE is what makes the relationship 1:1 instead of 1:N.</td></tr>
+    <tr><td class="tbl-name">dispatch_records</td><td class="mono">{dispatch_id}</td><td class="mono">{application_id, dispatched_at}</td><td>Re-dispatch is permitted, so no single-column natural key holds.</td></tr>
+    <tr><td class="tbl-name">account_deletion_requests</td><td class="mono">{request_id}</td><td class="mono">none</td><td>A user may submit more than one request over time.</td></tr>
+    <tr><td class="tbl-name">audit_logs</td><td class="mono">{log_id}</td><td class="mono">none</td><td>Append-only; the surrogate <i>is</i> the chronology.</td></tr>
+    <tr><td class="tbl-name">payments</td><td class="mono">{payment_id}</td><td class="mono">{transaction_ref}</td><td>The transaction reference is the payment gateway's own idempotency key.</td></tr>
+  </tbody>
+</table>
+
+<h3>5.2 Referential integrity catalogue</h3>
+<table>
+  <thead><tr><th>Constraint name</th><th>Child column</th><th>Parent column</th><th>ON DELETE</th><th>ON UPDATE</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">fk_applications_applicants</td><td class="mono">applications.applicant_id</td><td class="mono">applicants.applicant_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_applications_users</td><td class="mono">applications.processed_by</td><td class="mono">users.user_id</td><td>SET NULL</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_verifications_applications</td><td class="mono">verifications.application_id</td><td class="mono">applications.application_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_documents_applications</td><td class="mono">documents.application_id</td><td class="mono">applications.application_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_cards_applications</td><td class="mono">identity_cards.application_id</td><td class="mono">applications.application_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_cards_applicants</td><td class="mono">identity_cards.applicant_id</td><td class="mono">applicants.applicant_id</td><td><span class="bad">NO ACTION</span></td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_cards_users</td><td class="mono">identity_cards.issued_by</td><td class="mono">users.user_id</td><td>SET NULL</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_payments_applications</td><td class="mono">payments.application_id</td><td class="mono">applications.application_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_logs_users</td><td class="mono">audit_logs.user_id</td><td class="mono">users.user_id</td><td>SET NULL</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_dispatch_applications</td><td class="mono">dispatch_records.application_id</td><td class="mono">applications.application_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+    <tr><td class="mono">fk_deletion_users</td><td class="mono">account_deletion_requests.user_id</td><td class="mono">users.user_id</td><td>CASCADE</td><td>RESTRICT</td></tr>
+  </tbody>
+</table>
+<p class="lead">The last two are implemented by the JPA layer and by explicit DDL; the T-SQL script declares the
+first nine explicitly.</p>
+
+<h3>5.3 Domain (CHECK) constraints</h3>
+<table>
+  <thead><tr><th>Constraint</th><th>Expression</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">CHK_users_role</td><td class="mono">role IN ('Admin','Form-Officer','Document-Officer','Approver','Operational','Citizen')</td><td>Blocks privilege escalation by a direct SQL write.</td></tr>
+    <tr><td class="mono">CHK_applicants_gender</td><td class="mono">gender IN ('Male','Female','Other')</td><td>Keeps demographic reporting consistent.</td></tr>
+    <tr><td class="mono">CHK_applications_type</td><td class="mono">application_type IN ('New','Renewal','Replacement')</td><td>Selects the fee and document rules.</td></tr>
+    <tr><td class="mono">CHK_applications_status</td><td class="mono">status IN ('Pending','Approved','Rejected','Processing','Printed','Issued')</td><td>Validates workflow state. The T-SQL variant lists six values; the MySQL ENUM widens to nine.</td></tr>
+    <tr><td class="mono">CHK_verifications_method</td><td class="mono">method IN ('AI-BOT','MANUAL')</td><td>Identifies the evaluating engine.</td></tr>
+    <tr><td class="mono">CHK_verifications_result</td><td class="mono">result IN ('Verified','Flagged','Inconclusive')</td><td>Tri-state verification outcome.</td></tr>
+    <tr><td class="mono">CHK_identity_cards_status</td><td class="mono">status IN ('Active','Expired','Revoked','Lost')</td><td>Card validity state.</td></tr>
+    <tr><td class="mono">CHK_payments_method</td><td class="mono">payment_method IN ('Cash','Card','Online')</td><td>Payment channel.</td></tr>
+    <tr><td class="mono">CHK_payments_status</td><td class="mono">payment_status IN ('Pending','Completed','Failed')</td><td>Settlement state.</td></tr>
+  </tbody>
+</table>
+<div class="note n-info">
+  <span class="t">MySQL enforcement note</span>
+  MySQL 8.0 parses and stores <code>CHECK</code> clauses but only enforces them from 8.0.16 onward. The MySQL
+  schema therefore expresses the same domains as native <code>ENUM(...)</code> types, which are always enforced.
+  The <code>CHECK</code> form is retained in the T-SQL script because SQL Server has no <code>ENUM</code>. The two
+  forms are semantically equivalent: both restrict an attribute to a fixed, declared value set.
+</div>
+
+<h3>5.4 Business rules enforced outside the schema</h3>
+<table>
+  <thead><tr><th>Rule</th><th>Enforced in</th><th>Mechanism</th></tr></thead>
+  <tbody>
+    <tr><td>A card cannot be created for an unapproved application</td><td>Application service</td><td>Status precondition asserted inside a transaction before insert</td></tr>
+    <tr><td><code>expiry_date &gt; issue_date</code>, ten-year term</td><td>Issuance routine (<code>NicGenerator</code>)</td><td>Date arithmetic before insert</td></tr>
+    <tr><td>A verification advances the status only if <code>score &ge; 80</code></td><td>Verification controller</td><td>CASE expression in the UPDATE</td></tr>
+    <tr><td>One active card per applicant</td><td>Operational module</td><td>Existence check on <code>status='Active'</code> before renewal</td></tr>
+    <tr><td>Tracking ID format <code>NEX-2026-&lt;id&gt;</code></td><td>Entity getter</td><td>Derived in the persistence layer, never stored</td></tr>
+    <tr><td>AI bot match score thresholds</td><td><code>BotVerificationEngine</code></td><td>Deterministic scoring rule set</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="indexes">6. Indexes &amp; Access Paths</h2>
+
+<h3>6.1 Index inventory</h3>
+<table>
+  <thead><tr><th>Index</th><th>Table</th><th>Columns</th><th>Type</th><th>Query it serves</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">PRIMARY</td><td class="tbl-name">all ten</td><td class="mono">&lt;entity&gt;_id</td><td>Clustered</td><td>Every point lookup by surrogate key; FK join probes.</td></tr>
+    <tr><td class="mono">uq_users_username</td><td class="tbl-name">users</td><td class="mono">username</td><td>Unique BTREE</td><td><code>SELECT ... WHERE username = ?</code>, the login query.</td></tr>
+    <tr><td class="mono">uq_users_email</td><td class="tbl-name">users</td><td class="mono">email</td><td>Unique BTREE</td><td>Duplicate-registration check; OTP and password-reset lookup.</td></tr>
+    <tr><td class="mono">uq_applicants_national_id</td><td class="tbl-name">applicants</td><td class="mono">national_id_number</td><td>Unique BTREE</td><td>Idempotent applicant upsert; duplicate-citizen guard.</td></tr>
+    <tr><td class="mono">uq_identity_cards_card_number</td><td class="tbl-name">identity_cards</td><td class="mono">card_number</td><td>Unique BTREE</td><td>Card lookup and validation by printed number.</td></tr>
+    <tr><td class="mono">uq_identity_cards_application_id</td><td class="tbl-name">identity_cards</td><td class="mono">application_id</td><td>Unique BTREE</td><td>Enforces the 1:1 relationship and serves the FK join to <code>applications</code>.</td></tr>
+    <tr><td class="mono">uq_payments_transaction_ref</td><td class="tbl-name">payments</td><td class="mono">transaction_ref</td><td>Unique BTREE</td><td>Payment-gateway idempotency check.</td></tr>
+    <tr><td class="mono">idx_ver_application_id</td><td class="tbl-name">verifications</td><td class="mono">application_id</td><td>Non-unique BTREE</td><td>Load all verification attempts for one application.</td></tr>
+    <tr><td class="mono">idx_ver_applicant_id</td><td class="tbl-name">verifications</td><td class="mono">applicant_id</td><td>Non-unique BTREE</td><td>Verification history across all applications of one citizen.</td></tr>
+    <tr><td class="mono">idx_doc_application_id</td><td class="tbl-name">documents</td><td class="mono">application_id</td><td>Non-unique BTREE</td><td>List attachments for the document-review screen.</td></tr>
+    <tr><td class="mono">idx_dispatch_app_id</td><td class="tbl-name">dispatch_records</td><td class="mono">application_id</td><td>Non-unique BTREE</td><td>Dispatch history for an application.</td></tr>
+    <tr><td class="mono">idx_del_user_id</td><td class="tbl-name">account_deletion_requests</td><td class="mono">user_id</td><td>Non-unique BTREE</td><td>The citizen's "my deletion requests" panel.</td></tr>
+    <tr><td class="mono">idx_del_status</td><td class="tbl-name">account_deletion_requests</td><td class="mono">status</td><td>Non-unique BTREE</td><td>Admin approval queue, <code>WHERE status='Pending'</code>.</td></tr>
+  </tbody>
+</table>
+
+<h3>6.2 Indexing rules followed</h3>
+<ul>
+  <li><b>Every foreign-key column is indexed</b> or is itself UNIQUE. This is mandatory: InnoDB needs an index on
+      the referencing side, otherwise a parent delete must scan the child table and a parent update must lock it.</li>
+  <li><b>Unique business keys carry the most value.</b> Login, NID duplicate check and card validation are the
+      highest-frequency queries in the system, and each is served by a unique index rather than a full scan.</li>
+  <li><b>No redundant overlapping indexes.</b> Only single-column indexes exist because no current query filters on
+      two of these columns together. Past roughly 10<sup>5</sup> rows in <code>verifications</code>, the two single
+      indexes should be replaced by one composite <code>(applicant_id, application_id)</code>.</li>
+  <li><b>No index on <code>applications.status</code></b> despite heavy status filtering. The dashboard queries filter
+      status together with a date range, so a selective composite <code>(status, submitted_at)</code> is the correct
+      choice at that point. This is a documented trade-off, not an oversight.</li>
+  <li><b>Binary content is never stored in the database.</b> <code>documents.file_path</code> holds only a pointer, so
+      the table stays narrow and cache-resident while the files live under <code>server/uploads/documents/</code>.</li>
+</ul>
+
+<h2 class="sec" id="norm">7. Normalization: Foundations</h2>
+
+<h3>7.1 Why normalize</h3>
+<p>
+  Normalization organises attributes and relations so that <b>each fact is stored exactly once, in exactly one
+  place</b>. It is a redundancy control derived directly from Codd's relational model. Redundant storage is not
+  merely wasteful, it is actively dangerous, because the copies drift apart. Three anomalies follow:
+</p>
+<div class="grid g3">
+  <div class="card"><h4 class="bad" style="margin-top:0">Insertion anomaly</h4><p style="margin:0;font-size:13.5px">A fact cannot be stored without storing some other fact. A new document type, for example, cannot be recorded unless an application using it already exists.</p></div>
+  <div class="card"><h4 class="bad" style="margin-top:0">Deletion anomaly</h4><p style="margin:0;font-size:13.5px">Deleting one fact silently destroys another. Deleting a citizen's last application destroys their NID and address.</p></div>
+  <div class="card"><h4 class="bad" style="margin-top:0">Update anomaly</h4><p style="margin:0;font-size:13.5px">One logical change requires updating many rows. An officer's name change means rewriting 200 application rows; miss one and the database contradicts itself.</p></div>
+</div>
+
+<h3>7.2 The normal-form ladder</h3>
+<table>
+  <thead><tr><th>NF</th><th>Formal requirement</th><th>Plain meaning</th></tr></thead>
+  <tbody>
+    <tr><td><b>1NF</b></td><td>Every attribute is atomic (indivisible); no repeating groups; every tuple uniquely keyed.</td><td>No lists. No <code>first_name, last_name</code> packed into one "name" column. No <code>doc1, doc2, doc3</code> columns.</td></tr>
+    <tr><td><b>2NF</b></td><td>1NF and every non-prime attribute is fully dependent on <i>every</i> candidate key.</td><td>Nothing is stored merely because it happens to sit beside part of the key. Only meaningful for composite keys.</td></tr>
+    <tr><td><b>3NF</b></td><td>2NF and no transitive dependency: no <code>key -&gt; X -&gt; Y</code> among non-prime attributes.</td><td>Knowing the key gives you the value, and that value tells you nothing you did not already know.</td></tr>
+    <tr><td><b>BCNF</b></td><td>3NF and every determinant is a superkey.</td><td>Stricter than 3NF: a determinant can never predict a non-key attribute unless it is itself a key.</td></tr>
+    <tr><td><b>4NF</b></td><td>BCNF and no non-trivial multi-valued dependency.</td><td>Two independent "many" facts about the same key must live in separate relations.</td></tr>
+    <tr><td><b>5NF</b></td><td>4NF and no non-trivial join dependency.</td><td>Every join dependency is implied by candidate keys; nothing must be reassembled from three relations.</td></tr>
+  </tbody>
+</table>
+
+<div class="note n-info">
+  <span class="t">Terminology used below</span>
+  <b>Candidate key</b> a minimal superkey. <b>Prime attribute</b> one that appears in some candidate key.
+  <b>Non-prime attribute</b> any other attribute. <b>Prime determinant</b> a non-superkey attribute that determines
+  something, the only possible cause of a BCNF violation. <b>Lossless join</b> the decomposition preserves all
+  information. <b>Dependency preservation</b> every original dependency can still be enforced with constraints on a
+  single relation alone.
+</div>
+
+<h3 id="unf">7.3 &nbsp;UNF: The Unnormalized Form</h3>
+<p>
+  The starting point is the paper "Identity Card Application Form" (DRP-1) as originally captured. All information
+  about a request lived in one wide, repeating record.
+</p>
+
+<pre>UNF: APPLICATION_FORM
+------------------------------------------------------------------------------
+NIC_Number | Full_Name | DOB | Gender | Address | Phone | Application_Type
+Status | Reason | Officer_Name
+Doc1_Type | Doc1_File | Doc2_Type | Doc2_File | Doc3_Type | Doc3_File
+Bot_Verified | Bot_Score | Bot_Notes | Bot_Verified_At
+Amount | Payment_Method | Payment_Status | Txn_Ref
+Card_Number | Issue_Date | Expiry_Date | Card_Status
+------------------------------------------------------------------------------
+
+Row 1:
+  200512345678 | Thilina Sakalasooriya | 2005-01-01 | Male
+  | No.12 Main St, Malabe | +94771234567 | New | Issued | G.C.E O/L
+  | Thilina Sakalasooriya
+  | Birth Certificate | birth_certificate.pdf | GRP-1 | grama_cert.jpg | (null) | (null)
+  | 1 | 96 | "Automated Bot Check: PASSED (96%)" | 2026-08-01 09:32
+  | 2000.00 | Card | Completed | TXN-2026-001
+  | 200512345678 | 2026-08-03 | 2036-08-03 | Active
+
+Row 2:
+  200456789012 | Kavindi Perera | 2004-05-14 | Female
+  | No.45 Temple Rd, Kandy | +94719876543 | New | Pending | G.C.E O/L
+  | Thilina Sakalasooriya
+  | Birth Certificate | bc.pdf | (null) | (null) | (null) | (null)
+  | 0 | 63 | "INCONCLUSIVE (63%)" | 2026-08-06 12:00
+  | 2000.00 | Online | Completed | TXN-2026-002
+  | (null) | (null) | (null) | (null)
+
+Row 3:
+  200389012345 | Dilshan Senanayake | 2003-09-12 | Male
+  | No.78 Highlevel Rd | +94778889900 | Renewal | Approved | G.C.E O/L
+  | Thilina Sakalasooriya
+  | (null) x 6
+  | 1 | 91 | "Renewal verified by AI Bot" | 2026-08-08 08:16
+  | 2500.00 | Cash | Completed | TXN-2026-003
+  | (null) | (null) | (null) | (null)</pre>
+
+<h4>Detected problems</h4>
+<table>
+  <thead><tr><th>#</th><th>Problem</th><th>Violation</th><th>Consequence</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Non-atomic values: <code>Full_Name = "Thilina Sakalasooriya"</code>, <code>Address = "No.12 Main St, Malabe"</code></td><td>1NF, non-atomic attribute</td><td>Cannot search, sort or report by family name; inconsistent spacing and formats.</td></tr>
+    <tr><td>2</td><td>Repeating groups: <code>Doc1, Doc2, Doc3</code>, and the same for repeated bot checks and payments</td><td>1NF repeating group; also 4NF multi-valued dependency</td><td>Hard ceiling of three documents; a fourth needs DDL; sparse NULLs waste space.</td></tr>
+    <tr><td>3</td><td>No primary key: a row is identified only by a combination of attributes</td><td>1NF, no tuple identification</td><td>Duplicate rows cannot be rejected.</td></tr>
+    <tr><td>4</td><td>Applicant identity (NIC, name, DOB, address) repeated in every application row</td><td>2NF partial dependence on <code>{NIC_Number}</code></td><td>An address change becomes a mass UPDATE; inconsistency if a row is missed.</td></tr>
+    <tr><td>5</td><td><code>Officer_Name</code> repeated on every row, and it itself determines the officer's role and email</td><td>3NF transitive: <code>Officer_Name -&gt; role, email</code></td><td>An officer rename becomes a mass UPDATE; the officer's role cannot be recorded once.</td></tr>
+    <tr><td>6</td><td>Card attributes coexist with application attributes, yet a card exists only sometimes</td><td>Entity/attribute mismatch, raggedness</td><td>Columns are mostly NULL; "does a card exist?" cannot be answered cleanly.</td></tr>
+    <tr><td>7</td><td>Card number equals the NIC, so it is derivable, yet stored again</td><td>Redundancy</td><td>Two places to keep in sync; a card could claim another citizen's NID.</td></tr>
+    <tr><td>8</td><td>Tracking number absent, forcing staff to expose the internal integer ID to citizens</td><td>Missing business key</td><td>Leaking implementation detail; no human-friendly reference for courier reconciliation.</td></tr>
+  </tbody>
+</table>
+
+<div class="nf-flow">
+  <div class="nf-step"><b>UNF</b>Wide repeating form</div><span class="arrow">&rarr;</span>
+  <div class="nf-step"><b>1NF</b>Atomic, keyed,<br>no repeating groups</div><span class="arrow">&rarr;</span>
+  <div class="nf-step"><b>2NF</b>No partial<br>dependence</div><span class="arrow">&rarr;</span>
+  <div class="nf-step"><b>3NF</b>No transitive<br>dependence</div><span class="arrow">&rarr;</span>
+  <div class="nf-step"><b>BCNF</b>Every determinant<br>is a superkey</div><span class="arrow">&rarr;</span>
+  <div class="nf-step"><b>4NF / 5NF</b>No MVD,<br>no join dependency</div>
+</div>
+
+<h3 id="1nf">7.4 &nbsp;1NF: First Normal Form</h3>
+
+<h4>Rules applied</h4>
+<ol>
+  <li>Split every non-atomic attribute into atomic components: <code>Full_Name -&gt; first_name, last_name</code>.
+      <code>Address</code> stays one atomic string, with the reasoning recorded in section 7.6.</li>
+  <li>Eliminate every repeating group by giving each repetition its own row in its own relation:
+      <code>documents</code>, <code>verifications</code>, <code>payments</code>.</li>
+  <li>Introduce a unique tuple identifier for every relation: a surrogate <code>INT AUTO_INCREMENT</code> key.</li>
+  <li>Ensure every column holds a single value and no row depends on its position in the table.</li>
+</ol>
+
+<pre>1NF DECOMPOSITION
+------------------------------------------------------------------------------
+R1 APPLICANT      ( applicant_id PK, national_id_number UQ, first_name, last_name,
+                    date_of_birth, gender, address, phone_number, email,
+                    photo_path, registered_at )
+
+R2 APPLICATION    ( application_id PK, applicant_id FK, application_type, status,
+                    processed_by, assigned_officer, application_reason,
+                    marital_status, service_type, remarks, submitted_at, updated_at )
+
+R3 DOCUMENT       ( document_id PK, application_id FK, document_type, file_name,
+                    file_path, file_size, uploaded_at )
+
+R4 VERIFICATION   ( verification_id PK, application_id FK, applicant_id FK, method,
+                    result, passed, score, notes, verified_by, verified_at )
+
+R5 PAYMENT        ( payment_id PK, application_id FK, amount, payment_method,
+                    payment_status, transaction_ref UQ, paid_at )
+
+R6 IDENTITY_CARD  ( card_id PK, application_id FK UQ, applicant_id FK,
+                    card_number UQ, issue_date, expiry_date, status, issued_by,
+                    created_at )
+
+R7 USER           ( user_id PK, username UQ, password_hash, full_name, email UQ,
+                    role, created_at )
+
+R8 AUDIT_LOG      ( log_id PK, user_id FK, action, details, timestamp )
+------------------------------------------------------------------------------</pre>
+
+<div class="note n-good">
+  <span class="t">1NF verified</span> Every attribute is atomic; no repeating group remains; every relation has a
+  key. The fixed <code>Doc1/Doc2/Doc3</code> columns are gone. An application may now carry zero, one, five or five
+  hundred documents with no schema change and no DDL.
+</div>
+
+<h3 id="2nf">7.5 &nbsp;2NF: Second Normal Form</h3>
+
+<h4>Prerequisite</h4>
+<p>
+  2NF is only violated by <b>composite</b> keys. After 1NF the only relation whose candidate key has more than one
+  attribute is the one describing documents inline with their application:
+</p>
+
+<div class="rule">DOCUMENT_1NF'  ( application_id, document_type, file_name, file_path, file_size, uploaded_at )
+--------- composite candidate key: { application_id , document_type } ---------
+
+R3's key is chosen as the surrogate { document_id }  ->  no partial dependence remains.
+
+fd1:  { application_id , document_type } -> file_name, file_path, file_size, uploaded_at
+      <span style="color:#f0b429">PARTIAL dependence on application_id alone</span>
+fd2:   application_id -> (nothing about the file: file attributes vary per document)   OK already full</div>
+
+<p>
+  <code>file_name</code>, <code>file_path</code>, <code>file_size</code> and <code>uploaded_at</code> describe
+  <i>one file</i>, not "one document type belonging to application X". They depend on only <i>part</i> of the composite
+  key: a textbook <b>partial dependency</b>. The identical defect existed in UNF for the bot-verification block
+  (<code>bot_verified, bot_score, bot_notes, bot_verified_at</code>) and for the payment block.
+</p>
+
+<h4>Decomposition performed (lossless and dependency-preserving)</h4>
+<ol>
+  <li><code>documents(document_id PK, application_id FK, document_type, file_name, file_path, file_size, uploaded_at)</code>
+      &mdash; replace the composite key with a surrogate, so every dependency is on the whole key.</li>
+  <li><code>verifications(verification_id PK, application_id FK, applicant_id FK, method, result, passed, score, notes, verified_by, verified_at)</code>
+      &mdash; the bot block becomes an independent child relation.</li>
+  <li><code>payments(payment_id PK, application_id FK, amount, payment_method, payment_status, transaction_ref, paid_at)</code>.</li>
+  <li><b>Applicant identity is moved out</b> of <code>applications</code> into <code>applicants</code>. This is the
+      partial-dependency fix for the demographic block: since
+      <code>{applicant_id} -&gt; first_name, last_name, dob, gender, address, phone, email</code>, those attributes
+      depend on a proper subset of the application's natural key and therefore cannot live in the application relation.</li>
+  <li><b>Card attributes are moved out</b> into <code>identity_cards</code>, because
+      <code>{application_id} -&gt; card_number, issue_date, expiry_date, card_status</code> depends on a subset: an
+      application may have zero or one card, and the card facts exist only once a card is issued.</li>
+  <li><b>Authentication data is moved out</b> into <code>users</code>, leaving <code>processed_by</code> as a bare key
+      reference.</li>
+  <li><b>Operational concerns are split out</b> into <code>dispatch_records</code>, <code>account_deletion_requests</code>
+      and <code>audit_logs</code>, each attached to exactly one parent.</li>
+</ol>
+
+<pre>POST-2NF RELATIONS
+------------------------------------------------------------------------------
+users( user_id, username, password_hash, full_name, email, role, created_at )
+applicants( applicant_id, national_id_number, first_name, last_name, date_of_birth,
+            gender, address, phone_number, email, photo_path, registered_at )
+applications( application_id, applicant_id, application_type, status, processed_by,
+               assigned_officer, application_reason, marital_status, service_type,
+               remarks, submitted_at, updated_at )
+documents( document_id, application_id, document_type, file_name, file_path,
+           file_size, uploaded_at )
+verifications( verification_id, application_id, applicant_id, method, result, passed,
+                score, notes, verified_by, verified_at )
+identity_cards( card_id, application_id, applicant_id, card_number, issue_date,
+                expiry_date, status, issued_by, created_at )
+payments( payment_id, application_id, amount, payment_method, payment_status,
+          transaction_ref, paid_at )
+dispatch_records( dispatch_id, application_id, tracking_id, applicant_name, nic_number,
+                  dispatch_method, delivery_address, dispatched_by, dispatched_by_name,
+                  dispatched_at, notes )
+account_deletion_requests( request_id, user_id, username, email, reason, status,
+                           admin_notes, requested_at, processed_at, processed_by )
+audit_logs( log_id, user_id, action, details, timestamp )
+------------------------------------------------------------------------------
+Candidate keys after 2NF:
+  users                       {user_id} | {username} | {email}
+  applicants                  {applicant_id} | {national_id_number}
+  applications                {application_id}          (single attribute -> 2NF vacuous)
+  documents                   {document_id}
+  verifications               {verification_id}
+  identity_cards              {card_id} | {application_id} | {card_number}
+  audit_logs                  {log_id}
+  dispatch_records            {dispatch_id} | {application_id, dispatched_at}</pre>
+
+<div class="note n-good">
+  <span class="t">2NF verified</span> Every non-prime attribute depends on the <i>whole</i> of every candidate key.
+  Note that the only composite-key candidates have all been replaced by surrogate keys. <b>Surrogate keys are the
+  standard practical way to guarantee 2NF</b>, because a single-attribute key cannot be partially depended upon. The
+  duplication that remains is not a 2NF violation; it is examined in section 7.6.
+</div>
+
+<h3 id="3nf">7.6 &nbsp;3NF: Third Normal Form</h3>
+
+<p>3NF asks whether any non-prime attribute determines another non-prime attribute, that is, whether a transitive
+dependency exists. Three such chains existed in the 2NF schema.</p>
+
+<h4>Violation 1: the officer chain</h4>
+<div class="rule">applications.assigned_officer  -&gt;  users.role, users.email, users.full_name
+via users.full_name
+
+  chain:  {application_id} -&gt; assigned_officer -&gt; { full_name, role, email }
+          <span style="color:#f4737d">TRANSITIVE DEPENDENCY = 3NF VIOLATION</span></div>
+<p>
+  The officer's role, email and password hash are facts about the <i>person</i>, not about the application they
+  happened to process. Storing the officer's name on the application duplicates it, and an officer rename becomes a
+  200-row UPDATE. <b>Fix:</b> <code>users</code> already exists, so reduce <code>applications.processed_by</code> to a
+  bare foreign key to <code>users.user_id</code> and <b>drop the <code>assigned_officer</code> name column</b>, joining
+  to <code>users.full_name</code> at read time. The display requirement is met by a join, not by storage.
+</p>
+
+<h4>Violation 2: the applicant chain</h4>
+<div class="rule">applications.application_id -&gt; applicant_id -&gt; { first_name, last_name,
+                                    date_of_birth, gender, address, phone_number }
+          <span style="color:#f4737d">TRANSITIVE DEPENDENCY = 3NF VIOLATION</span></div>
+<p>
+  <b>Fix (already applied in the 2NF decomposition):</b> hoist the entire dependent group into <code>applicants</code>
+  and keep only the key <code>applicant_id</code> in <code>applications</code>. The chain is absorbed by a foreign key
+  rather than by storage, so no transitive dependency is written down.
+</p>
+
+<h4>Violation 3: the location chain, identified and consciously accepted</h4>
+<div class="rule">applicants.address -&gt; city -&gt; district -&gt; province -&gt; region_code
+
+  chain:  {applicant_id} -&gt; address -&gt; city -&gt; district -&gt; province
+          <span style="color:#f4737d">TRANSITIVE DEPENDENCY if decomposed</span></div>
+<p>
+  A strict 3NF treatment would decompose this into
+  <code>address(city_id, street, ...)</code>, <code>city(district_id, city_name)</code>,
+  <code>district(province_id, ...)</code>, <code>province</code>. The team evaluated this and chose <b>not</b> to,
+  for a documented reason: the address is a free-form mailing block used only for printing and courier delivery. It
+  is never joined on, aggregated by, or reported across, and Sri Lankan administrative boundaries change far more
+  often than this database is redeployed, so each boundary change would force a data migration across every
+  applicant row. <b>This is a conscious, justified 3NF deviation</b>, mitigated by keeping the value atomic in a
+  single attribute. If regional reporting becomes a requirement the correct fix is to add a separate optional
+  <code>regions</code> dimension plus a <code>region_id</code> on <code>applicants</code>, not to over-normalise an
+  atomic string today.
+</p>
+
+<h4>Verification that 3NF holds: the determinant audit</h4>
+<table>
+  <thead><tr><th>Relation</th><th>Determinants present</th><th>Is each a superkey?</th><th>Verdict</th></tr></thead>
+  <tbody>
+    <tr><td class="tbl-name">users</td><td class="mono">{user_id}, {username}, {email}</td><td>All three are candidate keys</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">applicants</td><td class="mono">{applicant_id}, {national_id_number}</td><td>Both candidate keys</td><td><span class="ok">3NF holds</span> (address deviation noted)</td></tr>
+    <tr><td class="tbl-name">applications</td><td class="mono">{application_id}</td><td>Candidate key</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">documents</td><td class="mono">{document_id}</td><td>Candidate key</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">verifications</td><td class="mono">{verification_id}</td><td>Candidate key</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">identity_cards</td><td class="mono">{card_id}, {application_id}, {card_number}</td><td>All three are candidate keys</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">audit_logs</td><td class="mono">{log_id}</td><td>Candidate key</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">dispatch_records</td><td class="mono">{dispatch_id}, {application_id, dispatched_at}</td><td>Both candidate keys</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">account_deletion_requests</td><td class="mono">{request_id}</td><td>Candidate key</td><td><span class="ok">3NF holds</span></td></tr>
+    <tr><td class="tbl-name">payments</td><td class="mono">{payment_id}, {transaction_ref}</td><td>Both candidate keys</td><td><span class="ok">3NF holds</span></td></tr>
+  </tbody>
+</table>
+
+<div class="note n-good">
+  <span class="t">3NF verified</span> In every relation the only attribute that determines anything else is a candidate
+  key. There is therefore <b>no non-prime determinant anywhere</b> and no transitive dependency remains. The schema
+  is in <b>Third Normal Form</b>.
+</div>
+
+<h3 id="bcnf">7.7 &nbsp;BCNF, 4NF and 5NF</h3>
+
+<p>
+  <b>BCNF</b> is the strict form: every determinant must be a superkey. Because the 3NF audit above found that every
+  determinant in every relation is already a candidate key, <b>no BCNF violation can exist</b>. The schema is in
+  <b>BCNF</b>.
+</p>
+<p>
+  <b>4NF</b> is likewise satisfied. The two independent repeating groups that coexisted inside the UNF form
+  ("many documents per application" and "many verification attempts per application") are now separate relations.
+  No relation retains a multi-valued dependency of the form
+  <code>application_id -&gt;-&gt; document_type</code> <i>and independently</i>
+  <code>application_id -&gt;-&gt; verification_result</code>.
+</p>
+<p>
+  <b>5NF</b> is satisfied trivially. The model is a tree of parent-child relations plus one 1:1 leaf
+  (<code>applications</code> to <code>identity_cards</code>). There is no ternary relationship that would create a
+  non-trivial join dependency, so no relation ever has to be reassembled from three others.
+</p>
+
+<div class="card">
+  <h4 style="margin-top:0">Normal-form summary</h4>
+  <table style="margin:0">
+    <thead><tr><th>Form</th><th>Reached</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>1NF</td><td><span class="ok">Yes</span></td><td>All attributes atomic; repeating groups decomposed into <code>documents</code>, <code>verifications</code>, <code>payments</code>; every relation keyed.</td></tr>
+      <tr><td>2NF</td><td><span class="ok">Yes</span></td><td>Single-attribute surrogate keys; partial dependencies on file attributes, demographics and card facts removed by decomposition.</td></tr>
+      <tr><td>3NF</td><td><span class="ok">Yes</span></td><td>Officer chain and applicant chain eliminated; the determinant audit shows only candidate keys as determinants. <i>Documented deviation: composite address string.</i></td></tr>
+      <tr><td>BCNF</td><td><span class="ok">Yes</span></td><td>Every determinant is a superkey, which follows directly from the 3NF audit.</td></tr>
+      <tr><td>4NF</td><td><span class="ok">Yes</span></td><td>No residual multi-valued dependencies; independent repeating groups separated.</td></tr>
+      <tr><td>5NF</td><td><span class="ok">Yes</span></td><td>No join dependencies beyond those implied by candidate keys.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 id="anomalies">7.8 &nbsp;Anomalies Eliminated and Residual Deviations</h3>
+
+<h4>Anomalies removed by the normalization process</h4>
+<table>
+  <thead><tr><th>Anomaly</th><th>In UNF</th><th>How the 3NF / BCNF schema prevents it</th></tr></thead>
+  <tbody>
+    <tr><td><b>Update</b> &mdash; a citizen changes address</td><td><span class="bad">Yes</span>, repeated on every application row</td><td><code>UPDATE applicants SET address=... WHERE applicant_id=?</code> touches one row no matter how many applications exist.</td></tr>
+    <tr><td><b>Update</b> &mdash; an officer is renamed or changes role</td><td><span class="bad">Yes</span>, repeated on every row</td><td><code>UPDATE users SET full_name=... WHERE user_id=?</code> touches one row; applications retain only the foreign key.</td></tr>
+    <tr><td><b>Update</b> &mdash; the bot score is recalculated</td><td><span class="bad">Yes</span>, the single slot was overwritten</td><td><code>INSERT</code> a new <code>verifications</code> row; the complete history is retained instead of being lost.</td></tr>
+    <tr><td><b>Insert</b> &mdash; register a new document type</td><td><span class="bad">Yes</span>, no place to put it without an application</td><td>No lookup table is needed; any <code>document_type</code> string is accepted per document.</td></tr>
+    <tr><td><b>Insert</b> &mdash; onboard a staff member with no case load</td><td><span class="bad">Yes</span>, required a form row</td><td><code>INSERT INTO users ...</code> alone; every other reference is NULL and legal.</td></tr>
+    <tr><td><b>Insert</b> &mdash; log a login before any application exists</td><td><span class="bad">Yes</span></td><td><code>audit_logs</code> depends on <code>users</code> only, never on an application.</td></tr>
+    <tr><td><b>Delete</b> &mdash; remove a citizen's last application</td><td><span class="bad">Yes</span>, destroys NID, DOB, address</td><td>Cascade removes only the <code>applications</code> child; the <code>applicants</code> row survives untouched.</td></tr>
+    <tr><td><b>Delete</b> &mdash> remove a rejected application</td><td><span class="bad">Yes</span>, also lost payment and verification history</td><td>Each is an independent child relation with its own lifecycle and its own audit trail.</td></tr>
+    <tr><td><b>Inconsistency</b> &mdash; two rows disagree about one fact</td><td><span class="bad">Yes</span>, structural</td><td>Impossible: a fact occupies exactly one column of exactly one row.</td></tr>
+    <tr><td><b>Spurious tuples</b> &mdash; joins fabricate non-existent combinations</td><td><span class="bad">Yes</span></td><td>The tree shape of the schema plus surrogate keys makes the natural join lossless, so no phantom application-document pairs can appear.</td></tr>
+  </tbody>
+</table>
+
+<h4>Residual deviations, each deliberate and justified</h4>
+<table>
+  <thead><tr><th>Location</th><th>What is denormalised</th><th>Why it is acceptable</th><th>Risk and mitigation</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="mono">verifications.applicant_id</td>
+      <td>A pointer to the applicant inside a table whose declared parent is <code>applications</code>, so it is transitively derivable.</td>
+      <td>Avoids a three-table join for the "verification history of this citizen" screen, which is that module's hottest query.</td>
+      <td>Could drift from <code>applications.applicant_id</code>. <b>Mitigation:</b> no declared foreign key, always written from the applications row inside the same service transaction, and audited by the consistency report in section 14.</td>
+    </tr>
+    <tr>
+      <td class="mono">dispatch_records.applicant_name, nic_number, dispatched_by_name, tracking_id</td>
+      <td>Copies of applicant and officer attributes.</td>
+      <td>These are <b>immutable snapshots</b> required by the courier: the label printed on the parcel must show the name and NID <i>as they were at dispatch</i>, even if the citizen later corrects their record.</td>
+      <td>Intentional historical snapshot, not a redundancy defect. A snapshot is by definition a fact about the past, so it is correct even when the present changes.</td>
+    </tr>
+    <tr>
+      <td class="mono">applications.assigned_officer</td>
+      <td>Officer name stored as text, duplicating <code>users.full_name</code>.</td>
+      <td>Allows assignment to a named officer before that officer has an account, and keeps the assignment query to a single table.</td>
+      <td><span class="warn">Weakest point in the design.</span> A rename will not propagate. <b>Preferred remediation:</b> replace it with <code>assigned_officer_id INT</code> referencing <code>users.user_id</code>, then join for display.</td>
+    </tr>
+    <tr>
+      <td class="mono">applicants.address</td>
+      <td>Composite free-text address instead of <code>address</code>, <code>city</code>, <code>district</code>, <code>province</code>.</td>
+      <td>The address is only printed and couriered, never joined or aggregated on; and administrative boundaries change far more often than the schema.</td>
+      <td>Regional reporting is impossible today. <b>Remediation path:</b> add an optional <code>regions</code> dimension and a nullable <code>region_id</code> on <code>applicants</code>, which is additive and lossless.</td>
+    </tr>
+    <tr>
+      <td class="mono">account_deletion_requests.username, email</td>
+      <td>Copies of <code>users.username</code> and <code>users.email</code>.</td>
+      <td>Same snapshot rationale: the deletion decision record must remain legible after the account row is removed for privacy compliance.</td>
+      <td>None. The snapshot is the legal evidence that the request concerned a specific identified person.</td>
+    </tr>
+  </tbody>
+</table>
+<h2 class="sec" id="fds">8. Functional Dependencies</h2>
+
+<p>
+  The complete set of dependencies the business rules impose, grouped per relation. Notation:
+  <code>X -&gt; Y</code> means "knowing X, you can derive Y". Attributes appearing in a candidate key are
+  <b>prime</b>; all others are <b>non-prime</b>.
+</p>
+
+<h3>8.1 users</h3>
+<div class="rule">F1  { user_id }             -&gt; username, password_hash, full_name, email, role, created_at
+F2  { username }             -&gt; user_id, password_hash, full_name, email, role, created_at
+F3  { email }                -&gt; user_id, username, password_hash, full_name, role, created_at
+F4  { full_name }            -&gt; (nothing)          NOT a determinant
+
+candidate keys: {user_id}, {username}, {email}
+prime attributes: user_id, username, email
+non-prime: password_hash, full_name, role, created_at
+all determinants are candidate keys  =&gt;  BCNF</div>
+
+<h3>8.2 applicants</h3>
+<div class="rule">F1  { applicant_id }        -&gt; national_id_number, first_name, last_name, date_of_birth,
+                                       gender, address, phone_number, email, photo_path, registered_at
+F2  { national_id_number }  -&gt; applicant_id, first_name, last_name, date_of_birth, gender,
+                                       address, phone_number, email, photo_path, registered_at
+
+candidate keys: {applicant_id}, {national_id_number}
+prime: applicant_id, national_id_number
+non-prime: first_name, last_name, date_of_birth, gender, address, phone_number,
+           email, photo_path, registered_at
+all determinants are candidate keys  =&gt;  BCNF  (address deviation documented in 7.6)</div>
+
+<h3>8.3 applications</h3>
+<div class="rule">F1  { application_id }  -&gt; applicant_id, application_type, status, processed_by,
+                                      assigned_officer, application_reason, marital_status,
+                                      service_type, remarks, submitted_at, updated_at
+F2  { applicant_id }       -&gt; (nothing here)     applicant attributes live in `applicants`
+F3  { processed_by }       -&gt; (nothing here)     officer attributes live in `users`
+F4  tracking_id            -&gt; application_id      DERIVED, deliberately not stored
+
+candidate key: {application_id}
+prime: application_id
+all determinants are candidate keys  =&gt;  BCNF
+note: F2 and F3 are the chains that decomposition removed; the corresponding
+      dependencies are satisfied by joins, not by duplicated columns.</div>
+
+<h3>8.4 verifications</h3>
+<div class="rule">F1  { verification_id } -&gt; application_id, applicant_id, method, result, passed,
+                                     score, notes, verified_by, verified_at
+F2  { application_id }     -&gt; (nothing)   an application may be verified many times
+F3  { applicant_id }       -&gt; (nothing)   a citizen may be verified many times
+
+candidate key: {verification_id}
+all determinants are candidate keys  =&gt;  BCNF</div>
+
+<h3>8.5 documents</h3>
+<div class="rule">F1  { document_id }   -&gt; application_id, document_type, file_name, file_path,
+                                 file_size, uploaded_at
+F2  { application_id }   -&gt; (nothing)     an application may carry many documents
+F3  { file_path }        -&gt; (nothing)     display metadata only
+
+candidate key: {document_id}
+all determinants are candidate keys  =&gt;  BCNF</div>
+
+<h3>8.6 identity_cards</h3>
+<div class="rule">F1  { card_id }        -&gt; application_id, applicant_id, card_number, issue_date,
+                                       expiry_date, status, issued_by, created_at
+F2  { application_id }  -&gt; card_id, applicant_id, card_number, issue_date, expiry_date,
+                          status, issued_by, created_at
+F3  { card_number }     -&gt; card_id, application_id, applicant_id, issue_date, expiry_date,
+                          status, issued_by, created_at
+F4  { application_id }  -&gt; applicant_id   transitively through applications; kept as a
+                          convenience pointer with NO ACTION delete protection
+
+candidate keys: {card_id}, {application_id}, {card_number}
+all determinants are candidate keys  =&gt;  BCNF
+F4 is the single documented transitive convenience pointer; because {application_id} is a
+   candidate key, the dependency remains inside a single relation and does not break BCNF.</div>
+
+<h3>8.7 dispatch_records, account_deletion_requests, audit_logs, payments</h3>
+<div class="rule">dispatch_records
+F1  { dispatch_id }                    -&gt; all remaining attributes
+F2  { application_id, dispatched_at }  -&gt; all remaining attributes   (re-dispatch history)
+
+account_deletion_requests
+F1  { request_id }  -&gt; all remaining attributes
+     (a user may submit several requests, so user_id determines nothing)
+
+audit_logs
+F1  { log_id }  -&gt; all remaining attributes
+     (the relation is append-only; no attribute is ever updated)
+
+payments
+F1  { payment_id }      -&gt; all remaining attributes
+F2  { transaction_ref } -&gt; payment_id, application_id, amount, payment_method,
+                           payment_status, paid_at</div>
+
+<h3>8.8 Closure summary</h3>
+<table>
+  <thead><tr><th>Property</th><th>Result</th><th>Justification</th></tr></thead>
+  <tbody>
+    <tr><td>Candidate keys identified</td><td><span class="ok">19</span></td><td>Every relation's minimal superkeys listed above and in section 5.1.</td></tr>
+    <tr><td>Prime determinants found</td><td><span class="ok">0</span></td><td>No attribute that is not part of some candidate key determines anything.</td></tr>
+    <tr><td>Transitive dependencies left (within a relation)</td><td><span class="ok">0</span></td><td>The officer, applicant and location chains are all resolved or consciously accepted.</td></tr>
+    <tr><td>Lossless joins</td><td><span class="ok">All</span></td><td>Every decomposition joins a child to its parent on the parent's key, so no tuple is lost or fabricated.</td></tr>
+    <tr><td>Dependency preservation</td><td><span class="ok">All</span></td><td>Each remaining FD can be enforced by a constraint on a single relation.</td></tr>
+    <tr><td>Highest normal form</td><td><span class="ok">5NF</span></td><td>Follows from BCNF plus the absence of multi-valued and join dependencies.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="relational">9. Relational Schema (Formal)</h2>
+
+<p>
+  The database schema in formal notation, one relation per line, attributes separated from the key by
+  <code>|</code>, and referential actions annotated on foreign keys.
+</p>
+
+<pre>SCHEMA IDENTITY_CARD_SYSTEM = {
+
+  USERS (
+      user_id         : INTEGER        [PK, AUTO_INCREMENT, NOT NULL]
+    , username        : VARCHAR(50)    [NOT NULL, UQ]
+    , password_hash   : VARCHAR(255)   [NOT NULL]
+    , full_name       : VARCHAR(100)   [NOT NULL]
+    , email           : VARCHAR(100)   [NOT NULL, UQ]
+    , role            : ENUM('Admin','Form-Officer','Document-Officer',
+                              'Approver','Operational','Citizen')  [NOT NULL, DEFAULT 'Citizen']
+    , created_at      : DATETIME       [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  APPLICANTS (
+      applicant_id       : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , national_id_number : VARCHAR(20)  [NOT NULL, UQ]
+    , first_name         : VARCHAR(50)  [NOT NULL]
+    , last_name          : VARCHAR(50)  [NOT NULL]
+    , date_of_birth      : DATE         [NOT NULL]
+    , gender             : ENUM('Male','Female','Other')            [NOT NULL]
+    , address            : TEXT         [NOT NULL]
+    , phone_number       : VARCHAR(20)  [NOT NULL]
+    , email              : VARCHAR(100) [NULL]
+    , photo_path         : VARCHAR(255) [NULL]
+    , registered_at      : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  APPLICATIONS (
+      application_id    : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , applicant_id      : INTEGER      [FK -&gt; APPLICANTS.applicant_id, NOT NULL, ON DELETE CASCADE]
+    , application_type  : ENUM('New','Renewal','Replacement')         [NOT NULL, DEFAULT 'New']
+    , status            : ENUM('Pending','Verification-Passed','Documents-Required',
+                                'Processing','Approved','Rejected','Printed',
+                                'Dispatched','Issued')                [NOT NULL, DEFAULT 'Pending']
+    , processed_by      : INTEGER      [FK -&gt; USERS.user_id, NULL, ON DELETE SET NULL]
+    , assigned_officer  : VARCHAR(100) [NULL]
+    , application_reason: VARCHAR(100) [NULL, DEFAULT 'G.C.E O/L']
+    , marital_status    : VARCHAR(50)  [NULL, DEFAULT 'Single']
+    , service_type      : ENUM('Normal','1-Day')                      [NOT NULL, DEFAULT 'Normal']
+    , remarks           : TEXT         [NULL]
+    , submitted_at      : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+    , updated_at        : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE]
+  )
+
+  DOCUMENTS (
+      document_id    : INTEGER       [PK, AUTO_INCREMENT, NOT NULL]
+    , application_id : INTEGER       [FK -&gt; APPLICATIONS.application_id, NOT NULL,
+                                     ON DELETE CASCADE, IDX]
+    , document_type  : VARCHAR(100)  [NOT NULL]
+    , file_name      : VARCHAR(255)  [NOT NULL]
+    , file_path      : LONGTEXT      [NOT NULL]
+    , file_size      : VARCHAR(50)   [NULL, DEFAULT 'Unknown']
+    , uploaded_at    : DATETIME      [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  VERIFICATIONS (
+      verification_id : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , application_id  : INTEGER      [FK -&gt; APPLICATIONS.application_id, NOT NULL,
+                                      ON DELETE CASCADE, IDX]
+    , applicant_id    : INTEGER      [FK* -&gt; APPLICANTS.applicant_id, NULL, IDX]
+    , method          : ENUM('AI-BOT','MANUAL')                      [NOT NULL, DEFAULT 'AI-BOT']
+    , result          : ENUM('Verified','Flagged','Inconclusive')     [NOT NULL, DEFAULT 'Inconclusive']
+    , passed          : TINYINT(1)   [NOT NULL, DEFAULT 0]
+    , score           : INTEGER      [NOT NULL, DEFAULT 0]
+    , notes           : TEXT         [NULL]
+    , verified_by     : INTEGER      [FK -&gt; USERS.user_id, NULL]
+    , verified_at     : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  IDENTITY_CARDS (
+      card_id        : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , card_number    : VARCHAR(50)  [NOT NULL, UQ]
+    , application_id : INTEGER      [FK -&gt; APPLICATIONS.application_id, NOT NULL, UQ,
+                                     ON DELETE CASCADE]
+    , applicant_id   : INTEGER      [FK -&gt; APPLICANTS.applicant_id, NOT NULL,
+                                     ON DELETE NO ACTION]
+    , issue_date     : DATE         [NOT NULL]
+    , expiry_date    : DATE         [NOT NULL]
+    , status         : ENUM('Active','Expired','Revoked','Lost')     [NOT NULL, DEFAULT 'Active']
+    , issued_by      : INTEGER      [FK -&gt; USERS.user_id, NULL, ON DELETE SET NULL]
+    , created_at     : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  DISPATCH_RECORDS (
+      dispatch_id      : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , application_id   : INTEGER      [FK -&gt; APPLICATIONS.application_id, NOT NULL, IDX]
+    , tracking_id      : VARCHAR(30)  [NOT NULL]
+    , applicant_name   : VARCHAR(150) [NOT NULL]
+    , nic_number       : VARCHAR(20)  [NULL]
+    , dispatch_method  : ENUM('Courier','Postal')   [NOT NULL, DEFAULT 'Postal']
+    , delivery_address : TEXT         [NULL]
+    , dispatched_by    : INTEGER      [FK -&gt; USERS.user_id, NULL]
+    , dispatched_by_name: VARCHAR(100)[NULL]
+    , dispatched_at    : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+    , notes            : TEXT         [NULL]
+  )
+
+  ACCOUNT_DELETION_REQUESTS (
+      request_id   : INTEGER       [PK, AUTO_INCREMENT, NOT NULL]
+    , user_id      : INTEGER       [FK -&gt; USERS.user_id, NOT NULL, IDX]
+    , username     : VARCHAR(50)   [NOT NULL]
+    , email        : VARCHAR(100)  [NOT NULL]
+    , reason       : TEXT          [NULL]
+    , status       : ENUM('Pending','Approved','Rejected')  [NOT NULL, DEFAULT 'Pending', IDX]
+    , admin_notes  : TEXT          [NULL]
+    , requested_at : DATETIME      [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+    , processed_at : DATETIME      [NULL]
+    , processed_by : INTEGER       [FK -&gt; USERS.user_id, NULL]
+  )
+
+  AUDIT_LOGS (
+      log_id     : INTEGER      [PK, AUTO_INCREMENT, NOT NULL]
+    , user_id    : INTEGER      [FK -&gt; USERS.user_id, NULL, ON DELETE SET NULL]
+    , action     : VARCHAR(100) [NOT NULL]
+    , details    : TEXT         [NULL]
+    , timestamp  : DATETIME     [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+
+  PAYMENTS (  -- T-SQL script only
+      payment_id      : INTEGER        [PK, IDENTITY, NOT NULL]
+    , application_id  : INTEGER        [FK -&gt; APPLICATIONS.application_id, NOT NULL,
+                                       ON DELETE CASCADE]
+    , amount          : DECIMAL(10,2)  [NOT NULL]
+    , payment_method  : ENUM('Cash','Card','Online')   [NOT NULL]
+    , payment_status  : ENUM('Pending','Completed','Failed')  [NOT NULL, DEFAULT 'Pending']
+    , transaction_ref : VARCHAR(100)   [NULL, UQ]
+    , paid_at         : DATETIME       [NOT NULL, DEFAULT CURRENT_TIMESTAMP]
+  )
+}</pre>
+
+<h3>9.1 Derived (non-stored) attributes</h3>
+<table>
+  <thead><tr><th>Derived value</th><th>Formula</th><th>Where computed</th><th>Why not stored</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">tracking_id</td><td class="mono">'NEX-2026-' || application_id</td><td>Application, Verification and Document entity getters</td><td>Storing it would create the transitive dependency <code>application_id -&gt; tracking_id</code> for no benefit, since it is a pure concatenation.</td></tr>
+    <tr><td class="mono">full_name_en</td><td class="mono">first_name || ' ' || last_name</td><td>Entity getter</td><td>Contradictory copies of a name are the classic 1NF failure; the atomic names are the single source of truth.</td></tr>
+    <tr><td class="mono">turnaround time</td><td class="mono">processed_at - requested_at</td><td>Reporting query</td><td>Report-only figure; storing it would need maintenance on every status change.</td></tr>
+    <tr><td class="mono">card validity today</td><td class="mono">issue_date &lt;= CURDATE() &lt;= expiry_date</td><td>Reporting query</td><td>A stored boolean would be wrong every midnight without a scheduled job.</td></tr>
+    <tr><td class="mono">application_count</td><td class="mono">COUNT(*) over applications by user</td><td>Entity getter / query</td><td>Always derivable; caching it would immediately drift.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="integrity">10. Integrity &amp; Constraints</h2>
+
+<h3>10.1 Four kinds of integrity</h3>
+<table>
+  <thead><tr><th>Kind</th><th>Definition</th><th>How it is enforced here</th></tr></thead>
+  <tbody>
+    <tr><td><b>Entity integrity</b></td><td>Every row must be uniquely identifiable.</td><td>Surrogate primary key on every table, <code>NOT NULL</code> by definition of a PK.</td></tr>
+    <tr><td><b>Referential integrity</b></td><td>Every foreign key value must exist in the parent, or be NULL.</td><td>Eleven declared foreign keys with explicit <code>ON DELETE</code> actions, listed in section 5.2.</td></tr>
+    <tr><td><b>Domain integrity</b></td><td>Every value must come from the attribute's permitted domain.</td><td><code>ENUM</code> types, <code>CHECK</code> constraints, length limits, and <code>NOT NULL</code> where a value is mandatory.</td></tr>
+    <tr><td><b>User-defined integrity</b></td><td>Business rules beyond the above.</td><td>Service-layer precondition checks inside transactions, listed in section 5.4.</td></tr>
+  </tbody>
+</table>
+
+<h3>10.2 Constraint enforcement points</h3>
+<div class="grid g2">
+  <div class="card"><h4 style="margin-top:0">In the database (declarative)</h4>
+    <ul style="font-size:13.5px;margin-bottom:0">
+      <li>Primary keys, unique keys, foreign keys</li>
+      <li>ENUM domains for <code>role</code>, <code>status</code>, <code>gender</code>, <code>method</code>, <code>result</code>, <code>payment_method</code></li>
+      <li><code>NOT NULL</code> on every mandatory attribute</li>
+      <li><code>DEFAULT CURRENT_TIMESTAMP</code> on all created/submitted timestamps</li>
+      <li>Auto-maintained <code>updated_at</code></li>
+    </ul>
+  </div>
+  <div class="card"><h4 style="margin-top:0">In the service layer (imperative)</h4>
+    <ul style="font-size:13.5px;margin-bottom:0">
+      <li>Card issuance gated on an approved application</li>
+      <li>Ten-year validity arithmetic</li>
+      <li>Bot score threshold of 80 for automated pass</li>
+      <li>One active card per applicant</li>
+      <li>Audit-log write paired with every state change</li>
+      <li>Role checks on every mutating endpoint</li>
+    </ul>
+  </div>
+</div>
+
+<div class="note n-warn">
+  <span class="t">JPA mapping note</span>
+  In the Spring Boot JPA entities, inter-entity links are expressed as plain scalar <code>Long</code> identifier
+  columns rather than <code>@ManyToOne</code> associations, and <code>status</code> / <code>role</code> are
+  <code>String</code> rather than Java <code>enum</code> types. Consequently Hibernate does not emit database-level
+  foreign keys, and the ENUM/CHECK domains are only enforced when Hibernate's <code>ddl-auto=update</code> first
+  creates the tables. <b>Recommendation:</b> deploy the explicit DDL from section 12 so the constraints exist
+  independently of the ORM, and treat the JPA layer as a mapping convenience rather than the schema authority.
+</div>
+
+<h2 class="sec" id="lifecycle">11. Data Lifecycle &amp; States</h2>
+
+<h3>11.1 Application status state machine</h3>
+<pre>                      +------------------+
+   [citizen submits]  |     Pending      |  &lt;-- DEFAULT
+                      +--------+---------+
+                               |
+              bot verification runs (verifications row)
+                               |
+                 +-------------+-------------+
+                 |                           |
+        score &lt; 80 / flagged        score &gt;= 80
+                 |                           |
+        +--------v---------+      +----------v-----------+
+        | Documents-       |      |   Verification-Passed  |
+        | Required         |      +----------+---------------+
+        +--------+---------+                 |
+                 |                    officer review
+                 | citizen uploads     +----+----+
+                 +-------------------->+         |
+                                    v            v
+                          +-------------+   +---------+
+                          |  Processing  |   | Rejected| (terminal)
+                          +------+-------+   +---------+
+                                 |
+                     approver signs off
+                                 |
+                          +------v-------+
+                          |   Approved   |
+                          +------+-------+
+                                 |
+                        card generated
+                                 |
+                          +------v-------+
+                          |   Printed    |
+                          +------+-------+
+                                 |
+                        courier handover
+                                 |
+                          +------v-------+
+                          |  Dispatched  |
+                          +------+-------+
+                                 |
+                     citizen collects
+                                 |
+                          +------v-------+
+                          |    Issued    |  (terminal)
+                          +--------------+</pre>
+
+<h3>11.2 Status domain definitions</h3>
+<table>
+  <thead><tr><th>Status</th><th>Meaning</th><th>Who sets it</th><th>Next allowed states</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Pending</td><td>Application submitted, awaiting automated verification</td><td>System on insert</td><td>Verification-Passed, Documents-Required, Rejected</td></tr>
+    <tr><td class="mono">Verification-Passed</td><td>AI bot accepted the documents with sufficient confidence</td><td>Verification module</td><td>Processing, Rejected</td></tr>
+    <tr><td class="mono">Documents-Required</td><td>Bot could not verify; citizen must upload more evidence</td><td>Verification module</td><td>Pending</td></tr>
+    <tr><td class="mono">Processing</td><td>An officer is actively handling the case</td><td>Form / Document officer</td><td>Approved, Rejected</td></tr>
+    <tr><td class="mono">Approved</td><td>Authorised for card production</td><td>Approver</td><td>Printed</td></tr>
+    <tr><td class="mono">Rejected</td><td>Refused, with a reason in <code>remarks</code></td><td>Approver</td><td>Terminal (a new application is required)</td></tr>
+    <tr><td class="mono">Printed</td><td>Physical card produced and queued for dispatch</td><td>Operational officer</td><td>Dispatched</td></tr>
+    <tr><td class="mono">Dispatched</td><td>Parcel handed to the courier with a tracking record</td><td>Operational officer</td><td>Issued</td></tr>
+    <tr><td class="mono">Issued</td><td>Card collected by the citizen; complete</td><td>Operational officer</td><td>Terminal</td></tr>
+  </tbody>
+</table>
+
+<h3>11.3 Card status lifecycle</h3>
+<table>
+  <thead><tr><th>Status</th><th>Meaning</th><th>Transition trigger</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">Active</td><td>Valid and in circulation</td><td>Created on issuance</td></tr>
+    <tr><td class="mono">Expired</td><td>Past <code>expiry_date</code></td><td>Date comparison at validation time</td></tr>
+    <tr><td class="mono">Lost</td><td>Reported lost by the citizen</td><td>Citizen report; triggers a Replacement application</td></tr>
+    <tr><td class="mono">Revoked</td><td>Withdrawn by an administrator</td><td>Admin action; always audit-logged</td></tr>
+  </tbody>
+</table>
+
+<h3>11.4 Row lifecycle summary by table</h3>
+<table>
+  <thead><tr><th>Table</th><th>Created by</th><th>Updated by</th><th>Deleted by</th><th>Retention</th></tr></thead>
+  <tbody>
+    <tr><td class="tbl-name">users</td><td>Registration / seeding</td><td>Profile change, role assignment</td><td>Admin, after an approved deletion request</td><td>Account lifetime plus audit reference</td></tr>
+    <tr><td class="tbl-name">applicants</td><td>First application or registration</td><td>Correction of personal data</td><td>Admin only; blocked while a card exists</td><td>10 years after the last card expires</td></tr>
+    <tr><td class="tbl-name">applications</td><td>Citizen submission</td><td>Every status transition</td><td>Admin correction only</td><td>10 years</td></tr>
+    <tr><td class="tbl-name">documents</td><td>File upload</td><td>Never</td><td>Cascade with the application, or citizen removal</td><td>Life of the application</td></tr>
+    <tr><td class="tbl-name">verifications</td><td>Bot engine or officer</td><td>Never</td><td>Cascade with the application</td><td>Life of the application</td></tr>
+    <tr><td class="tbl-name">identity_cards</td><td>Issuance</td><td>Status change only</td><td>Never in practice; revoked instead</td><td>Permanent</td></tr>
+    <tr><td class="tbl-name">dispatch_records</td><td>Courier handover</td><td>Never</td><td>Never</td><td>Permanent</td></tr>
+    <tr><td class="tbl-name">account_deletion_requests</td><td>Citizen request</td><td>On decision</td><td>Never</td><td>Permanent (legal evidence)</td></tr>
+    <tr><td class="tbl-name">audit_logs</td><td>Every significant action</td><td>Never</td><td>Never</td><td>Permanent</td></tr>
+  </tbody>
+</table>
+<h2 class="sec" id="ddl">12. Full DDL Reference</h2>
+
+<h3>12.1 MySQL (authoritative runtime schema)</h3>
+<pre>-- ============================================================
+-- NexusGov Identity Card Issuing System
+-- MySQL 8 / InnoDB / utf8mb4  --  schema + seed
+-- ============================================================
+
+CREATE DATABASE IF NOT EXISTS identity_card_system
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE identity_card_system;
+
+-- ------------------------------------------------------------
+-- users
+-- ------------------------------------------------------------
+CREATE TABLE users (
+    user_id       INT AUTO_INCREMENT PRIMARY KEY,
+    username      VARCHAR(50)  NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name     VARCHAR(100) NOT NULL,
+    email         VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('Admin','Form-Officer','Document-Officer',
+              'Approver','Operational','Citizen') NOT NULL DEFAULT 'Citizen',
+    created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- applicants
+-- ------------------------------------------------------------
+CREATE TABLE applicants (
+    applicant_id       INT AUTO_INCREMENT PRIMARY KEY,
+    national_id_number VARCHAR(20)  NOT NULL UNIQUE,
+    first_name         VARCHAR(50)  NOT NULL,
+    last_name          VARCHAR(50)  NOT NULL,
+    date_of_birth      DATE         NOT NULL,
+    gender ENUM('Male','Female','Other') NOT NULL,
+    address            TEXT         NOT NULL,
+    phone_number       VARCHAR(20)  NOT NULL,
+    email              VARCHAR(100) NULL,
+    photo_path         VARCHAR(255) NULL,
+    registered_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- applications
+-- ------------------------------------------------------------
+CREATE TABLE applications (
+    application_id   INT AUTO_INCREMENT PRIMARY KEY,
+    applicant_id     INT NOT NULL,
+    application_type ENUM('New','Renewal','Replacement') NOT NULL DEFAULT 'New',
+    status ENUM('Pending','Approved','Rejected','Processing','Printed','Issued',
+                'Verification-Passed','Documents-Required','Dispatched')
+                                       NOT NULL DEFAULT 'Pending',
+    processed_by        INT          NULL,
+    assigned_officer    VARCHAR(100) NULL,
+    application_reason  VARCHAR(100) NULL,
+    marital_status      VARCHAR(50)  NULL,
+    service_type ENUM('Normal','1-Day') NOT NULL DEFAULT 'Normal',
+    remarks          TEXT NULL,
+    submitted_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                    ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_applications_applicants FOREIGN KEY (applicant_id)
+        REFERENCES applicants(applicant_id) ON DELETE CASCADE,
+    CONSTRAINT fk_applications_users FOREIGN KEY (processed_by)
+        REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- verifications
+-- ------------------------------------------------------------
+CREATE TABLE verifications (
+    verification_id INT AUTO_INCREMENT PRIMARY KEY,
+    application_id  INT NOT NULL,
+    applicant_id    INT NULL,
+    method          ENUM('AI-BOT','MANUAL') NOT NULL DEFAULT 'AI-BOT',
+    result          ENUM('Verified','Flagged','Inconclusive') NOT NULL DEFAULT 'Inconclusive',
+    passed          TINYINT(1) NOT NULL DEFAULT 0,
+    score           INT NOT NULL DEFAULT 0,
+    notes           TEXT NULL,
+    verified_by     INT NULL,
+    verified_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_ver_application_id (application_id),
+    INDEX idx_ver_applicant_id   (applicant_id),
+    CONSTRAINT fk_verifications_applications FOREIGN KEY (application_id)
+        REFERENCES applications(application_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- documents
+-- ------------------------------------------------------------
+CREATE TABLE documents (
+    document_id    INT AUTO_INCREMENT PRIMARY KEY,
+    application_id INT NOT NULL,
+    document_type  VARCHAR(100) NOT NULL,
+    file_name      VARCHAR(255) NOT NULL,
+    file_path      LONGTEXT     NOT NULL,
+    file_size      VARCHAR(50)  NULL DEFAULT 'Unknown',
+    uploaded_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_doc_application_id (application_id),
+    CONSTRAINT fk_documents_applications FOREIGN KEY (application_id)
+        REFERENCES applications(application_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- identity_cards
+-- ------------------------------------------------------------
+CREATE TABLE identity_cards (
+    card_id        INT AUTO_INCREMENT PRIMARY KEY,
+    card_number    VARCHAR(50) NOT NULL UNIQUE,
+    application_id INT NOT NULL UNIQUE,     -- enforces the 1:1 relationship
+    applicant_id   INT NOT NULL,
+    issue_date     DATE NOT NULL,
+    expiry_date    DATE NOT NULL,
+    status ENUM('Active','Expired','Lost','Revoked') NOT NULL DEFAULT 'Active',
+    issued_by      INT NULL,
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_cards_applications FOREIGN KEY (application_id)
+        REFERENCES applications(application_id) ON DELETE CASCADE,
+    CONSTRAINT fk_cards_applicants FOREIGN KEY (applicant_id)
+        REFERENCES applicants(applicant_id) ON DELETE NO ACTION,
+    CONSTRAINT fk_cards_users FOREIGN KEY (issued_by)
+        REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- audit_logs  (append-only)
+-- ------------------------------------------------------------
+CREATE TABLE audit_logs (
+    log_id    INT AUTO_INCREMENT PRIMARY KEY,
+    user_id   INT NULL,
+    action    VARCHAR(100) NOT NULL,
+    details   TEXT NULL,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_logs_users FOREIGN KEY (user_id)
+        REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- account_deletion_requests
+-- ------------------------------------------------------------
+CREATE TABLE account_deletion_requests (
+    request_id   INT AUTO_INCREMENT PRIMARY KEY,
+    user_id      INT NOT NULL,
+    username     VARCHAR(50)  NOT NULL,
+    email        VARCHAR(100) NOT NULL,
+    reason       TEXT NULL,
+    status ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+    admin_notes  TEXT NULL,
+    requested_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    processed_at DATETIME NULL,
+    processed_by INT NULL,
+    INDEX idx_del_user_id (user_id),
+    INDEX idx_del_status  (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ------------------------------------------------------------
+-- dispatch_records
+-- ------------------------------------------------------------
+CREATE TABLE dispatch_records (
+    dispatch_id       INT AUTO_INCREMENT PRIMARY KEY,
+    application_id    INT NOT NULL,
+    tracking_id       VARCHAR(30)  NOT NULL,
+    applicant_name    VARCHAR(150) NOT NULL,
+    nic_number        VARCHAR(20)  NULL,
+    dispatch_method ENUM('Courier','Postal') NOT NULL DEFAULT 'Postal',
+    delivery_address  TEXT NULL,
+    dispatched_by     INT NULL,
+    dispatched_by_name VARCHAR(100) NULL,
+    dispatched_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    notes             TEXT NULL,
+    INDEX idx_dispatch_app_id (application_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+
+<h3>12.2 T-SQL / SQL Server variant (differences only)</h3>
+<pre>IF NOT EXISTS (SELECT * FROM sys.databases WHERE name='identity_card_system')
+    CREATE DATABASE [identity_card_system];
+GO
+USE [identity_card_system];
+GO
+
+-- Types
+--   INT IDENTITY(1,1)      instead of INT AUTO_INCREMENT
+--   DATETIME2              instead of DATETIME
+--   NVARCHAR(n)/(MAX)      instead of VARCHAR(n)/TEXT  (Unicode)
+--   BIT                    instead of TINYINT(1)
+--   ENGINE=InnoDB, CHARSET=utf8mb4 not applicable; use COLLATE
+--   ENUM does not exist -> VARCHAR(n) + CHECK constraint
+
+CREATE TABLE dbo.users (
+    user_id       INT IDENTITY(1,1) NOT NULL,
+    username      VARCHAR(50)   NOT NULL,
+    password_hash VARCHAR(255)  NOT NULL,
+    full_name     NVARCHAR(100) NOT NULL,
+    email         VARCHAR(100)  NOT NULL,
+    role          VARCHAR(20)   NOT NULL DEFAULT 'Citizen',
+    created_at    DATETIME2     NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_users          PRIMARY KEY CLUSTERED (user_id),
+    CONSTRAINT UQ_users_username UNIQUE (username),
+    CONSTRAINT UQ_users_email    UNIQUE (email),
+    CONSTRAINT CHK_users_role CHECK (role IN ('Admin','Form-Officer','Document-Officer',
+                                              'Approver','Operational','Citizen'))
+);
+
+-- Trigger emulating MySQL's ON UPDATE CURRENT_TIMESTAMP
+CREATE TRIGGER trg_applications_updated_at
+ON dbo.applications
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE dbo.applications
+    SET updated_at = GETDATE()
+    FROM dbo.applications a
+    INNER JOIN inserted i ON a.application_id = i.application_id;
+END;
+GO
+
+-- payments exists in the T-SQL variant only
+CREATE TABLE dbo.payments (
+    payment_id      INT IDENTITY(1,1) NOT NULL,
+    application_id  INT NOT NULL,
+    amount          DECIMAL(10,2) NOT NULL,
+    payment_method  VARCHAR(10) NOT NULL,
+    payment_status  VARCHAR(10) NOT NULL DEFAULT 'Pending',
+    transaction_ref VARCHAR(100) NULL,
+    paid_at         DATETIME2 NOT NULL DEFAULT GETDATE(),
+    CONSTRAINT PK_payments PRIMARY KEY CLUSTERED (payment_id),
+    CONSTRAINT UQ_payments_transaction_ref UNIQUE (transaction_ref),
+    CONSTRAINT CHK_payments_method CHECK (payment_method IN ('Cash','Card','Online')),
+    CONSTRAINT CHK_payments_status CHECK (payment_status IN ('Pending','Completed','Failed')),
+    CONSTRAINT fk_payments_applications FOREIGN KEY (application_id)
+        REFERENCES dbo.applications(application_id) ON DELETE CASCADE
+);</pre>
+
+<h2 class="sec" id="migrations">13. Migrations &amp; Triggers</h2>
+
+<h3>13.1 Idempotent schema creation</h3>
+<p>
+  Boot-time DDL uses <code>CREATE TABLE IF NOT EXISTS</code> throughout, so the application is safe to restart
+  against an existing database. Table creation is dependency-ordered: <code>users</code> and
+  <code>applicants</code> first, then <code>applications</code>, then the child relations.
+</p>
+
+<h3>13.2 Incremental migrations applied at boot</h3>
+<pre>-- 1. Role vocabulary evolution (three-step, data-preserving)
+ALTER TABLE users MODIFY COLUMN role
+  ENUM('Admin','Officer','Form-Officer','Document-Officer',
+       'Approver','Operational','Citizen') NOT NULL DEFAULT 'Citizen';
+UPDATE users SET role='Form-Officer' WHERE LOWER(role)='officer';
+ALTER TABLE users MODIFY COLUMN role
+  ENUM('Admin','Form-Officer','Document-Officer',
+       'Approver','Operational','Citizen') NOT NULL DEFAULT 'Citizen';
+
+-- 2. Widen the application workflow vocabulary
+ALTER TABLE applications MODIFY COLUMN status
+  ENUM('Pending','Approved','Rejected','Processing','Printed','Issued',
+       'Dispatched','Verification-Passed','Documents-Required') NOT NULL DEFAULT 'Pending';
+
+-- 3. New relations and columns for pre-existing databases
+CREATE TABLE IF NOT EXISTS dispatch_records ( ... );
+ALTER TABLE applicants ADD COLUMN photo_path VARCHAR(255) NULL;
+ALTER TABLE applications ADD COLUMN assigned_officer   VARCHAR(100) NULL;
+ALTER TABLE applications ADD COLUMN application_reason VARCHAR(100) NULL;
+ALTER TABLE applications ADD COLUMN marital_status     VARCHAR(50)  NULL;
+ALTER TABLE applications ADD COLUMN service_type ENUM('Normal','1-Day') NOT NULL DEFAULT 'Normal';
+
+-- 4. The 2NF migration: move bot verification out of `applications`
+--    into the dedicated `verifications` relation
+INSERT INTO verifications (application_id, applicant_id, method, result,
+                           passed, score, notes, verified_at)
+SELECT application_id, applicant_id, 'AI-BOT',
+       CASE WHEN bot_score &gt;= 80 THEN 'Verified'
+            WHEN bot_score  &gt;  0 THEN 'Flagged'
+            ELSE 'Inconclusive' END,
+       COALESCE(bot_verified, 0), COALESCE(bot_score, 0),
+       bot_notes, bot_verified_at
+FROM  applications
+WHERE (bot_verified IS NOT NULL OR bot_score IS NOT NULL
+    OR bot_notes   IS NOT NULL OR bot_verified_at IS NOT NULL)
+  AND application_id NOT IN (SELECT DISTINCT application_id FROM verifications);
+
+ALTER TABLE applications DROP COLUMN bot_verified;
+ALTER TABLE applications DROP COLUMN bot_score;
+ALTER TABLE applications DROP COLUMN bot_notes;
+ALTER TABLE applications DROP COLUMN bot_verified_at;</pre>
+<div class="note n-info">
+  <span class="t">Why the migration is idempotent</span>
+  The <code>NOT IN (SELECT application_id FROM verifications)</code> guard prevents duplicating rows that were
+  already migrated, and every <code>ALTER</code> is wrapped in a try/catch so a column that is already dropped or a
+  role column that is already current is treated as success. This lets the same code run against a brand-new
+  database and a two-year-old one without a version table.
+</div>
+
+<h3>13.3 Triggers and automatic behaviours</h3>
+<table>
+  <thead><tr><th>Mechanism</th><th>Where</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">ON UPDATE CURRENT_TIMESTAMP</td><td>MySQL <code>applications.updated_at</code></td><td>Maintains the last-modified timestamp with no application code.</td></tr>
+    <tr><td class="mono">trg_applications_updated_at</td><td>T-SQL <code>dbo.applications</code></td><td>SQL Server equivalent of the above, since it lacks the column feature.</td></tr>
+    <tr><td class="mono">DEFAULT CURRENT_TIMESTAMP / GETDATE()</td><td>All timestamp columns</td><td>Insert-time defaults owned by the database, not the caller.</td></tr>
+    <tr><td class="mono">AUTO_INCREMENT / IDENTITY</td><td>All primary keys</td><td>Surrogate key generation; guarantees monotonic, non-reused values.</td></tr>
+    <tr><td class="mono">Backup trigger on mutation</td><td><code>queryDb()</code> wrapper</td><td>Any statement beginning with INSERT, UPDATE, DELETE, REPLACE or ALTER triggers an automatic backup.</td></tr>
+  </tbody>
+</table>
+
+<h3>13.4 Stored procedures and views</h3>
+<p>
+  The schema intentionally uses <b>no stored procedures and no views</b>. All business logic lives in the service
+  layer. Rationale: it keeps the logic in one language (JavaScript and Java) that is unit-testable and
+  version-controlled, avoids duplicating validation between the database and the API, and keeps the relational
+  schema free of hidden behaviour.
+</p>
+
+<h2 class="sec" id="queries">14. Canonical Queries</h2>
+
+<h3>14.1 Authentication and RBAC</h3>
+<pre>-- Login lookup (served by uq_users_username)
+SELECT user_id, username, password_hash, full_name, email, role, created_at
+FROM   users
+WHERE  username = ?;
+
+-- Role-gated listing: an officer sees only applications assigned to their module
+SELECT a.application_id,
+       CONCAT('NEX-2026-', a.application_id)      AS tracking_id,
+       ap.first_name, ap.last_name, ap.national_id_number,
+       a.application_type, a.status, a.service_type,
+       a.submitted_at, a.updated_at, a.remarks
+FROM   applications a
+JOIN   applicants  ap ON ap.applicant_id = a.applicant_id
+WHERE  a.status IN ('Verification-Passed','Documents-Required','Processing')
+ORDER  BY a.submitted_at ASC;</pre>
+
+<h3>14.2 Full application dossier (the document-review screen)</h3>
+<pre>SELECT  a.application_id,
+        CONCAT('NEX-2026-', a.application_id) AS tracking_id,
+        ap.national_id_number, ap.first_name, ap.last_name, ap.date_of_birth,
+        ap.gender, ap.address, ap.phone_number, ap.email, ap.photo_path,
+        a.application_type, a.status, a.remarks, a.submitted_at,
+        u.full_name AS processed_by_name,
+        v.method, v.result, v.passed, v.score, v.notes AS verification_notes,
+        c.card_number, c.issue_date, c.expiry_date, c.status AS card_status
+FROM    applications a
+JOIN    applicants  ap ON ap.applicant_id  = a.applicant_id
+LEFT JOIN users      u  ON u.user_id       = a.processed_by
+LEFT JOIN verifications v ON v.application_id = a.application_id
+                        AND v.verified_at = (SELECT MAX(v2.verified_at)
+                                             FROM verifications v2
+                                             WHERE v2.application_id = a.application_id)
+LEFT JOIN identity_cards c ON c.application_id = a.application_id
+WHERE   a.application_id = ?;</pre>
+
+<h3>14.3 Documents attached to an application</h3>
+<pre>SELECT document_id, document_type, file_name, file_path, file_size, uploaded_at
+FROM   documents
+WHERE  application_id = ?
+ORDER  BY uploaded_at;</pre>
+
+<h3>14.4 Verification history for one citizen</h3>
+<pre>-- Served entirely by idx_ver_applicant_id, with no join to applications
+SELECT v.verification_id, v.application_id, v.method, v.result,
+       v.passed, v.score, v.verified_at
+FROM   verifications v
+WHERE  v.applicant_id = ?
+ORDER  BY v.verified_at DESC;</pre>
+
+<h3>14.5 Print queue</h3>
+<pre>SELECT c.card_id, c.card_number, ap.first_name, ap.last_name,
+       ap.photo_path, c.issue_date, c.expiry_date, u.full_name AS issued_by_name
+FROM   identity_cards c
+JOIN   applications a  ON a.application_id = c.application_id
+JOIN   applicants  ap ON ap.applicant_id  = c.applicant_id
+LEFT JOIN users      u  ON u.user_id       = c.issued_by
+WHERE  a.status = 'Printed'
+ORDER  BY c.created_at;</pre>
+
+<h3>14.6 Dashboard analytics</h3>
+<pre>-- Applications by status
+SELECT status, COUNT(*) AS total
+FROM   applications
+GROUP  BY status;
+
+-- Average turnaround time, split by service tier
+SELECT service_type,
+       AVG(TIMESTAMPDIFF(HOUR, submitted_at, updated_at)) AS avg_hours
+FROM   applications
+WHERE  status IN ('Approved','Printed','Issued')
+GROUP  BY service_type;
+
+-- Verification outcome distribution
+SELECT result, COUNT(*) AS attempts, AVG(score) AS avg_score
+FROM   verifications
+GROUP  BY result;
+
+-- Gender distribution for aggregate demographic reporting
+SELECT gender, COUNT(*) AS citizens
+FROM   applicants
+GROUP  BY gender;</pre>
+
+<h3>14.7 Audit trail</h3>
+<pre>SELECT l.log_id, l.timestamp, l.action, l.details,
+       u.username, u.role
+FROM   audit_logs l
+LEFT JOIN users u ON u.user_id = l.user_id      -- SET NULL keeps the trail intact
+WHERE  u.username = ? OR l.action LIKE 'APPLICATION%'
+ORDER  BY l.timestamp DESC
+LIMIT  100;</pre>
+
+<h3>14.8 Integrity monitoring</h3>
+<pre>-- Referential integrity orphan check (all four must return zero rows)
+SELECT v.verification_id FROM verifications v
+  LEFT JOIN applications a ON a.application_id = v.application_id
+WHERE a.application_id IS NULL;
+
+SELECT c.card_id FROM identity_cards c
+  LEFT JOIN applications a ON a.application_id = c.application_id
+WHERE a.application_id IS NULL;
+
+SELECT d.document_id FROM documents d
+  LEFT JOIN applications a ON a.application_id = d.application_id
+WHERE a.application_id IS NULL;
+
+SELECT l.log_id FROM audit_logs l
+  LEFT JOIN users u ON u.user_id = l.user_id
+WHERE l.user_id IS NOT NULL AND u.user_id IS NULL;
+
+-- Denormalisation drift check: verifications.applicant_id must match
+-- applications.applicant_id
+SELECT v.verification_id
+FROM   verifications v
+JOIN   applications a ON a.application_id = v.application_id
+WHERE  v.applicant_id &lt;&gt; a.applicant_id;
+
+-- Duplicate business key check (should be impossible thanks to UNIQUE)
+SELECT national_id_number, COUNT(*) FROM applicants
+GROUP  BY national_id_number HAVING COUNT(*) &gt; 1;
+
+-- Card validity as at today
+SELECT card_number, expiry_date FROM identity_cards
+WHERE  status = 'Active' AND expiry_date &lt; CURDATE();</pre>
+
+<h3>14.9 Transactions</h3>
+<pre>-- Approve an application, write the audit entry and issue the card atomically
+START TRANSACTION;
+
+  UPDATE applications
+     SET status = 'Approved', processed_by = ?, remarks = ?
+   WHERE application_id = ?
+     AND status IN ('Verification-Passed','Processing');
+
+  INSERT INTO audit_logs (user_id, action, details)
+  VALUES (?, 'APPLICATION_APPROVED',
+          CONCAT('Approved application #', ?));
+
+  INSERT INTO identity_cards
+         (card_number, application_id, applicant_id,
+          issue_date, expiry_date, status, issued_by)
+  VALUES (?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 10 YEAR),
+          'Active', ?);
+
+COMMIT;
+-- any failure above rolls the whole triple back: no card without approval,
+-- no approval without an audit entry</pre>
+
+<h2 class="sec" id="security">15. Security in the Data Layer</h2>
+
+<table>
+  <thead><tr><th>Control</th><th>Implementation</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td>Password storage</td><td>bcrypt, cost factor 10</td><td>60-character hash in a 255-character column. Salted per user, so identical passwords produce different hashes. Plaintext is never persisted or logged.</td></tr>
+    <tr><td>Parameterised queries</td><td>Prepared statements via <code>pool.query(sql, params)</code></td><td>Every value in this document's queries is bound as a parameter. No string concatenation of user input, so SQL injection has no surface.</td></tr>
+    <tr><td>Least-privilege role</td><td>Application connects as a restricted user</td><td>Development uses <code>root</code>; production should use a dedicated account granted only SELECT, INSERT, UPDATE on this schema, and no DROP.</td></tr>
+    <tr><td>Column-level secrecy</td><td><code>@JsonProperty(access = WRITE_ONLY)</code> plus <code>@JsonIgnore</code> on the getter</td><td><code>password_hash</code> is accepted on input and never serialised on output, so it cannot leak through any API response.</td></tr>
+    <tr><td>Transport security</td><td>TLS terminated at the gateway; <code>useSSL=false</code> locally</td><td>Must be enabled in production, together with <code>require_secure_transport=ON</code>.</td></tr>
+    <tr><td>Session security</td><td>JWT, HMAC-SHA key, 7-day expiry</td><td>The JWT carries only <code>user_id</code> and <code>role</code>; every authorisation decision is re-validated against the database on each request.</td></tr>
+    <tr><td>File separation</td><td>Uploads stored outside the database</td><td>Only paths are persisted, so a database dump alone cannot expose identity documents. Upload directory must sit outside the web root.</td></tr>
+    <tr><td>Non-repudiation</td><td><code>audit_logs</code>, append-only</td><td>Every state change is recorded with actor, action and narrative, and no application code path updates or deletes those rows.</td></tr>
+    <tr><td>Secret hygiene</td><td>Credentials in <code>.env</code>, never committed</td><td>SMTP and JWT secrets live outside version control. <b>Action item:</b> the SMTP app password currently present in <code>application.properties</code> should be moved to an environment variable and rotated before any public deployment.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="backup">16. Backup, Recovery &amp; Retention</h2>
+
+<h3>16.1 Strategy</h3>
+<p>
+  The system uses a <b>continuous, event-driven backup</b> rather than a nightly schedule, because a card-issuing
+  system's state is legally significant and a day of lost transactions is unacceptable.
+</p>
+<table>
+  <thead><tr><th>Trigger</th><th>Action</th><th>Artefact</th></tr></thead>
+  <tbody>
+    <tr><td>Any <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>REPLACE</code> or <code>ALTER</code></td><td>Automatic backup of the full logical dataset</td><td><code>backup/database_backup.json</code> and <code>backup/database_backup.sql</code></td></tr>
+    <tr><td>Application start-up</td><td>Baseline synchronisation</td><td>Both backup files refreshed</td></tr>
+    <tr><td>Start-up with an empty database</td><td>Automatic restore from the backup file</td><td>Database and in-memory store repopulated</td></tr>
+    <tr><td>MySQL connection lost</td><td>Degrade to in-memory mode, keep serving, keep backing up</td><td>Backup files remain current</td></tr>
+    <tr><td>MySQL restored</td><td>Reconcile in-memory state back into MySQL</td><td>Single source of truth re-established</td></tr>
+  </tbody>
+</table>
+
+<h3>16.2 Why this matters for the relational design</h3>
+<ul>
+  <li>Backups are <b>logical</b> (row-level), not physical, so the JSON artefact is a direct serialisation of the
+      relations and stays readable if the schema later migrates.</li>
+  <li>Because the schema is in 3NF with no inter-table duplication, a restore of one relation is always consistent
+      with the others. A denormalised design would have required cross-table repair logic during restore.</li>
+  <li>Foreign keys make the restore order deterministic, since the DAG in the ER diagram dictates
+      <code>users, applicants, applications, children</code>.</li>
+  <li>The immutable relations (<code>audit_logs</code>, <code>dispatch_records</code>) are backed up but never
+      rewritten, so a restore cannot silently lose audit evidence.</li>
+</ul>
+
+<h3>16.3 Recovery procedure</h3>
+<pre>1. Stop the application servers.
+2. Restore the SQL dump:
+      mysql -u root -p identity_card_system &lt; backup/database_backup.sql
+   (or seed from scratch with identity_card_system.sql, which includes seed rows)
+3. Start the servers; the boot routine verifies the schema and applies any
+   pending migrations automatically.
+4. Confirm the row counts of every table against the backup manifest.</pre>
+
+<h3>16.4 Retention</h3>
+<table>
+  <thead><tr><th>Data class</th><th>Retention</th><th>Basis</th></tr></thead>
+  <tbody>
+    <tr><td><code>audit_logs</code></td><td>Permanent</td><td>Non-repudiation requirement</td></tr>
+    <tr><td><code>identity_cards</code></td><td>Permanent</td><td>Legal record of an issued credential</td></tr>
+    <tr><td><code>applicants</code></td><td>10 years past card expiry</td><td>Re-issuance eligibility, fraud detection</td></tr>
+    <tr><td><code>applications</code>, <code>verifications</code>, <code>documents</code></td><td>10 years</td><td>Appeals window and statistical reporting</td></tr>
+    <tr><td><code>dispatch_records</code></td><td>Permanent</td><td>Courier reconciliation and loss investigation</td></tr>
+    <tr><td><code>account_deletion_requests</code></td><td>Permanent</td><td>Evidence that an erasure was lawfully requested and answered</td></tr>
+    <tr><td>Uploaded files</td><td>Life of the application</td><td>Free disk; regenerate from re-application if lost</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec" id="perf">17. Performance &amp; Concurrency</h2>
+
+<h3>17.1 Connection management</h3>
+<ul>
+  <li>A single <code>mysql2</code> pool of 15 connections serves the whole process; connections are created once and
+      reused, never per request.</li>
+  <li><code>waitForConnections = true</code> with an unbounded queue means a traffic burst degrades into latency
+      rather than into errors.</li>
+  <li>TCP keep-alive prevents the classic <code>PROTOCOL_CONNECTION_LOST</code> failure caused by MySQL's
+      <code>wait_timeout</code> closing idle connections.</li>
+  <li>Transient failures (<code>ECONNRESET</code>, <code>ER_LOCK_DEADLOCK</code>, <code>EPIPE</code>,
+      <code>ETIMEDOUT</code>) trigger one automatic reconnect-and-retry, which covers a rolling MySQL restart
+      without a user-visible error.</li>
+</ul>
+
+<h3>17.2 Transaction and locking practice</h3>
+<ul>
+  <li>InnoDB supplies row-level locking and MVCC, so readers never block writers.</li>
+  <li>Multi-table operations (approve plus audit plus card insert) are wrapped in one transaction so partial states
+      are impossible.</li>
+  <li><code>ON DELETE CASCADE</code> is used sparingly; large cascading deletes are chunked in maintenance
+      procedures to avoid long lock holds.</li>
+  <li><code>SELECT ... FOR UPDATE</code> is used on <code>identity_cards.application_id</code> during issuance so
+      two concurrent officers cannot mint two cards for the same application, even though the UNIQUE constraint
+      would ultimately reject one.</li>
+</ul>
+
+<h3>17.3 Expected query costs</h3>
+<table>
+  <thead><tr><th>Query</th><th>Index used</th><th>Expected cost</th></tr></thead>
+  <tbody>
+    <tr><td>Login by username</td><td><code>uq_users_username</code></td><td>Single B-tree descent, O(log n)</td></tr>
+    <tr><td>Load an application dossier</td><td>PK lookups on all five joined tables</td><td>Five index dives plus row reads</td></tr>
+    <tr><td>Documents for an application</td><td><code>idx_doc_application_id</code></td><td>Index range scan, rows are narrow</td></tr>
+    <tr><td>Verification history by citizen</td><td><code>idx_ver_applicant_id</code></td><td>Index range scan, no join needed</td></tr>
+    <tr><td>Admin deletion queue</td><td><code>idx_del_status</code></td><td>Index range scan on a low-cardinality column, effective because the queue is small</td></tr>
+    <tr><td>Status dashboard</td><td>Table scan with GROUP BY</td><td>Acceptable; a <code>(status, submitted_at)</code> composite index should be added if <code>applications</code> exceeds 10<sup>5</sup> rows</td></tr>
+  </tbody>
+</table>
+
+<h3>17.4 Storage characteristics</h3>
+<ul>
+  <li><code>utf8mb4</code> with 4-byte character support, so Sinhala, Tamil and emoji in names and remarks store
+      correctly. This is why <code>NVARCHAR</code> in the T-SQL variant is not merely cosmetic.</li>
+  <li><code>DECIMAL(10,2)</code> for money: exact base-10 arithmetic, no floating-point drift in reconciliation.</li>
+  <li><code>DATE</code> rather than <code>DATETIME</code> for births, issue and expiry dates: half the storage and
+      no meaningless time component.</li>
+  <li><code>DATETIME</code> rather than <code>TIMESTAMP</code> for event times, to avoid the 2038 limit and the
+      implicit timezone conversion of <code>TIMESTAMP</code> columns; UTC is enforced by the JDBC
+      <code>serverTimezone=UTC</code> parameter.</li>
+  <li>Long text columns (<code>remarks</code>, <code>notes</code>, <code>details</code>) are stored off-page in
+      overflow, keeping the frequently scanned index entries compact.</li>
+</ul>
+
+<h2 class="sec" id="appendix">18. Appendix</h2>
+
+<h3>18.1 Seed data (as shipped in <code>identity_card_system.sql</code>)</h3>
+<table>
+  <thead><tr><th>Table</th><th>Seeded rows</th><th>Content</th></tr></thead>
+  <tbody>
+    <tr><td class="tbl-name">users</td><td>6</td><td>1 Admin, 1 second Admin, 1 Form-Officer, 1 Approver, 1 Document-Officer, 1 Operational</td></tr>
+    <tr><td class="tbl-name">applicants</td><td>3</td><td>Thilina Sakalasooriya, Kavindi Perera, Dilshan Senanayake</td></tr>
+    <tr><td class="tbl-name">applications</td><td>3</td><td>One Issued (New), one Pending (New), one Approved (Renewal)</td></tr>
+    <tr><td class="tbl-name">verifications</td><td>3</td><td>Verified 96, Flagged 63, Verified 91</td></tr>
+    <tr><td class="tbl-name">identity_cards</td><td>1</td><td>Card 200512345678, valid 2026-08-03 to 2036-08-03 (ten-year term)</td></tr>
+    <tr><td class="tbl-name">payments</td><td>3</td><td>2000.00 Card, 2000.00 Online, 2500.00 Cash</td></tr>
+    <tr><td class="tbl-name">audit_logs</td><td>2</td><td>SYSTEM_INIT, APPLICATION_APPROVED</td></tr>
+  </tbody>
+</table>
+<p class="lead">
+  All seeded password hashes are bcrypt. The seed demonstrates the UNIQUE-in-policy pattern of
+  <code>national_id_number</code> and <code>card_number</code> being identical for the first applicant: the card
+  number is generated from the NID, which is exactly why the redundancy was removed as a stored attribute and is
+  now produced on demand.
+</p>
+
+<h3>18.2 Glossary</h3>
+<table>
+  <thead><tr><th>Term</th><th>Meaning in this document</th></tr></thead>
+  <tbody>
+    <tr><td>Aggregate root</td><td>The relation at the centre of the model (<code>applications</code>) that owns the lifetime of its children.</td></tr>
+    <tr><td>Candidate key</td><td>A minimal superkey: a set of attributes that identifies a tuple and contains no redundant attribute.</td></tr>
+    <tr><td>Determinant</td><td>The attribute set on the left-hand side of a functional dependency.</td></tr>
+    <tr><td>MVD</td><td>Multi-valued dependency, the 4NF violation, e.g. one application having many documents and many verifications independently.</td></tr>
+    <tr><td>Prime / non-prime attribute</td><td>Prime if it belongs to some candidate key; non-prime otherwise.</td></tr>
+    <tr><td>Surrogate key</td><td>A system-generated key with no business meaning, used so foreign keys never change and 2NF is structurally guaranteed.</td></tr>
+    <tr><td>Total / partial participation</td><td>Total: every child row must have a parent. Partial: the foreign key may be NULL.</td></tr>
+    <tr><td>TAT</td><td>Turnaround time, the interval from <code>submitted_at</code> to decision.</td></tr>
+  </tbody>
+</table>
+
+<h3>18.3 File map</h3>
+<table>
+  <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">identity_card_system.sql</td><td>T-SQL schema and seed script for SQL Server Management Studio</td></tr>
+    <tr><td class="mono">backup/database_backup.sql</td><td>Auto-generated logical SQL dump of the current dataset</td></tr>
+    <tr><td class="mono">backup/database_backup.json</td><td>Auto-generated JSON snapshot used for hybrid-mode restore</td></tr>
+    <tr><td class="mono">server/src-nodejs/config/db.js</td><td>Connection pool, DDL, migrations, seeding, in-memory fallback</td></tr>
+    <tr><td class="mono">server/src-nodejs/config/backupService.js</td><td>Automatic backup and restore orchestration</td></tr>
+    <tr><td class="mono">server/src/main/resources/application.properties</td><td>JDBC, JPA, mail and JWT configuration</td></tr>
+    <tr><td class="mono">server/src/main/java/lk/gov/nexus/entity/</td><td>JPA entity mappings for all nine live relations</td></tr>
+    <tr><td class="mono">server/src/main/java/lk/gov/nexus/repository/</td><td>Spring Data repositories</td></tr>
+    <tr><td class="mono">server/scripts/cleanDatabase.js</td><td>Truncation utility for resetting the environment</td></tr>
+    <tr><td class="mono">clean-database.cmd</td><td>Windows wrapper for the reset utility</td></tr>
+  </tbody>
+</table>
+
+<h3>18.4 Verification checklist</h3>
+<table>
+  <thead><tr><th>Claim</th><th>How to verify</th></tr></thead>
+  <tbody>
+    <tr><td>Schema is in 3NF / BCNF</td><td>Run the determinant audit in section 7.6 against the live schema; every determinant found must be a declared PRIMARY KEY or UNIQUE key.</td></tr>
+    <tr><td>No orphan rows</td><td>Run the four LEFT JOIN orphan checks in section 14.8; all must return zero rows.</td></tr>
+    <tr><td>One card per application</td><td><code>SELECT application_id FROM identity_cards GROUP BY application_id HAVING COUNT(*)&gt;1;</code> must return zero rows.</td></tr>
+    <tr><td>No denormalisation drift</td><td>Run the <code>verifications.applicant_id</code> drift check in section 14.8.</td></tr>
+    <tr><td>Roles are constrained</td><td><code>SELECT DISTINCT role FROM users;</code> must return only the six permitted values.</td></tr>
+    <tr><td>Audit trail is intact</td><td>Confirm no <code>UPDATE</code> or <code>DELETE</code> statement against <code>audit_logs</code> exists anywhere in the source tree.</td></tr>
+    <tr><td>No plaintext credentials at rest</td><td><code>SELECT password_hash FROM users;</code> must show bcrypt hashes only.</td></tr>
+  </tbody>
+</table>
+
+<p class="foot">
+  NexusGov Smart Identity Card Issuing System &mdash; Database Design Document<br>
+  Software Engineering Project, SLIIT &middot; schema <code>identity_card_system</code> &middot;
+  Normal form achieved: <b>5NF</b> &middot; generated alongside <code>identity_card_system.sql</code>
+</p>
+</div>
+</main>
+</div>
+</body>
+</html>
