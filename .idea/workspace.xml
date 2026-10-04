@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="" />
+    <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,7 +68,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Spring Boot.NexusGov — Spring Boot API" />
+  <component name="RunManager" selected="Compound.NexusGov — Full Stack (Spring Boot + Vite)" />
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -91,6 +93,8 @@
       <workItem from="1790744302167" duration="1385000" />
       <workItem from="1790757499391" duration="2557000" />
       <workItem from="1790762011563" duration="811000" />
+      <workItem from="1790838087633" duration="1643000" />
+      <workItem from="1790846587348" duration="865000" />
     </task>
     <servers />
   </component>
