@@ -50,6 +50,8 @@ export const LoginPage = () => {
             navigate('/admin');
           } else if (userRole === 'operational') {
             navigate('/print-queue');
+          } else if (userRole === 'delivery-manager') {
+            navigate('/delivery-jobpool');
           } else if (userRole === 'approver') {
             navigate('/approver-jobpool');
           } else if (userRole === 'form-officer') {
