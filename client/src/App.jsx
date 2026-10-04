@@ -22,6 +22,7 @@ import { DocumentOfficerPool } from './modules/verification-management/DocumentO
 import { ApproverPool } from './modules/verification-management/ApproverPool';
 import { PrintQueuePage } from './modules/operation-management/PrintQueuePage';
 import { AnalyticsPage } from './modules/operation-management/AnalyticsPage';
+import { DeliveryPoolPage } from './modules/delivery-management/DeliveryPoolPage';
 import { AdminDashboard } from './modules/admin-managemnt/AdminDashboard';
 
 // ── Route guard: redirect logged-in staff away from public citizen pages ─────
@@ -29,10 +30,11 @@ const PublicRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (isAuthenticated && user) {
     const r = (user.role || '').toLowerCase();
-    if (r === 'operational')   return <Navigate to="/print-queue" replace />;
-    if (r === 'admin')         return <Navigate to="/admin" replace />;
-    if (r === 'approver')      return <Navigate to="/approver-jobpool" replace />;
-    if (r === 'form-officer')  return <Navigate to="/officer-jobpool" replace />;
+    if (r === 'operational')      return <Navigate to="/print-queue" replace />;
+    if (r === 'delivery-manager')  return <Navigate to="/delivery-jobpool" replace />;
+    if (r === 'admin')            return <Navigate to="/admin" replace />;
+    if (r === 'approver')         return <Navigate to="/approver-jobpool" replace />;
+    if (r === 'form-officer')     return <Navigate to="/officer-jobpool" replace />;
     if (r === 'document-officer') return <Navigate to="/document-jobpool" replace />;
   }
   return children;
@@ -44,7 +46,7 @@ const FormOfficerRoute = ({ children }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
   if (!['admin', 'form-officer'].includes(r)) {
-    return <Navigate to={r === 'document-officer' ? '/document-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
+    return <Navigate to={r === 'document-officer' ? '/document-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : r === 'delivery-manager' ? '/delivery-jobpool' : '/login'} replace />;
   }
   return children;
 };
@@ -54,7 +56,7 @@ const DocumentOfficerRoute = ({ children }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
   if (!['admin', 'document-officer'].includes(r)) {
-    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
+    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'approver' ? '/approver-jobpool' : r === 'operational' ? '/print-queue' : r === 'delivery-manager' ? '/delivery-jobpool' : '/login'} replace />;
   }
   return children;
 };
@@ -64,7 +66,7 @@ const ApproverRoute = ({ children }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
   if (!['admin', 'approver'].includes(r)) {
-    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'document-officer' ? '/document-jobpool' : r === 'operational' ? '/print-queue' : '/login'} replace />;
+    return <Navigate to={r === 'form-officer' ? '/officer-jobpool' : r === 'document-officer' ? '/document-jobpool' : r === 'operational' ? '/print-queue' : r === 'delivery-manager' ? '/delivery-jobpool' : '/login'} replace />;
   }
   return children;
 };
@@ -81,6 +83,27 @@ const OperationalRoute = ({ children }) => {
         <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
           The <strong>Print Queue</strong> is exclusively accessible to <strong>Operational</strong> staff.
+          Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
+        </p>
+        <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
+      </div>
+    );
+  }
+  return children;
+};
+
+// ── Route guard: ONLY Delivery-Manager role can access the Delivery Job Pool ─
+const DeliveryManagerRoute = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  const r = (user?.role || '').toLowerCase();
+  if (r !== 'delivery-manager') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
+        <div style={{ fontSize: '3rem' }}>🔒</div>
+        <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
+          The <strong>Delivery Management Job Pool</strong> is exclusively accessible to <strong>Delivery-Manager</strong> staff.
           Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
         </p>
         <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
@@ -136,7 +159,7 @@ function AppContent() {
   const location = useLocation();
 
   // Admin-panel style pages hide the public Navbar / Footer / background
-  const isPanelPath = ['/admin', '/officer-jobpool', '/document-jobpool', '/approver-jobpool', '/print-queue', '/analytics'].includes(location.pathname);
+  const isPanelPath = ['/admin', '/officer-jobpool', '/document-jobpool', '/approver-jobpool', '/print-queue', '/delivery-jobpool', '/analytics'].includes(location.pathname);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
@@ -169,6 +192,10 @@ function AppContent() {
 
           {/* Strictly Operational only */}
           <Route path="/print-queue" element={<OperationalRoute><PrintQueuePage /></OperationalRoute>} />
+
+          {/* Strictly Delivery-Manager only — downstream of Operation Management */}
+          <Route path="/delivery" element={<Navigate to="/delivery-jobpool" replace />} />
+          <Route path="/delivery-jobpool" element={<DeliveryManagerRoute><DeliveryPoolPage /></DeliveryManagerRoute>} />
 
           {/* Strictly Admin only */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
