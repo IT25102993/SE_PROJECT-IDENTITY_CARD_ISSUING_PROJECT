@@ -637,6 +637,66 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // ── Delivery Management: fetch the last-mile delivery job pool ───────────────
+  const getDeliveryJobs = async () => {
+    const token = localStorage.getItem('nexusgov-token');
+    try {
+      const res = await fetch('/api/delivery/job-pool', {
+        method: 'GET',
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.jobs)) {
+        return data.jobs;
+      }
+      throw new Error(data.message || 'Failed to fetch delivery jobs');
+    } catch (err) {
+      console.warn('Delivery job pool fetch note:', err.message);
+      return [];
+    }
+  };
+
+  // ── Delivery Management: record the delivery outcome for an order ────────────
+  const updateDeliveryStatus = async (appId, status, remarks = '') => {
+    const numericId = String(appId).replace(/^NEX-2026-/, '');
+    const token = localStorage.getItem('nexusgov-token');
+
+    try {
+      const res = await fetch(`/api/delivery/${numericId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ status, remarks })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || `Failed to set delivery status to ${status}`);
+      }
+
+      setApplications(prev => prev.map(app => {
+        if (app.id === appId || app.application_id === appId || String(app.application_id) === numericId) {
+          return {
+            ...app,
+            status,
+            remarks: remarks || app.remarks,
+            officerNotes: remarks || app.officerNotes
+          };
+        }
+        return app;
+      }));
+
+      addToast(`Delivery status for ${appId} set to ${status}.`, 'success');
+      scheduleRefresh(400);
+      return { success: true, message: data.message };
+    } catch (err) {
+      addToast(err.message || 'Error updating delivery status', 'error');
+      return { success: false, message: err.message };
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -662,7 +722,9 @@ export const AppProvider = ({ children }) => {
         unclaimJob,
         claimNextJob,
         runBotVerification,
-        getApplicationVerifications
+        getApplicationVerifications,
+        getDeliveryJobs,
+        updateDeliveryStatus
       }}
     >
       {children}
