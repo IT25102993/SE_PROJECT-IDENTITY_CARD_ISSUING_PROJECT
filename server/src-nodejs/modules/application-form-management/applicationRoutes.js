@@ -30,12 +30,12 @@ router.post('/:id/documents', uploadDocument);
 
 // Form & Document Officer Application Management: View, Update, Pool Management
 router.put('/:id', verifyToken, requireRole('Form-Officer', 'Admin', 'Approver'), updateApplication);
-router.post('/:id/claim', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver'), claimApplication);
-router.post('/:id/unclaim', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver'), unclaimApplication);
+router.post('/:id/claim', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Delivery-Manager'), claimApplication);
+router.post('/:id/unclaim', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Delivery-Manager'), unclaimApplication);
 
 // Status update (Printed, Approved, Dispatched, Documents-Required, etc.) — accessible by all staff roles
-router.patch('/:id/status', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Operational'), updateApplicationStatus);
-router.put('/:id/status', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Operational'), updateApplicationStatus);
+router.patch('/:id/status', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Operational', 'Delivery-Manager'), updateApplicationStatus);
+router.put('/:id/status', verifyToken, requireRole('Form-Officer', 'Document-Officer', 'Admin', 'Approver', 'Operational', 'Delivery-Manager'), updateApplicationStatus);
 
 // Approver decisions (strictly Senior Approvers and Admin)
 router.put('/:id/approve', verifyToken, requireRole('Approver', 'Admin'), approveApplication);
