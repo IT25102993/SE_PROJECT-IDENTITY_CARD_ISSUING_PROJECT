@@ -61,6 +61,13 @@ const DEFAULT_STAFF_ACCOUNTS = [
     full_name: 'Operational Specialist Silva',
     role: 'Operational',
     password_hash: BCRYPT_DEFAULT_PASSWORD_HASH
+  },
+  {
+    username: 'delivery_manager',
+    email: 'delivery-manager@nexusgov.lk',
+    full_name: 'Delivery Manager Fernando',
+    role: 'Delivery-Manager',
+    password_hash: BCRYPT_DEFAULT_PASSWORD_HASH
   }
 ];
 
@@ -111,17 +118,17 @@ async function cleanDatabase() {
       }
     }
 
-    // 3. Purge Citizen Users from `users` table (Keep ONLY Admin, Form-Officer, Document-Officer, Approver, Operational)
+    // 3. Purge Citizen Users from `users` table (Keep ONLY Admin, Form-Officer, Document-Officer, Approver, Operational, Delivery-Manager)
     if (tableNames.includes('users')) {
       const [[{ citizenCount }]] = await connection.query(`
         SELECT COUNT(*) AS citizenCount 
         FROM \`users\` 
-        WHERE LOWER(role) NOT IN ('admin', 'form-officer', 'document-officer', 'approver', 'operational')
+        WHERE LOWER(role) NOT IN ('admin', 'form-officer', 'document-officer', 'approver', 'operational', 'delivery-manager')
       `);
 
       await connection.query(`
         DELETE FROM \`users\` 
-        WHERE LOWER(role) NOT IN ('admin', 'form-officer', 'document-officer', 'approver', 'operational')
+        WHERE LOWER(role) NOT IN ('admin', 'form-officer', 'document-officer', 'approver', 'operational', 'delivery-manager')
       `);
       console.log(`  ✓ Cleared citizen accounts from [users] (${citizenCount} citizen user accounts deleted)`);
 
@@ -175,13 +182,13 @@ async function cleanDatabase() {
 
     // 8. Display preserved staff accounts
     console.log('\n---------------------------------------------------------------');
-    console.log('PRESERVED STAFF ACCOUNTS (Form Officer, Document Officer, Approver & Admin):');
+    console.log('PRESERVED STAFF ACCOUNTS (Form Officer, Document Officer, Approver, Operational, Delivery Manager & Admin):');
     console.log('---------------------------------------------------------------');
 
     const [staffUsers] = await connection.query(`
       SELECT user_id, username, full_name, email, role, created_at 
       FROM \`users\` 
-      ORDER BY FIELD(role, 'Admin', 'Approver', 'Form-Officer', 'Document-Officer'), user_id ASC
+      ORDER BY FIELD(role, 'Admin', 'Approver', 'Form-Officer', 'Document-Officer', 'Operational', 'Delivery-Manager'), user_id ASC
     `);
 
     console.table(staffUsers.map(u => ({
@@ -195,7 +202,7 @@ async function cleanDatabase() {
     console.log('===============================================================');
     console.log(' ✓ SUCCESS: DATABASE CLEANED SUCCESSFULLY!');
     console.log('   - Applications, documents, cards & citizen records: CLEARED');
-    console.log('   - Form Officer, Document Officer, Approver & Admin accounts: 100% PRESERVED');
+    console.log('   - Form Officer, Document Officer, Approver, Operational, Delivery Manager & Admin accounts: 100% PRESERVED');
     console.log('   - Default login passwords: password123 (or #Thilina2005)');
     console.log('===============================================================\n');
 
