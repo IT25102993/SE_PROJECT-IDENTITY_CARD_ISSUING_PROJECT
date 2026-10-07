@@ -68,7 +68,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Compound.NexusGov — Full Stack (Spring Boot + Vite)" />
+  <component name="RunManager" selected="npm.NexusGov — Frontend Client (Vite)" />
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -95,6 +95,8 @@
       <workItem from="1790762011563" duration="811000" />
       <workItem from="1790838087633" duration="1643000" />
       <workItem from="1790846587348" duration="865000" />
+      <workItem from="1791203968267" duration="2000" />
+      <workItem from="1791344314445" duration="1604000" />
     </task>
     <servers />
   </component>
