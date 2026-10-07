@@ -1,6 +1,6 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-10-04T14:09:21.102Z
+-- Generated / Synced: 2026-10-07T14:23:53.779Z
 -- Total Applications: 5
 -- =============================================================
 
@@ -13,7 +13,7 @@ INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`,
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (68, 'document_officer', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Document Handling Officer Silva', 'document-officer@nexusgov.lk', 'Document-Officer', '2026-09-19 00:40:06');
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (69, 'approver', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Senior Approver Jayawardena', 'approver@nexusgov.lk', 'Approver', '2026-09-19 00:40:06');
 INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (70, 'operational', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Operational Specialist Silva', 'operational@nexusgov.lk', 'Operational', '2026-09-19 00:40:06');
-INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (119, 'delivery_manager', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Delivery Manager Fernando', 'delivery-manager@nexusgov.lk', '', '2026-10-04 13:16:45');
+INSERT IGNORE INTO `users` (`user_id`, `username`, `password_hash`, `full_name`, `email`, `role`, `created_at`) VALUES (119, 'delivery_manager', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Delivery Manager Fernando', 'delivery-manager@nexusgov.lk', 'Delivery-Manager', '2026-10-04 13:16:45');
 
 -- Table: applicants (5 records)
 INSERT INTO `applicants` (`applicant_id`, `national_id_number`, `first_name`, `last_name`, `date_of_birth`, `gender`, `address`, `phone_number`, `email`, `registered_at`) VALUES (1, '200509055367', 'Thilina', 'Sakalasooriya', '2005-03-30 18:00:00', 'Male', 'test address 1', '0712513663', 'kgnadunnimesh@gmail.com', '2026-09-15 10:14:24') ON DUPLICATE KEY UPDATE `first_name`=VALUES(`first_name`);
@@ -27,7 +27,7 @@ INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`
 INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (2, 2, 'New', 'Processing', 'thilinapak', 'G.C.E O/L', 'Single', 'Normal', 'New citizen online submission.', '2026-09-15 13:00:50') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (3, 3, 'New', 'Documents-Required', 'Officer Wickramasinghe', 'Wallet Got Stolen', 'Single', '1-Day', '[Action Required: Re-upload Birth Certificate] [Action Required: Re-upload Birth Certificate] New citizen online submission.', '2026-09-15 14:15:45') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (9003, 9002, 'New', 'Documents-Required', 'Document Handling Officer Silva', 'G.C.E O/L', 'Single', 'Normal', '[Action Required: Re-upload Other Supporting Document] test', '2026-09-29 23:36:24') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
-INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (9004, 9003, 'New', 'Dispatched', NULL, 'G.C.E O/L', 'Divorced', 'Normal', 'New citizen online submission.', '2026-09-30 03:44:14') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
+INSERT INTO `applications` (`application_id`, `applicant_id`, `application_type`, `status`, `assigned_officer`, `application_reason`, `marital_status`, `service_type`, `remarks`, `submitted_at`) VALUES (9004, 9003, 'New', 'Dispatched', NULL, 'G.C.E O/L', 'Divorced', 'Normal', 'Handed over to postal service. Awaiting last-mile delivery confirmation.', '2026-09-30 03:44:14') ON DUPLICATE KEY UPDATE `status`=VALUES(`status`);
 
 -- Table: verifications (9 records)
 INSERT INTO `verifications` (`verification_id`, `application_id`, `applicant_id`, `method`, `result`, `passed`, `score`, `notes`, `verified_by`, `verified_at`) VALUES (1, 1, 1, 'AI-BOT', 'Verified', 1, 95, 'Automated Bot Check: PASSED (Match Score: 95\%). Official Birth Certificate confirmed for Thilina Sakalasooriya.\n• Specimen Document: birthcerificate.pdf (Official Register of Births, Sri Lanka)\n• PDF Recorded Name: \"Thilina Srimal Sakalasooriya\" -> Applicant Name: \"Thilina Sakalasooriya\" (100\% match)\n• PDF Recorded Birth Date: 2005 May 31 (2005-05-31) -> Applicant DOB: \"2005-03-31\" (85\% match)\n• PDF Recorded Sex: Male -> Applicant Gender: \"Male\" (100\% match)\n• PDF Administrative Jurisdiction: District: Gampaha | Division: Ragama\n• Document Authenticity: 100\% Verified (Sri Lanka official registrar formatting, legal headings, and security criteria validated).', NULL, '2026-09-15 10:14:24') ON DUPLICATE KEY UPDATE `passed`=VALUES(`passed`);
@@ -64,15 +64,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-21T05:57:43.157Z] System startup baseline sync
--- [2026-09-21T06:03:15.625Z] System startup baseline sync
--- [2026-09-21T06:06:07.230Z] System startup baseline sync
--- [2026-09-21T06:11:03.121Z] System startup baseline sync
--- [2026-09-21T06:13:31.818Z] System startup baseline sync
--- [2026-09-21T06:18:24.080Z] System startup baseline sync
--- [2026-09-23T16:43:57.773Z] System startup baseline sync
--- [2026-09-23T16:46:38.676Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-23T16:47:01.425Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-23T16:47:57.655Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
 -- [2026-09-23T16:48:10.941Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-09-23T16:49:10.867Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
@@ -94,3 +85,12 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-09-30T14:52:47.879834700] Application #9004 status set to Dispatched
 -- [2026-10-01T12:32:25.449971800] Account deletion approved #1
 -- [2026-10-04T14:09:21.103Z] System startup baseline sync
+-- [2026-10-07T14:16:44.461Z] System startup baseline sync
+-- [2026-10-07T14:17:55.980Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T14:18:27.691Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T14:22:18.779Z] System startup baseline sync
+-- [2026-10-07T14:22:27.008Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T14:22:48.355Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T14:22:48.605Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T14:23:45.490Z] System startup baseline sync
+-- [2026-10-07T14:23:53.785Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
