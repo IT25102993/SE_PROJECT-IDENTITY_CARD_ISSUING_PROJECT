@@ -113,19 +113,19 @@ const StaffRoute = ({ children }) => {
   return children;
 };
 
-// ── Route guard: ONLY Delivery-Manager role can access the Delivery Job Pool ──
+// ── Route guard: Delivery-Manager owns the Delivery Job Pool, Admin may view ──
 const DeliveryManagerRoute = ({ children }) => {
   const { user, isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   const r = (user?.role || '').toLowerCase();
-  if (r !== 'delivery-manager') {
+  if (!['delivery-manager', 'admin'].includes(r)) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '1rem', textAlign: 'center', padding: '2rem' }}>
         <div style={{ fontSize: '3rem' }}>🔒</div>
         <h2 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-secondary)', maxWidth: '420px' }}>
-          The <strong>Delivery Job Pool</strong> is exclusively accessible to <strong>Delivery-Manager</strong> staff.
-          Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
+          The <strong>Delivery Job Pool</strong> is exclusively accessible to <strong>Delivery-Manager</strong> staff
+          (and <strong>Admin</strong> oversight). Your current role (<strong>{user?.role}</strong>) does not have permission to view this section.
         </p>
         <button className="btn btn-primary" onClick={() => window.history.back()}>← Go Back</button>
       </div>
