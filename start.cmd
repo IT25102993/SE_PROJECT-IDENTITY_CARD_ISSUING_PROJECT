@@ -98,6 +98,7 @@ echo   Form Officer Pool:     http://localhost:5173/officer-jobpool
 echo   Document Officer Pool: http://localhost:5173/document-jobpool
 echo   Senior Approver Pool:  http://localhost:5173/approver-jobpool
 echo   Print Queue:          http://localhost:5173/print-queue
+echo   Delivery Job Pool:    http://localhost:5173/delivery-jobpool
 echo   Admin Dashboard:      http://localhost:5173/admin
 echo.
 echo   Backend REST API:     http://localhost:5000
@@ -111,6 +112,7 @@ echo     Form Officer:       form-officer@nexusgov.lk
 echo     Document Officer:   document-officer@nexusgov.lk
 echo     Approver:           approver@nexusgov.lk
 echo     Operational:        operational@nexusgov.lk
+echo     Delivery Manager:   delivery-manager@nexusgov.lk
 echo ======================================================================
 echo.
 echo  Keep the two server windows open. Close them to stop all services.
