@@ -42,7 +42,7 @@ CREATE TABLE dbo.users (
     CONSTRAINT PK_users PRIMARY KEY CLUSTERED (user_id),
     CONSTRAINT UQ_users_username UNIQUE (username),
     CONSTRAINT UQ_users_email UNIQUE (email),
-    CONSTRAINT CHK_users_role CHECK (role IN ('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Citizen'))
+    CONSTRAINT CHK_users_role CHECK (role IN ('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager', 'Citizen'))
 );
 GO
 
