@@ -9,10 +9,11 @@ import { verifyToken, requireRole } from '../../middleware/authMiddleware.js';
 const router = express.Router();
 
 // Delivery job pool — orders handed over by Operation Management
-router.get('/job-pool', verifyToken, requireRole('Delivery-Manager'), getDeliveryJobPool);
+// Delivery-Manager owns the pool; Admin has read-only oversight.
+router.get('/job-pool', verifyToken, requireRole('Delivery-Manager', 'Admin'), getDeliveryJobPool);
 
 // Delivery counts per status (KPI cards)
-router.get('/stats', verifyToken, requireRole('Delivery-Manager'), getDeliveryStats);
+router.get('/stats', verifyToken, requireRole('Delivery-Manager', 'Admin'), getDeliveryStats);
 
 // Record the last-mile delivery outcome
 router.patch('/:id/status', verifyToken, requireRole('Delivery-Manager'), updateDeliveryStatus);
