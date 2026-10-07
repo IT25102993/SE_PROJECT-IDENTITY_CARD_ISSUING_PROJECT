@@ -39,6 +39,9 @@ export const DeliveryPoolPage = () => {
 
   const activeRole = (user?.role || role || 'citizen').toLowerCase();
   const isDeliveryManager = activeRole === 'delivery-manager';
+  // Admin gets read-only oversight of the pool; Delivery-Manager owns the workflow.
+  const hasAccess = ['delivery-manager', 'admin'].includes(activeRole);
+  const canAct = isDeliveryManager;
   const officerName = user?.full_name || user?.username || 'Delivery Manager';
 
   const loadJobs = useCallback(async () => {
@@ -56,12 +59,12 @@ export const DeliveryPoolPage = () => {
   }, [getDeliveryJobs, applications]);
 
   useEffect(() => {
-    if (isDeliveryManager) {
+    if (hasAccess) {
       loadJobs();
     }
-  }, [isDeliveryManager, loadJobs]);
+  }, [hasAccess, loadJobs]);
 
-  if (!isDeliveryManager) {
+  if (!hasAccess) {
     return (
       <div style={{ position: 'relative', zIndex: 1, padding: '4rem 1rem' }}>
         <div className="container" style={{ maxWidth: '640px' }}>
@@ -71,7 +74,8 @@ export const DeliveryPoolPage = () => {
             </div>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem' }}>Delivery Personnel Only</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem' }}>
-              The <strong>Delivery Management</strong> workbench is strictly restricted to authorised <strong>Delivery-Manager</strong> staff.
+              The <strong>Delivery Management</strong> workbench is strictly restricted to authorised <strong>Delivery-Manager</strong> staff
+              and <strong>Admin</strong> oversight.
             </p>
             <button className="btn btn-primary" onClick={() => window.history.back()} style={{ padding: '0.75rem 1.5rem' }}>
               ← Return Back
@@ -180,6 +184,28 @@ export const DeliveryPoolPage = () => {
       roleTag="DELIVERY"
       navItems={navItems}
     >
+      {/* Admin oversight banner */}
+      {!canAct && (
+        <div
+          className="glass-card"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            padding: '0.8rem 1.1rem',
+            marginBottom: '1.5rem',
+            border: '1px solid rgba(249, 115, 22, 0.35)',
+            background: 'rgba(249, 115, 22, 0.08)',
+            color: '#f97316',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            borderRadius: '12px'
+          }}
+        >
+          <Eye size={16} /> Admin oversight — read-only view of the Delivery Job Pool. Claiming, releasing and delivery outcomes are handled by Delivery-Manager staff.
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div
         style={{
@@ -307,14 +333,16 @@ export const DeliveryPoolPage = () => {
                       <button className="btn btn-secondary btn-sm" onClick={() => openDetail(job)} style={{ flex: 1, gap: '0.3rem', fontSize: '0.78rem' }}>
                         <Eye size={13} /> Details
                       </button>
-                      <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => handleClaim(job)}
-                        disabled={busyId === appId}
-                        style={{ flex: 1.5, gap: '0.3rem', fontSize: '0.78rem' }}
-                      >
-                        <Hand size={13} /> Claim Delivery
-                      </button>
+                      {canAct && (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => handleClaim(job)}
+                          disabled={busyId === appId}
+                          style={{ flex: 1.5, gap: '0.3rem', fontSize: '0.78rem' }}
+                        >
+                          <Hand size={13} /> Claim Delivery
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -375,7 +403,7 @@ export const DeliveryPoolPage = () => {
                       <button className="btn btn-secondary btn-sm" onClick={() => openDetail(job)} style={{ flex: 1, gap: '0.3rem', fontSize: '0.78rem' }}>
                         <Eye size={13} /> Update
                       </button>
-                      {inFlight && (
+                      {canAct && inFlight && (
                         <button
                           className="btn btn-amber btn-sm"
                           onClick={() => handleRelease(job)}
@@ -551,12 +579,14 @@ export const DeliveryPoolPage = () => {
                 rows={3}
                 value={remarkDraft}
                 onChange={(e) => setRemarkDraft(e.target.value)}
-                placeholder="e.g. Handed to recipient and signed for. / Address unreachable, reattempt scheduled."
-                style={{ width: '100%', resize: 'vertical' }}
+                readOnly={!canAct}
+                placeholder={canAct ? 'e.g. Handed to recipient and signed for. / Address unreachable, reattempt scheduled.' : 'Read-only oversight view'}
+                style={{ width: '100%', resize: 'vertical', cursor: canAct ? 'text' : 'default' }}
               />
             </div>
 
             {/* Status actions */}
+            {canAct ? (
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: '0.6rem' }}>
               <button
                 className="btn btn-secondary btn-sm"
@@ -591,6 +621,11 @@ export const DeliveryPoolPage = () => {
                 <PackageCheck size={14} /> Confirm Delivered
               </button>
             </div>
+            ) : (
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'right', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)' }}>
+                Read-only oversight view — only Delivery-Manager staff can claim, release or record delivery outcomes.
+              </div>
+            )}
           </div>
         </div>
       )}
