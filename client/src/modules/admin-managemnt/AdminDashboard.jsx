@@ -37,7 +37,8 @@ import {
   Layers,
   Receipt,
   Download,
-  Check
+  Check,
+  Truck
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
@@ -586,6 +587,27 @@ export const AdminDashboard = () => {
             }}
           >
             <ShieldCheck size={18} /> Approver Panel
+          </NavLink>
+
+          <NavLink
+            to="/delivery-jobpool"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.85rem',
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(249, 115, 22, 0.25)',
+              backgroundColor: 'rgba(249, 115, 22, 0.08)',
+              color: '#f97316',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Truck size={18} /> Delivery Job Pool
           </NavLink>
 
           <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
