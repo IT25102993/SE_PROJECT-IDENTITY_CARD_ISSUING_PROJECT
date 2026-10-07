@@ -1,6 +1,6 @@
 {
   "version": "2.1",
-  "last_updated": "2026-10-04T14:09:21.102Z",
+  "last_updated": "2026-10-07T14:23:53.779Z",
   "tables": {
     "users": [
       {
@@ -63,7 +63,7 @@
         "password_hash": "$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6",
         "full_name": "Delivery Manager Fernando",
         "email": "delivery-manager@nexusgov.lk",
-        "role": "",
+        "role": "Delivery-Manager",
         "created_at": "2026-10-04T13:16:45.000Z"
       }
     ],
@@ -201,9 +201,9 @@
         "application_reason": "G.C.E O/L",
         "marital_status": "Divorced",
         "service_type": "Normal",
-        "remarks": "New citizen online submission.",
+        "remarks": "Handed over to postal service. Awaiting last-mile delivery confirmation.",
         "submitted_at": "2026-09-30T03:44:14.000Z",
-        "updated_at": "2026-10-04T13:18:56.000Z"
+        "updated_at": "2026-10-07T14:23:53.000Z"
       }
     ],
     "verifications": [
@@ -496,6 +496,83 @@
       }
     ],
     "audit_logs": [
+      {
+        "log_id": 129,
+        "user_id": 119,
+        "action": "DELIVERY_STATUS_UPDATE",
+        "details": "Application #9004 delivery status set to 'Dispatched' by Delivery Manager Fernando",
+        "timestamp": "2026-10-07T14:23:53.000Z"
+      },
+      {
+        "log_id": 128,
+        "user_id": 69,
+        "action": "STATUS_CHANGE",
+        "details": "Application #9004 changed from Not-Delivered to Dispatched",
+        "timestamp": "2026-10-07T14:23:53.000Z"
+      },
+      {
+        "log_id": 127,
+        "user_id": 119,
+        "action": "DELIVERY_STATUS_UPDATE",
+        "details": "Application #9004 delivery status set to 'Not-Delivered' by Delivery Manager Fernando",
+        "timestamp": "2026-10-07T14:23:53.000Z"
+      },
+      {
+        "log_id": 126,
+        "user_id": 69,
+        "action": "STATUS_CHANGE",
+        "details": "Application #9004 changed from Dispatched to Not-Delivered",
+        "timestamp": "2026-10-07T14:23:53.000Z"
+      },
+      {
+        "log_id": 125,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:23:53.000Z"
+      },
+      {
+        "log_id": 124,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-10-07T14:22:48.000Z"
+      },
+      {
+        "log_id": 123,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:22:48.000Z"
+      },
+      {
+        "log_id": 122,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:22:26.000Z"
+      },
+      {
+        "log_id": 121,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:18:27.000Z"
+      },
+      {
+        "log_id": 120,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:17:55.000Z"
+      },
+      {
+        "log_id": 119,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-06T22:15:52.000Z"
+      },
       {
         "log_id": 118,
         "user_id": 1,
@@ -1444,6 +1521,42 @@
     {
       "timestamp": "2026-10-04T14:09:21.103Z",
       "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-10-07T14:16:44.461Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-10-07T14:17:55.980Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T14:18:27.691Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T14:22:18.779Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-10-07T14:22:27.008Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T14:22:48.355Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T14:22:48.605Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T14:23:45.490Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-10-07T14:23:53.785Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
   "summary": {
