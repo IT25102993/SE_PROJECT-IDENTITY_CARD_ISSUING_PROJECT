@@ -97,10 +97,10 @@ export const getDeliveryStats = async (req, res) => {
       rows.forEach(r => { stats[r.status] = r.count; });
       stats.total = Object.values(stats).reduce((a, b) => a + b, 0);
 
-      const [unclaimed] = await queryDb(
+      const unclaimedRows = await queryDb(
         "SELECT COUNT(*) AS count FROM applications WHERE status IN ('Dispatched', 'Not-Delivered') AND assigned_officer IS NULL"
       );
-      stats.unclaimed = unclaimed[0]?.count || 0;
+      stats.unclaimed = (Array.isArray(unclaimedRows) && unclaimedRows[0] && unclaimedRows[0].count) || 0;
 
       return res.status(200).json({ success: true, stats });
     }
@@ -147,19 +147,20 @@ export const updateDeliveryStatus = async (req, res) => {
 
     if (getDbStatus()) {
       // Confirm the application has actually entered the delivery pipeline
-      const [existing] = await queryDb(
+      const existingRows = await queryDb(
         'SELECT application_id, status FROM applications WHERE application_id = ?',
         [cleanId]
       );
+      const existing = Array.isArray(existingRows) ? existingRows[0] : null;
 
-      if (!existing || existing.length === 0) {
+      if (!existing) {
         return res.status(404).json({ success: false, message: `Application #${req.params.id} not found.` });
       }
 
-      if (!DELIVERY_STATUSES.includes(existing[0].status)) {
+      if (!DELIVERY_STATUSES.includes(existing.status)) {
         return res.status(400).json({
           success: false,
-          message: `Application #${cleanId} is currently '${existing[0].status}'. Only dispatched applications can be given a delivery status.`
+          message: `Application #${cleanId} is currently '${existing.status}'. Only dispatched applications can be given a delivery status.`
         });
       }
 
