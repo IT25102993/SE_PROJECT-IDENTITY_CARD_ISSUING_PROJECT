@@ -558,6 +558,26 @@ export const initDb = async () => {
       VALUES ('delivery_manager', '$2b$10$q0.x5xM4G2yR/v.3yq1q.Oq4h9sT0g4j6m7k8l9o0p1q2r3s4t5u6', 'Delivery Manager Fernando', 'delivery-manager@nexusgov.lk', 'Delivery-Manager');
     `);
 
+    // Repair: databases restored from backup may have seeded staff accounts with an
+    // empty role (INSERT IGNORE cannot overwrite the bad row). Without this, the
+    // Delivery-Manager JWT carries role "" and every /api/delivery call returns 403.
+    try {
+      await pool.query(`
+        UPDATE users
+        SET role = CASE username
+          WHEN 'admin' THEN 'Admin'
+          WHEN 'thilina_admin' THEN 'Admin'
+          WHEN 'form_officer' THEN 'Form-Officer'
+          WHEN 'document_officer' THEN 'Document-Officer'
+          WHEN 'approver' THEN 'Approver'
+          WHEN 'operational' THEN 'Operational'
+          WHEN 'delivery_manager' THEN 'Delivery-Manager'
+        END
+        WHERE username IN ('admin', 'thilina_admin', 'form_officer', 'document_officer', 'approver', 'operational', 'delivery_manager')
+          AND CAST(role AS CHAR) NOT IN ('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager')
+      `);
+    } catch (e) { /* ignore if role column is not in expected shape */ }
+
     isConnected = true;
     console.log('Connected to MySQL Database successfully and schema migrations verified!');
 
