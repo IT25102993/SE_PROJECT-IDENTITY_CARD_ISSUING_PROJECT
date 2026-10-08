@@ -256,15 +256,21 @@ export const OfficerDashboard = ({ mode }) => {
     setShowReuploadModal(true);
   };
 
-  // Officer: Confirm and dispatch document re-upload request to applicant
+  // Officer: Confirm and dispatch re-upload request to applicant
   const handleConfirmReupload = () => {
     if (!selectedApp) return;
     const appId = selectedApp.id || selectedApp.application_id;
-    const reasonText = reuploadReason.trim() || 'Please re-upload a clear, authentic original copy of this document.';
-    const formattedNotes = `[Action Required: Re-upload ${reuploadDocType}] ${reasonText}`;
+    const reasonText = reuploadReason.trim() || (isFormOfficerUser
+      ? 'Please review and re-submit your application with the corrections indicated.'
+      : 'Please re-upload a clear, authentic original copy of this document.');
+    const formattedNotes = isFormOfficerUser
+      ? `[Action Required: Re-submit Application] ${reasonText}`
+      : `[Action Required: Re-upload ${reuploadDocType}] ${reasonText}`;
 
     triggerLoading({
-      message: `Requesting Re-upload of ${reuploadDocType}...`,
+      message: isFormOfficerUser
+        ? `Requesting Application Re-upload...`
+        : `Requesting Re-upload of ${reuploadDocType}...`,
       subtext: 'Updating status to Documents-Required & notifying applicant',
       duration: 1000,
       onComplete: async () => {
@@ -275,7 +281,9 @@ export const OfficerDashboard = ({ mode }) => {
         });
         setShowReuploadModal(false);
         setSelectedApp(null);
-        addToast(`Document re-upload request for "${reuploadDocType}" sent to citizen!`, 'warning');
+        addToast(isFormOfficerUser
+          ? 'Application re-upload request sent to citizen!'
+          : `Document re-upload request for "${reuploadDocType}" sent to citizen!`, 'warning');
       }
     });
   };
@@ -1078,7 +1086,7 @@ export const OfficerDashboard = ({ mode }) => {
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {!isEditing && (
                     <>
-                      {/* Officer view (Form & Document Officers): check details/documents, save notes, and request document re-upload ONLY. Cannot approve! */}
+                      {/* Officer view (Form & Document Officers): check details/documents, save notes, and request re-upload ONLY. Form Officers request a full Application re-upload; Document Officers request a Document re-upload. Cannot approve! */}
                       {!isApproverMode && (
                         <>
                           <button
@@ -1105,7 +1113,7 @@ export const OfficerDashboard = ({ mode }) => {
                               boxShadow: '0 0 14px rgba(245, 158, 11, 0.35)'
                             }}
                           >
-                            <Upload size={15} /> Request Document Re-upload
+                            <Upload size={15} /> {isFormOfficerUser ? 'Request Application Re-upload' : 'Request Document Re-upload'}
                           </button>
                         </>
                       )}
@@ -1136,7 +1144,7 @@ export const OfficerDashboard = ({ mode }) => {
                   ? 'Senior Approvers have executive sign-off authority to inspect AI Bot verification, issue official NIC numbers, and submit records to the thermal Print Queue.'
                   : isDocumentOfficerUser
                     ? 'Document Officers can inspect uploaded proof documents, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'
-                    : 'Form Officers can check application details & documents, correct form records, save notes, and request document re-upload. Approval and print submission are restricted to Senior Approvers.'}
+                    : 'Form Officers can check application details & documents, correct form records, save notes, and request application re-upload. Approval and print submission are restricted to Senior Approvers.'}
               </div>
             </div>
           </div>
@@ -1151,20 +1159,26 @@ export const OfficerDashboard = ({ mode }) => {
                   <Upload size={20} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Request Document Re-upload</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{isFormOfficerUser ? 'Request Application Re-upload' : 'Request Document Re-upload'}</h3>
                   <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                    Notify applicant #{selectedApp.id || selectedApp.application_id} to upload fresh documents
+                    {isFormOfficerUser
+                      ? `Notify applicant #${selectedApp.id || selectedApp.application_id} to verify and re-submit their application`
+                      : `Notify applicant #${selectedApp.id || selectedApp.application_id} to upload fresh documents`}
                   </div>
                 </div>
               </div>
 
               <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
-                Select the document requiring re-submission and provide clear instructions for the citizen. The application status will update to <strong>Documents-Required</strong>.
+                {isFormOfficerUser ? (
+                  <>Select the item that failed your review and provide clear instructions. The citizen must re-submit the corrected application. The application status will update to <strong>Documents-Required</strong>.</>
+                ) : (
+                  <>Select the document requiring re-submission and provide clear instructions for the citizen. The application status will update to <strong>Documents-Required</strong>.</>
+                )}
               </p>
 
               <div className="form-group" style={{ marginBottom: '1rem' }}>
                 <label className="form-label" style={{ fontSize: '0.82rem', fontWeight: 700 }}>
-                  Document Requiring Re-upload
+                  {isFormOfficerUser ? 'Item Requiring Re-upload' : 'Document Requiring Re-upload'}
                 </label>
                 <select
                   className="form-control"
@@ -1172,6 +1186,7 @@ export const OfficerDashboard = ({ mode }) => {
                   onChange={(e) => setReuploadDocType(e.target.value)}
                   style={{ width: '100%', padding: '0.65rem 0.85rem' }}
                 >
+                  {isFormOfficerUser && <option value="Application Details">Application Details / Form Records</option>}
                   <option value="Birth Certificate">Original Birth Certificate (Illegible / Missing)</option>
                   <option value="Grama Niladhari Certificate">Grama Niladhari Residency Certificate</option>
                   <option value="Bank CDM Deposit Slip">Bank CDM Deposit Slip / Proof of Payment</option>
@@ -1210,7 +1225,7 @@ export const OfficerDashboard = ({ mode }) => {
                   onClick={handleConfirmReupload}
                   style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', border: 'none' }}
                 >
-                  <Upload size={14} /> Send Re-upload Request
+                  <Upload size={14} /> {isFormOfficerUser ? 'Send Application Re-upload Request' : 'Send Re-upload Request'}
                 </button>
               </div>
             </div>
