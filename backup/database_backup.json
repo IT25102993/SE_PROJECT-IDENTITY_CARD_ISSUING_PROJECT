@@ -1,6 +1,6 @@
 {
   "version": "2.1",
-  "last_updated": "2026-10-07T14:23:53.779Z",
+  "last_updated": "2026-10-07T17:06:27.167Z",
   "tables": {
     "users": [
       {
@@ -203,7 +203,7 @@
         "service_type": "Normal",
         "remarks": "Handed over to postal service. Awaiting last-mile delivery confirmation.",
         "submitted_at": "2026-09-30T03:44:14.000Z",
-        "updated_at": "2026-10-07T14:23:53.000Z"
+        "updated_at": "2026-10-07T14:24:17.000Z"
       }
     ],
     "verifications": [
@@ -496,6 +496,90 @@
       }
     ],
     "audit_logs": [
+      {
+        "log_id": 141,
+        "user_id": 2,
+        "action": "USER_LOGIN",
+        "details": "User admin logged in successfully.",
+        "timestamp": "2026-10-07T17:06:27.000Z"
+      },
+      {
+        "log_id": 140,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T17:06:21.000Z"
+      },
+      {
+        "log_id": 139,
+        "user_id": 70,
+        "action": "USER_LOGIN",
+        "details": "User operational logged in successfully.",
+        "timestamp": "2026-10-07T17:06:15.000Z"
+      },
+      {
+        "log_id": 138,
+        "user_id": 69,
+        "action": "USER_LOGIN",
+        "details": "User approver logged in successfully.",
+        "timestamp": "2026-10-07T17:06:09.000Z"
+      },
+      {
+        "log_id": 137,
+        "user_id": 68,
+        "action": "USER_LOGIN",
+        "details": "User document_officer logged in successfully.",
+        "timestamp": "2026-10-07T17:06:03.000Z"
+      },
+      {
+        "log_id": 136,
+        "user_id": 68,
+        "action": "USER_LOGIN",
+        "details": "User document_officer logged in successfully.",
+        "timestamp": "2026-10-07T17:04:55.000Z"
+      },
+      {
+        "log_id": 135,
+        "user_id": 68,
+        "action": "USER_LOGIN",
+        "details": "User document_officer logged in successfully.",
+        "timestamp": "2026-10-07T17:03:07.000Z"
+      },
+      {
+        "log_id": 134,
+        "user_id": 68,
+        "action": "USER_LOGIN",
+        "details": "User document_officer logged in successfully.",
+        "timestamp": "2026-10-07T17:02:05.000Z"
+      },
+      {
+        "log_id": 133,
+        "user_id": 67,
+        "action": "USER_LOGIN",
+        "details": "User form_officer logged in successfully.",
+        "timestamp": "2026-10-07T17:00:57.000Z"
+      },
+      {
+        "log_id": 132,
+        "user_id": 119,
+        "action": "JOB_REMOVED_FROM_POOL",
+        "details": "Application #9004 removed from job pool by Delivery Manager Fernando and returned to unassigned queue",
+        "timestamp": "2026-10-07T14:24:17.000Z"
+      },
+      {
+        "log_id": 131,
+        "user_id": 119,
+        "action": "JOB_CLAIMED",
+        "details": "Application #9004 claimed into active pool by Delivery Manager Fernando",
+        "timestamp": "2026-10-07T14:24:17.000Z"
+      },
+      {
+        "log_id": 130,
+        "user_id": 119,
+        "action": "USER_LOGIN",
+        "details": "User delivery_manager logged in successfully.",
+        "timestamp": "2026-10-07T14:24:17.000Z"
+      },
       {
         "log_id": 129,
         "user_id": 119,
@@ -1556,6 +1640,46 @@
     },
     {
       "timestamp": "2026-10-07T14:23:53.785Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T16:58:53.599Z",
+      "action": "System startup baseline sync"
+    },
+    {
+      "timestamp": "2026-10-07T17:00:57.380Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:02:05.700Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:03:07.843Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:04:55.111Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:06:03.193Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:06:09.064Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:06:15.094Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:06:21.248Z",
+      "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
+    },
+    {
+      "timestamp": "2026-10-07T17:06:27.169Z",
       "action": "INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)"
     }
   ],
