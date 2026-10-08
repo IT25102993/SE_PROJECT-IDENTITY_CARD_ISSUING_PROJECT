@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CREDENTIALS.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CREDENTIALS.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/modules/admin-managemnt/AdminDashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/modules/admin-managemnt/AdminDashboard.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,6 +102,7 @@
       <workItem from="1791350487263" duration="237000" />
       <workItem from="1791352536607" duration="9000" />
       <workItem from="1791354512211" duration="1634000" />
+      <workItem from="1791423044211" duration="1530000" />
     </task>
     <servers />
   </component>
