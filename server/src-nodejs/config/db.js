@@ -573,7 +573,8 @@ export const initDb = async () => {
           WHEN 'operational' THEN 'Operational'
           WHEN 'delivery_manager' THEN 'Delivery-Manager'
         END
-        WHERE username IN ('admin', 'thilina_admin', 'form_officer', 'document_officer', 'approver', 'operational', 'delivery_manager')
+        WHERE username IN ('admin', 'thilina_admin',
+                           'form_officer', 'document_officer', 'approver', 'operational', 'delivery_manager')
           AND CAST(role AS CHAR) NOT IN ('Admin', 'Form-Officer', 'Document-Officer', 'Approver', 'Operational', 'Delivery-Manager')
       `);
     } catch (e) { /* ignore if role column is not in expected shape */ }
