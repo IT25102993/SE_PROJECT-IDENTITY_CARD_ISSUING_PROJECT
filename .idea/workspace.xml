@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backup/database_backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backup/database_backup.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backup/database_backup.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src-nodejs/config/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src-nodejs/config/db.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/lk/gov/nexus/repository/DispatchRecordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/lk/gov/nexus/repository/DispatchRecordRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/lk/gov/nexus/repository/DispatchRecordRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-    </list>
+    <list default="true" id="5f08172e-11e6-4979-9d00-3b20e640cf00" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,7 +100,7 @@
       <workItem from="1791352536607" duration="9000" />
       <workItem from="1791354512211" duration="1634000" />
       <workItem from="1791423044211" duration="8161000" />
-      <workItem from="1791438884255" duration="637000" />
+      <workItem from="1791438884255" duration="1188000" />
     </task>
     <servers />
   </component>
