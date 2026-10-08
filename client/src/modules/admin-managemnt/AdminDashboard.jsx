@@ -628,7 +628,7 @@ export const AdminDashboard = () => {
                 textDecoration: 'none'
               }}
             >
-              <Home size={18} /> Citizen Portal
+              <Home size={18} /> Admin Panal
             </NavLink>
 
             <button
