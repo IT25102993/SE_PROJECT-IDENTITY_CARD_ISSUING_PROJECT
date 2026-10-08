@@ -1,6 +1,6 @@
 -- =============================================================
 -- NEXUSGOV IDENTITY ISSUANCE SYSTEM — AUTOMATIC DATABASE BACKUP
--- Generated / Synced: 2026-10-07T14:23:53.779Z
+-- Generated / Synced: 2026-10-07T17:06:27.167Z
 -- Total Applications: 5
 -- =============================================================
 
@@ -64,16 +64,6 @@ INSERT INTO `identity_cards` (`card_id`, `card_number`, `application_id`, `appli
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── RECENT UPDATE TRANSACTIONS (APPENDED LOG) ───────────────────────
--- [2026-09-23T16:47:57.655Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
--- [2026-09-23T16:48:10.941Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-23T16:49:10.867Z] UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email), role = COALESCE(?, 
--- [2026-09-23T16:49:20.893Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
--- [2026-09-30T10:36:25.407023700] Application #9003 created
--- [2026-09-30T10:36:55.394305100] Application #9003 claimed by Document Handling Officer Silva
--- [2026-09-30T10:46:14.172803400] Application #9003 updated
--- [2026-09-30T14:44:16.509238900] Application #9004 created
--- [2026-09-30T14:48:47.673344700] Application #9004 claimed by Document Handling Officer Silva
--- [2026-09-30T14:48:53.937089600] Application #9004 unclaimed
 -- [2026-09-30T14:49:00.117753600] Application #9004 claimed by Document Handling Officer Silva
 -- [2026-09-30T14:49:50.432939600] Bot verification run for Application #9004
 -- [2026-09-30T14:49:52.425067100] Bot verification run for Application #9004
@@ -94,3 +84,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- [2026-10-07T14:22:48.605Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
 -- [2026-10-07T14:23:45.490Z] System startup baseline sync
 -- [2026-10-07T14:23:53.785Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T16:58:53.599Z] System startup baseline sync
+-- [2026-10-07T17:00:57.380Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:02:05.700Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:03:07.843Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:04:55.111Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:06:03.193Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:06:09.064Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:06:15.094Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:06:21.248Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
+-- [2026-10-07T17:06:27.169Z] INSERT INTO audit_logs (user_id, action, details) VALUES (?, ?, ?)
